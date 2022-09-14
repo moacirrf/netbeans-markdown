@@ -1,0 +1,189 @@
+body {
+    padding: 0px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.removeMarginPaddingTop{
+    padding-top: 0px;
+    margin-top: 0px;
+}
+
+p, h1, h2, h3, h4, h5, h6, a, code, table {
+    font-family: Noto Sans, sans-serif;
+}
+
+p {
+    margin-top: 0px;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+h1 {
+    font-size: 30pt;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-size:  16.72px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+h4 {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+h5 {
+    font-size: 11.28px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+h6 {
+    font-size: 8.72px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+strong {
+    font-weight: bold
+}
+
+em {
+    font-style: italic
+}
+
+blockquote {
+    border-left-style: solid;
+    border-left-width: 3px;
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+blockquote p {
+    margin-top: 10px;
+}
+
+blockquote ul{
+    margin-bottom: 0px;
+}
+
+dl, ol, ul{
+    margin-top: 0px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    -bullet-gap: 10px;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ol ol, ul, li{
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding: 0px;
+}
+
+ol ol{
+    list-style-type: upper-roman;
+}
+
+ul ol, ul, li{
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding: 0px;
+}
+
+ul ul{
+    list-style-type: circle;
+}
+
+ol ul{
+    list-style-type: circle;
+}
+
+li{
+    margin: 3px;
+    font-family: Noto Sans, sans-serif;
+}
+
+li p{
+    margin-bottom: 0px;
+}
+
+li blockquote{
+    margin-top: 10px;
+}
+
+li  blockquote p{
+    margin-bottom: 10px;
+}
+
+li pre {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+pre {
+    padding-top:10px;
+    padding-bottom:10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+a {
+    color: #6897bb;
+    text-decoration: underline;
+}
+
+table{
+    border-collapse: collapse;
+    border-spacing: 0x;
+}
+
+td, th{
+    border-style: solid;
+    border-width: 1px;
+    padding: 10px;
+}
+th {
+    font-weight: bold;
+}
+
+.noBorderTop{
+    border-top-width: 0px;
+}
+
+.noBorderLeft{
+    border-left-width: 0px;
+}
+
+.noBorderTopLeft{
+    border-top-width: 0px;
+    border-left-width: 0px;
+}
+
+
