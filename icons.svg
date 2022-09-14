@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="99.999992"
+   height="100"
+   viewBox="0 0 26.458331 26.458332"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="icons.svg"
+   inkscape:export-filename="src/main/resources/io/github/moacirrf/netbeans/markdown/icon_source.png"
+   inkscape:export-xdpi="15.360002"
+   inkscape:export-ydpi="15.360002"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="3.9257124"
+     inkscape:cx="28.529854"
+     inkscape:cy="54.385033"
+     inkscape:window-width="1920"
+     inkscape:window-height="1015"
+     inkscape:window-x="1366"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer4"
+     showguides="false"
+     inkscape:lockguides="false"><sodipodi:guide
+       position="13.34471,35.152612"
+       orientation="1,0"
+       id="guide4604"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-18.252728,13.257273"
+       orientation="0,-1"
+       id="guide337"
+       inkscape:locked="false" /></sodipodi:namedview><defs
+     id="defs2" /><g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="background_dark"
+     style="display:inline"
+     sodipodi:insensitive="true"><rect
+       style="display:inline;fill:#6e6e6e;fill-opacity:1;stroke:#6e6e6e;stroke-width:1.99307;stroke-dasharray:none;stroke-opacity:1"
+       id="rect234-5"
+       width="24.46526"
+       height="24.465261"
+       x="81.072807"
+       y="24.267183"
+       transform="translate(-80.076273,-23.270648)" /></g><g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="icon_preview.png"
+     style="display:none;fill:#cccccc"
+     transform="matrix(0.9074517,0,0,0.93667589,1.2243368,0.83772514)"><g
+       id="g1091"
+       transform="matrix(0.07696969,0,0,0.07696969,0.52916665,0.52916665)"
+       style="fill:#ffffff"><g
+         id="XMLID_11_"
+         style="fill:#ffffff">
+	<path
+   id="XMLID_12_"
+   d="m 195,150 c 27.57,0 50,-22.43 50,-50 0,-27.57 -22.43,-50 -50,-50 -27.57,0 -50,22.43 -50,50 0,27.57 22.43,50 50,50 z"
+   style="fill:#ffffff;fill-opacity:1" />
+	<path
+   id="XMLID_13_"
+   d="M 315,0 H 15 C 6.716,0 0,6.716 0,15 v 239.804 c 0,0.01 0,0.02 0,0.03 V 315 c 0,8.284 6.716,15 15,15 h 300 c 8.284,0 15,-6.716 15,-15 V 15 C 330,6.716 323.284,0 315,0 Z m -15,209.636 -32.957,-44.388 c -2.829,-3.811 -7.296,-6.058 -12.043,-6.058 -4.747,0 -9.214,2.247 -12.043,6.058 L 195.426,229.264 117.333,116.462 C 114.531,112.415 109.922,110 105,110 c -4.922,0 -9.531,2.415 -12.333,6.462 L 30,206.981 V 30 h 270 z"
+   style="fill:#ffffff;fill-opacity:1" />
+</g><g
+         id="g1038"
+         style="fill:#ffffff">
+</g><g
+         id="g1040"
+         style="fill:#ffffff">
+</g><g
+         id="g1042"
+         style="fill:#ffffff">
+</g><g
+         id="g1044"
+         style="fill:#ffffff">
+</g><g
+         id="g1046"
+         style="fill:#ffffff">
+</g><g
+         id="g1048"
+         style="fill:#ffffff">
+</g><g
+         id="g1050"
+         style="fill:#ffffff">
+</g><g
+         id="g1052"
+         style="fill:#ffffff">
+</g><g
+         id="g1054"
+         style="fill:#ffffff">
+</g><g
+         id="g1056"
+         style="fill:#ffffff">
+</g><g
+         id="g1058"
+         style="fill:#ffffff">
+</g><g
+         id="g1060"
+         style="fill:#ffffff">
+</g><g
+         id="g1062"
+         style="fill:#ffffff">
+</g><g
+         id="g1064"
+         style="fill:#ffffff">
+</g><g
+         id="g1066"
+         style="fill:#ffffff">
+</g></g></g><g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="icon_source.png"
+     style="display:inline"><g
+       id="g276"
+       transform="matrix(0.03981819,0,0,0.0468472,3.3426941,-2.4222249)">
+	<g
+   id="g274">
+		<rect
+   x="4.8646116"
+   y="439.172"
+   width="507.586"
+   height="72.828003"
+   id="rect272"
+   style="fill:#ffffff" />
+	</g>
+</g><g
+       id="g282"
+       transform="matrix(0.03981819,0,0,0.0468472,3.4485154,-2.4222249)"
+       style="fill:#ffffff">
+	<g
+   id="g280"
+   style="fill:#ffffff">
+		<rect
+   x="2.207"
+   y="293.517"
+   width="507.586"
+   height="72.828003"
+   id="rect278"
+   style="fill:#ffffff" />
+	</g>
+</g><g
+       id="g288"
+       transform="matrix(0.03981819,0,0,0.0468472,3.4485154,-2.4222249)"
+       style="fill:#ffffff">
+	<g
+   id="g286"
+   style="fill:#ffffff">
+		<rect
+   x="2.207"
+   y="147.862"
+   width="507.586"
+   height="72.828003"
+   id="rect284"
+   style="fill:#ffffff" />
+	</g>
+</g></g><g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="icon_vertical_split.png"
+     style="display:none"
+     sodipodi:insensitive="true"><rect
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#6e6e6e;stroke-width:1.46662;stroke-dasharray:none;stroke-opacity:1"
+       id="rect234-5-2-6"
+       width="24.715172"
+       height="14.408376"
+       x="0.73330998"
+       y="0.73330998" /></g><g
+     inkscape:label="icon_horizontal_split.png"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-80.076272,-23.270648)"
+     style="display:none"
+     sodipodi:insensitive="true"><rect
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#6e6e6e;stroke-width:1.41002;stroke-dasharray:none;stroke-opacity:1"
+       id="rect234-5-2"
+       width="13.203025"
+       height="24.929729"
+       x="80.781288"
+       y="23.975662" /></g></svg>
