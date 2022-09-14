@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Java-Dependencies: Java > 11
+OpenIDE-Module-Localizing-Bundle: io/github/moacirrf/netbeans/markdown/Bundle.properties
+OpenIDE-Module-Install: io/github/moacirrf/netbeans/markdown/Installer.class
