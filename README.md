@@ -23,4 +23,4 @@ This plugin include some aditionals features to Apache Netbeans Markdown Editor.
  
 ## Screenshots
 
-![image](https://user-images.githubusercontent.com/950706/190041290-9b8c1701-c75d-4f75-a8ba-1e910f0bfc56.png)
+![image](https://user-images.githubusercontent.com/950706/190041477-71d5b5fc-d887-4934-810a-0ceb1048c607.png)
