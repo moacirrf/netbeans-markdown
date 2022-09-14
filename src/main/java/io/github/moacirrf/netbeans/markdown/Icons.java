@@ -16,18 +16,33 @@
  */
 package io.github.moacirrf.netbeans.markdown;
 
-import io.github.moacirrf.netbeans.markdown.ui.TopBar;
 import javax.swing.ImageIcon;
+import static org.openide.util.ImageUtilities.loadImageIcon;
 
 /**
- *
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
 public final class Icons {
-    
-    public static final ImageIcon ICON_VERTICAL_SPLIT = 
-            new ImageIcon(TopBar.class.getResource("/io/github/moacirrf/netbeans/markdown/icon_vertical_split.png"));
 
-    public static final ImageIcon ICON_HORIZONTAL_SPLIT = 
-            new ImageIcon(TopBar.class.getResource("/io/github/moacirrf/netbeans/markdown/icon_horizontal_split.png"));
+    private static final String PATH = "/io/github/moacirrf/netbeans/markdown/";
+
+    public static ImageIcon getICON_PREVIEW() {
+        return loadImageIcon(PATH + "icon_preview.png", true);
+    }
+
+    public static ImageIcon getICON_SOURCE() {
+        return loadImageIcon(PATH + "icon_source.png", true);
+    }
+
+    public static ImageIcon getICON_VERTICAL_SPLIT() {
+        return loadImageIcon(PATH + "icon_vertical_split.png", true);
+    }
+
+    public static ImageIcon getICON_HORIZONTAL_SPLIT() {
+        return loadImageIcon(PATH + "icon_horizontal_split.png", true);
+    }
+
+    public static ImageIcon getICON_COMPLETION() {
+        return loadImageIcon(PATH + "code_template.png", false);
+    }
 }
