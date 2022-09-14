@@ -118,5 +118,6 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
         }
         return false;
     }
+    
 
 }

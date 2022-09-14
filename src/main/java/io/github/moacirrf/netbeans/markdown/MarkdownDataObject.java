@@ -119,7 +119,7 @@ public class MarkdownDataObject extends MultiDataObject {
             iconBase = "io/github/moacirrf/netbeans/markdown/markdown.png",
             mimeType = "text/x-markdown-nb",
             persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,
-            preferredID = "Markdown",
+            preferredID = "io.github.moacirrf.netbeans.markdown.ui.MultiViewSplitEditorElement",
             position = 1000
     )
     @Messages("LBL_Markdown_EDITOR=Source")
