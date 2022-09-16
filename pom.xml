@@ -72,6 +72,7 @@
                     <author>Moacir da Roza Flores-moacirrf@gmail.com</author>
                     <licenseName>GNU GENERAL PUBLIC LICENSE 3.0</licenseName>
                     <licenseFile>LICENSE</licenseFile>
+                    <requiresRestart>true</requiresRestart>
                     <!--  Path of Netbeans instalation.
                     <netbeansInstallation>${netbeansInstalationPath}</netbeansInstallation> -->                    
                 </configuration>
