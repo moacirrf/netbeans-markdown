@@ -23,7 +23,7 @@ import org.openide.modules.ModuleInstall;
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
 public class Installer extends ModuleInstall {
-
+    
     @Override
     public boolean closing() {
         TempDir.removeTempDir();

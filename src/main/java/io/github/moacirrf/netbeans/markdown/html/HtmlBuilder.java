@@ -57,8 +57,13 @@ public final class HtmlBuilder {
         var renderer = HtmlRenderer.builder(options).build();
 
         Node document = parser.parse(markdownText);
+        if (document == null) {
+            return "";
+        }
         Document doc = Jsoup.parse(renderer.render(document));
-
+        if (doc == null) {
+            return "";
+        }
         if (!htmlAdjusters.isEmpty()) {
             for (var adjuster : htmlAdjusters) {
                 doc = adjuster.adjust(doc);

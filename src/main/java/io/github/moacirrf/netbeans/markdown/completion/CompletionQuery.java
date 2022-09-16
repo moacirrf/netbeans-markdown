@@ -19,10 +19,10 @@ package io.github.moacirrf.netbeans.markdown.completion;
 import static io.github.moacirrf.netbeans.markdown.completion.CompletionItemImpl.newItem;
 import static io.github.moacirrf.netbeans.markdown.Icons.getICON_COMPLETION;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.text.Document;
-import org.netbeans.spi.editor.completion.CompletionItem;
 import org.netbeans.spi.editor.completion.CompletionResultSet;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
 import org.openide.util.Exceptions;
@@ -33,21 +33,23 @@ import org.openide.util.Exceptions;
  */
 public class CompletionQuery extends AsyncCompletionQuery {
 
+    private final Set<AbstractCompletionItem> itens = new HashSet<>();
+
     @Override
     protected void query(CompletionResultSet crs, Document document, int caretOffset) {
-        crs.addAllItems(getFormatHints(document, caretOffset));
-        crs.addAllItems(getHeadings(document, caretOffset));
-        crs.addAllItems(getBlockquotes(document, caretOffset));
-        crs.addAllItems(getLists(document, caretOffset));
-        crs.addAllItems(getCode(document, caretOffset));
-        crs.addAllItems(getLinks(document, caretOffset));
-        crs.addAllItems(getImages(document, caretOffset));
-        crs.addAllItems(getTables(document, caretOffset));
+        getFormatHints(caretOffset);
+        getHeadings(caretOffset);
+        getBlockquotes(caretOffset);
+        getLists(caretOffset);
+        getCode(caretOffset);
+        getLinks(caretOffset);
+        getImages(caretOffset);
+        getTables(caretOffset);
+        crs.addAllItems(itens);
         crs.finish();
     }
 
-    private Collection<? extends CompletionItem> getFormatHints(Document document, int caretOffset) {
-        var itens = new ArrayList<CompletionItem>();
+    private Collection<? extends AbstractCompletionItem> getFormatHints(int caretOffset) {
         var icon = getICON_COMPLETION();
         itens.add(newItem(0, icon, "<i>Italic 1</i>", "*Italic 1*", caretOffset));
         itens.add(newItem(0, icon, "<i>Italic 2</i>", "_Italic 2_", caretOffset));
@@ -61,8 +63,7 @@ public class CompletionQuery extends AsyncCompletionQuery {
         return itens;
     }
 
-    private Collection<? extends CompletionItem> getHeadings(Document document, int caretOffset) {
-        var itens = new ArrayList<AbstractCompletionItem>();
+    private Collection<? extends AbstractCompletionItem> getHeadings(int caretOffset) {
         var icon = getICON_COMPLETION();
         itens.add(newItem(2, icon, "<h1>Heading level 1</h1>", "# Heading level 1", caretOffset));
         itens.add(newItem(2, icon, "<h2>Heading level 2</h2>", "## Heading level 2", caretOffset));
@@ -74,16 +75,14 @@ public class CompletionQuery extends AsyncCompletionQuery {
         return itens;
     }
 
-    private Collection<? extends CompletionItem> getBlockquotes(Document document, int caretOffset) {
-        var itens = new ArrayList<CompletionItem>();
+    private Collection<? extends AbstractCompletionItem> getBlockquotes(int caretOffset) {
         var icon = getICON_COMPLETION();
         itens.add(newItem(3, icon, "Blockquote", "> Blockquote", caretOffset));
 
         return itens;
     }
 
-    private Collection<? extends CompletionItem> getLists(Document document, int caretOffset) {
-        var itens = new ArrayList<CompletionItem>();
+    private Collection<? extends AbstractCompletionItem> getLists(int caretOffset) {
         var icon = getICON_COMPLETION();
         itens.add(newItem(4, icon, "Ordered List", "1. Item 1\n", caretOffset));
         itens.add(newItem(4, icon, "Unordered List", "- Item 1\n", caretOffset));
@@ -91,16 +90,14 @@ public class CompletionQuery extends AsyncCompletionQuery {
         return itens;
     }
 
-    private Collection<? extends CompletionItem> getCode(Document document, int caretOffset) {
-        var itens = new ArrayList<CompletionItem>();
+    private Collection<? extends AbstractCompletionItem> getCode(int caretOffset) {
         var icon = getICON_COMPLETION();
         itens.add(newItem(5, icon, "Code Block", "    fun code(){}", caretOffset));
 
         return itens;
     }
 
-    private Collection<? extends CompletionItem> getLinks(Document document, int caretOffset) {
-        var itens = new ArrayList<CompletionItem>();
+    private Collection<? extends AbstractCompletionItem> getLinks(int caretOffset) {
         var icon = getICON_COMPLETION();
         itens.add(newItem(6, icon, "Link", "[Description](https://netbeans.apache.org/).", caretOffset));
         itens.add(newItem(6, icon, "Email URL", "<https://netbeans.apache.org/)>\n"
@@ -108,8 +105,7 @@ public class CompletionQuery extends AsyncCompletionQuery {
         return itens;
     }
 
-    private Collection<? extends CompletionItem> getImages(Document document, int caretOffset) {
-        var itens = new ArrayList<CompletionItem>();
+    private Collection<? extends AbstractCompletionItem> getImages(int caretOffset) {
         var icon = getICON_COMPLETION();
         itens.add(newItem(7, icon, "Image 1",
                 "![Best IDE](https://netbeans.apache.org/images/nblogo48x48.png)", caretOffset));
@@ -118,11 +114,10 @@ public class CompletionQuery extends AsyncCompletionQuery {
         return itens;
     }
 
-    private Collection<? extends CompletionItem> getTables(Document document, int caretOffset) {
-        var itens = new ArrayList<CompletionItem>();
+    private Collection<? extends AbstractCompletionItem> getTables(int caretOffset) {
         var icon = getICON_COMPLETION();
         try ( var stream = getClass().getResourceAsStream("/io/github/moacirrf/netbeans/markdown/completion/table.md")) {
-            var item = newItem(7, icon, "Table", "A three Column table", caretOffset);
+            var item = newItem(7, icon, "Table", "A Three Column Table", caretOffset);
             item.setTemplate(new String(stream.readAllBytes()));
             itens.add(item);
         } catch (IOException ex) {

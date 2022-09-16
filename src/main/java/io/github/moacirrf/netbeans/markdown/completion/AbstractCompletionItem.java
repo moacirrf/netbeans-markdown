@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -40,7 +41,6 @@ public abstract class AbstractCompletionItem implements CompletionItem {
     private String leftHtmlText;
     private String righHtmlText;
     private String template;
-
     private int startOffset;
     private int sortPriority;
 
@@ -152,6 +152,32 @@ public abstract class AbstractCompletionItem implements CompletionItem {
 
     public void setSortPriority(int sortPriority) {
         this.sortPriority = sortPriority;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + Objects.hashCode(this.leftHtmlText);
+        hash = 11 * hash + Objects.hashCode(this.righHtmlText);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractCompletionItem other = (AbstractCompletionItem) obj;
+        if (!Objects.equals(this.leftHtmlText, other.leftHtmlText)) {
+            return false;
+        }
+        return Objects.equals(this.righHtmlText, other.righHtmlText);
     }
 
 }

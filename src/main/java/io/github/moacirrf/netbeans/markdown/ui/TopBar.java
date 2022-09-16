@@ -20,6 +20,7 @@ import io.github.moacirrf.netbeans.markdown.Icons;
 import java.awt.Graphics;
 import static javax.swing.JSplitPane.HORIZONTAL_SPLIT;
 import static javax.swing.JSplitPane.VERTICAL_SPLIT;
+import javax.swing.SwingUtilities;
 
 public class TopBar extends javax.swing.JPanel {
 
@@ -125,34 +126,40 @@ public class TopBar extends javax.swing.JPanel {
     }//GEN-LAST:event_showPreviewBtnActionPerformed
 
     private void onlySource() {
-        splitPanel.getSplitPanel().getLeftComponent().setVisible(true);
-        splitPanel.getSplitPanel().getRightComponent().setVisible(false);
-        splitModeOn = false;
+        SwingUtilities.invokeLater(() -> {
+            splitPanel.getSplitPanel().getLeftComponent().setVisible(true);
+            splitPanel.getSplitPanel().getRightComponent().setVisible(false);
+            splitModeOn = false;
+        });
     }
 
     private void split() {
-        splitModeBtn.setSelected(true);
-        splitPanel.getSplitPanel().getLeftComponent().setVisible(true);
-        splitPanel.getSplitPanel().getRightComponent().setVisible(true);
-        if (splitModeOn) {
-            switch (splitPanel.getSplitPanel().getOrientation()) {
-                case HORIZONTAL_SPLIT:
-                    splitPanel.getSplitPanel().setOrientation(VERTICAL_SPLIT);
-                    this.splitModeBtn.setIcon(Icons.getICON_VERTICAL_SPLIT());
-                    break;
-                default:
-                    splitPanel.getSplitPanel().setOrientation(HORIZONTAL_SPLIT);
-                    this.splitModeBtn.setIcon(Icons.getICON_HORIZONTAL_SPLIT());
+        SwingUtilities.invokeLater(() -> {
+            splitModeBtn.setSelected(true);
+            splitPanel.getSplitPanel().getLeftComponent().setVisible(true);
+            splitPanel.getSplitPanel().getRightComponent().setVisible(true);
+            if (splitModeOn) {
+                switch (splitPanel.getSplitPanel().getOrientation()) {
+                    case HORIZONTAL_SPLIT:
+                        splitPanel.getSplitPanel().setOrientation(VERTICAL_SPLIT);
+                        this.splitModeBtn.setIcon(Icons.getICON_VERTICAL_SPLIT());
+                        break;
+                    default:
+                        splitPanel.getSplitPanel().setOrientation(HORIZONTAL_SPLIT);
+                        this.splitModeBtn.setIcon(Icons.getICON_HORIZONTAL_SPLIT());
+                }
             }
-        }
-        splitModeOn = true;
-        refreshDividerLocation = true;
+            splitModeOn = true;
+            refreshDividerLocation = true;
+        });
     }
 
     private void onlyPreview() {
-        splitPanel.getSplitPanel().getLeftComponent().setVisible(false);
-        splitPanel.getSplitPanel().getRightComponent().setVisible(true);
-        splitModeOn = false;
+        SwingUtilities.invokeLater(() -> {
+            splitPanel.getSplitPanel().getLeftComponent().setVisible(false);
+            splitPanel.getSplitPanel().getRightComponent().setVisible(true);
+            splitModeOn = false;
+        });
     }
 
     @Override

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.moacirrf</groupId>
     <artifactId>netbeans-markdown</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>nbm</packaging>
     <name>Netbeans Markdown</name>
     <url>https://github.com/moacirrf/netbeans-markdown</url>
@@ -22,7 +22,7 @@
         <connection>scm:git:https://github.com/moacirrf/netbeans-markdown</connection>
         <developerConnection>scm:git:https://github.com/moacirrf/netbeans-markdown</developerConnection>
         <url>https://github.com/moacirrf/netbeans-markdown/tree/${project.scm.tag}</url>
-        <tag>v0.0.1</tag>
+        <tag>v0.0.2</tag>
     </scm>
     
     <licenses>
@@ -160,6 +160,12 @@
             <version>1.14</version>
         </dependency>
 
+        <!--  Commons Text-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.9</version>
+        </dependency>
                        
         <!-- Junit -->
         <dependency>
@@ -245,6 +251,21 @@
             <version>RELEASE140</version>
             <type>jar</type>
         </dependency>
+            
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-editor-mimelookup</artifactId>
+            <version>RELEASE140</version>
+            <type>jar</type>
+        </dependency>    
+
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-editor-settings</artifactId>
+            <version>RELEASE140</version>
+            <type>jar</type>
+        </dependency>    
+        
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

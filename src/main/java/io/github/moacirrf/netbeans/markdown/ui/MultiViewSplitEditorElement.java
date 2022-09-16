@@ -79,7 +79,6 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
                 super.fileChanged(fe);
                 syncronizeScrolls();
             }
-
         });
         rightJScrollPane.setFileObject(mdFile);
 
@@ -106,17 +105,17 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
     }
 
     private void setScrollToMaximum(JScrollPane scrollPane) {
-        Point p = scrollPane.getViewport().getViewPosition();
-        p.y = Integer.MAX_VALUE;
-        scrollPane.getViewport().setViewPosition(p);
+        var viewPort =  scrollPane.getViewport();
+        var viewPosition = viewPort.getViewPosition();
+        var viewSize = viewPort.getViewSize();
+        
+        viewPosition.y = viewSize.height;
+        scrollPane.getViewport().setViewPosition(viewPosition);
     }
 
     private boolean isScrolledToMaximum(JScrollPane scrollPane) {
         var viewPort = scrollPane.getViewport();
-        if ((viewPort.getViewSize().height - viewPort.getExtentSize().getHeight()) == viewPort.getViewPosition().y) {
-            return true;
-        }
-        return false;
+        return (viewPort.getViewSize().height - viewPort.getExtentSize().getHeight()) == viewPort.getViewPosition().y;
     }
     
 

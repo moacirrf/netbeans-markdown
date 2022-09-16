@@ -25,8 +25,13 @@ public class FirstElementAdjuster implements HtmlAdjuster {
 
     @Override
     public Document adjust(Document inputDocument) {
-        inputDocument.getElementsByTag("body").first().firstElementChild()
-                .addClass("removeMarginPaddingTop");
+        if (inputDocument != null) {
+            var body = inputDocument.getElementsByTag("body");
+            if (body != null && body.first() != null && body.first().firstElementChild() != null) {
+                body.first().firstElementChild()
+                        .addClass("removeMarginPaddingTop");
+            }
+        }
         return inputDocument;
     }
 

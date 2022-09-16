@@ -29,7 +29,9 @@ public class LinksAdjuster implements HtmlAdjuster {
 
     @Override
     public Document adjust(Document inputDocument) {
-        fixLinksWithImage(inputDocument.getElementsByTag("a"));
+        if (inputDocument != null) {
+            fixLinksWithImage(inputDocument.getElementsByTag("a"));
+        }
         return inputDocument;
     }
 

@@ -29,10 +29,11 @@ public class TablesAdjuster implements HtmlAdjuster {
 
     @Override
     public Document adjust(Document document) {
-
-        document.getElementsByTag("table").forEach(table
-                -> fixTableRowsStyle(table.getElementsByTag("tr"))
-        );
+        if (document != null && document.getElementsByTag("table") != null) {
+            document.getElementsByTag("table").forEach(table
+                    -> fixTableRowsStyle(table.getElementsByTag("tr"))
+            );
+        }
         return document;
     }
 

@@ -30,6 +30,7 @@ public class CompletionItemImpl extends AbstractCompletionItem {
             String leftText,
             String rightText,
             int startOffset) {
+
         var item = new CompletionItemImpl();
         item.setIcon(icon);
         item.setLeftHtmlText(leftText);
