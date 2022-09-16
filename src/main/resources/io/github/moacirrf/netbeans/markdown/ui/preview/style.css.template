@@ -4,15 +4,16 @@ body {
     padding-right: 15px;
     margin-left: 0;
     margin-right: 0;
+    color: ${body.color};
+    background-color: ${body.bgColor};
 }
 
-.removeMarginPaddingTop{
-    padding-top: 0px;
-    margin-top: 0px;
+p, h1, h2, h3, h4, h5, h6, a, code, table, li {
+    font-family: ${fontFamily};
 }
 
-p, h1, h2, h3, h4, h5, h6, a, code, table {
-    font-family: Noto Sans, sans-serif;
+p, a, code, table, li {
+    font-size: ${fontSize};
 }
 
 p {
@@ -76,6 +77,8 @@ blockquote {
     border-left-width: 3px;
     padding-left: 20px;
     margin-bottom: 10px;
+    background-color: ${blockquote.bgColor};
+    border-left-color: ${blockquote.borderLeftColor};
 }
 
 blockquote p {
@@ -127,7 +130,6 @@ ol ul{
 
 li{
     margin: 3px;
-    font-family: Noto Sans, sans-serif;
 }
 
 li p{
@@ -152,6 +154,7 @@ pre {
     padding-bottom:10px;
     padding-left: 20px;
     padding-right: 20px;
+    background-color: ${pre.bgColor};
 }
 
 a {
@@ -168,9 +171,15 @@ td, th{
     border-style: solid;
     border-width: 1px;
     padding: 10px;
+    border-color: ${tdTh.borderColor};
 }
+
 th {
     font-weight: bold;
+}
+
+code {
+    background-color: ${code.bgColor};
 }
 
 .noBorderTop{
@@ -186,4 +195,11 @@ th {
     border-left-width: 0px;
 }
 
+.removeColorLinkWithImage {
+    color: ${removeColorLinkWithImage.color};
+}
 
+.removeMarginPaddingTop{
+    padding-top: 0px;
+    margin-top: 0px;
+}

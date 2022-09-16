@@ -16,29 +16,91 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.UIManager;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.html.StyleSheet;
+import org.apache.commons.text.StringSubstitutor;
+import org.netbeans.api.editor.mimelookup.MimeLookup;
+import org.netbeans.api.editor.mimelookup.MimePath;
+import org.netbeans.api.editor.settings.FontColorNames;
+import org.netbeans.api.editor.settings.FontColorSettings;
+import org.openide.util.Exceptions;
 
 public final class ThemeResolver {
 
-    public static final String DEFAULT_CSS = "common.css";
-    public static final String LIGHT_CSS = "light.css";
-    public static final String DARK_CSS = "dark.css";
-    public static final String GENERIC_CSS = "generic.css";
+    public static final String STYLE_CSS = "/io/github/moacirrf/netbeans/markdown/ui/preview/style.css.template";
+    
+    private FontColorSettings fontColorSettings;
 
     public StyleSheet resolve() {
+        fontColorSettings = (FontColorSettings) MimeLookup.getLookup(MimePath.parse("text/x-java"))
+                .lookup(FontColorSettings.class);
         StyleSheet styleSheet = new StyleSheet();
-        styleSheet.importStyleSheet(this.getClass().getResource(DEFAULT_CSS));
-        String theme = UIManager.getLookAndFeel().getName().toLowerCase();
-
-        if (theme.contains("dark")) {
-            styleSheet.importStyleSheet(this.getClass().getResource(DARK_CSS));
-        } else if (theme.contains("flatlaf light")) {
-            styleSheet.importStyleSheet(this.getClass().getResource(LIGHT_CSS));
-        } else {
-            styleSheet.importStyleSheet(this.getClass().getResource(GENERIC_CSS));
+        try {
+            String style = new String(getClass().getResourceAsStream(STYLE_CSS).readAllBytes());
+            if (UIManager.getBoolean("nb.dark.theme")) {
+                style = StringSubstitutor.replace(style, getDarkStyle());
+                styleSheet.addRule(style);
+            } else {
+                style = StringSubstitutor.replace(style, getLightStyle());
+                styleSheet.addRule(style);
+            }
+            return styleSheet;
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
         }
-
         return styleSheet;
+    }
+
+    private Map<String, Object> getLightStyle() {
+        HashMap<String, Object> maps = new HashMap<>();
+        maps.put("blockquote.bgColor", "#F5F7F9");
+        maps.put("blockquote.borderLeftColor", "#a1c1dd");
+        maps.put("removeColorLinkWithImage.color", "#FFFFFF");
+        maps.put("pre.bgColor", "#F5F7F9");
+        maps.put("code.bgColor", "#F5F7F9");
+        maps.put("tdTh.borderColor", "#515151");
+        setFontFamilySize(maps);
+        return maps;
+    }
+
+    private Map<String, Object> getDarkStyle() {
+        HashMap<String, Object> maps = new HashMap<>();
+        maps.put("blockquote.bgColor", "#3C3D3E");
+        maps.put("blockquote.borderLeftColor", "#476387");
+        maps.put("removeColorLinkWithImage.color", "#2B2B2B");
+        maps.put("pre.bgColor", "#3C3D3E");
+        maps.put("code.bgColor", "#3C3D3E");
+        maps.put("tdTh.borderColor", "#515151");
+        setFontFamilySize(maps);
+        return maps;
+    }
+
+    /**
+     * See configuration of fontSize, fontFamily, fontColor, background from
+     * Preferences\Font &Colors
+     *
+     *
+     * @param maps
+     */
+    private void setFontFamilySize(HashMap<String, Object> maps) {
+
+        var att = fontColorSettings.getFontColors(FontColorNames.DEFAULT_COLORING);
+
+        maps.put("fontFamily", att.getAttribute(StyleConstants.FontConstants.FontFamily));
+        maps.put("fontSize", att.getAttribute(StyleConstants.FontConstants.FontSize));
+
+        Color fontColor = (Color) att.getAttribute(StyleConstants.FontConstants.Foreground);
+        Color bgColor = (Color) att.getAttribute(StyleConstants.FontConstants.Background);
+        maps.put("body.color", toRGB(fontColor));
+        maps.put("body.bgColor", toRGB(bgColor));
+    }
+
+    private String toRGB(Color color) {
+        return "rgb(%s,%s,%s)".formatted(color.getRed(), color.getGreen(), color.getBlue());
     }
 }

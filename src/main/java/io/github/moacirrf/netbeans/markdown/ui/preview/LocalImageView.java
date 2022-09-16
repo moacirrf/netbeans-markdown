@@ -32,6 +32,7 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.openide.util.Exceptions;
+import org.openide.util.ImageUtilities;
 
 /**
  * SVG images need to be converted to PNG, this class
@@ -70,7 +71,7 @@ public class LocalImageView extends ImageView {
                 return url;
             }
           
-            Path imageTemp = Paths.get(tempDir.toString(), new Date().getTime() + "_" + fileName + ".png");
+            Path imageTemp = Paths.get(tempDir.toString(), fileName + ".png");
             imageTemp.toFile().setWritable(true);
             PNGTranscoder t = new PNGTranscoder();
             TranscoderInput input = new TranscoderInput(url.toString());

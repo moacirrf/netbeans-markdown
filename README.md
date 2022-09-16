@@ -1,15 +1,14 @@
-Markdown for Netbeans ![master](https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg)
-=====================================
+# Markdown for Netbeans ![master](https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg)
+
+***
 
 ## Description
-This plugin include some aditionals features to Apache Netbeans Markdown Editor.
+This plugin include some additionals features to Apache Netbeans Markdown Editor.
 - Preview
 - Split Window
-- Autocomplete
+- Sugestion
 
-### Problems
-- A more accuracy syncronized scroll
- 
+## Requirements
  - Apache Netbeans 14, 15
  - JDK 11+
 
@@ -20,7 +19,9 @@ This plugin include some aditionals features to Apache Netbeans Markdown Editor.
  - Flexmark - BSD 2-Clause "Simplified" License
  - Apache Batik - Apache License, Version 2.0
  - Jsoup - The MIT License
- 
-## Screenshots
+ - Apache Commons Text - Apache License, Version 2.0
 
-![image](https://user-images.githubusercontent.com/950706/190041477-71d5b5fc-d887-4934-810a-0ceb1048c607.png)
+ 
+
+## Screenshots
+<img src="https://user-images.githubusercontent.com/950706/190041477-71d5b5fc-d887-4934-810a-0ceb1048c607.png" width="1700"  />

@@ -36,7 +36,7 @@ public class MarkdownPreviewScrollPane extends JScrollPane {
     public MarkdownPreviewScrollPane() {
         this.initComponents();
         setAutoscrolls(false);
-        this.setBorder(BorderFactory.createEmptyBorder(22, 0, 0, 0));
+        this.setBorder(BorderFactory.createEmptyBorder(22, 0, 9, 0));
         editorPane.addHyperlinkListener((HyperlinkEvent e) -> {
             if (e.getInputEvent() instanceof MouseEvent) {
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
@@ -48,7 +48,6 @@ public class MarkdownPreviewScrollPane extends JScrollPane {
 
     private void initComponents() {
         editorPane = new JEditorPane();
-        editorPane.setSize(super.getSize());
         editorPane.setEditable(false);
         editorPane.setEditorKit(new MarkdownEditorKit());
         setViewportView(editorPane);
@@ -63,9 +62,8 @@ public class MarkdownPreviewScrollPane extends JScrollPane {
 
     public void fillEditorPane() {
         try {
-            String html = HtmlBuilder.getInstance()
-                    .build(fileObject.asText());
-            editorPane.setText(html);
+            editorPane.setText(HtmlBuilder.getInstance()
+                    .build(fileObject.asText()));
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

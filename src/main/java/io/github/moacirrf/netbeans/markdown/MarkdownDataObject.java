@@ -44,8 +44,7 @@ import org.openide.windows.TopComponent;
 @DataObject.Registration(
         mimeType = MarkdownDataObject.MIME_TYPE,
         iconBase = "io/github/moacirrf/netbeans/markdown/markdown.png",
-        displayName = "#LBL_Markdown_LOADER",
-        position = 300
+        displayName = "#LBL_Markdown_LOADER"
 )
 @ActionReferences({
     @ActionReference(

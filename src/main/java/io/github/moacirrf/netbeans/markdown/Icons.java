@@ -24,7 +24,7 @@ import static org.openide.util.ImageUtilities.loadImageIcon;
  */
 public final class Icons {
 
-    private static final String PATH = "/io/github/moacirrf/netbeans/markdown/";
+    private static final String PATH = "io/github/moacirrf/netbeans/markdown/";
 
     public static ImageIcon getICON_PREVIEW() {
         return loadImageIcon(PATH + "icon_preview.png", true);
