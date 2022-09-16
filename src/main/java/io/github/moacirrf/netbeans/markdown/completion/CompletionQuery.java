@@ -117,7 +117,7 @@ public class CompletionQuery extends AsyncCompletionQuery {
     private Collection<? extends AbstractCompletionItem> getTables(int caretOffset) {
         var icon = getICON_COMPLETION();
         try ( var stream = getClass().getResourceAsStream("/io/github/moacirrf/netbeans/markdown/completion/table.md")) {
-            var item = newItem(7, icon, "Table", "A three Column table", caretOffset);
+            var item = newItem(7, icon, "Table", "A Three Column Table", caretOffset);
             item.setTemplate(new String(stream.readAllBytes()));
             itens.add(item);
         } catch (IOException ex) {
