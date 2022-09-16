@@ -33,7 +33,7 @@ import org.openide.util.Exceptions;
 public final class ThemeResolver {
 
     public static final String STYLE_CSS = "/io/github/moacirrf/netbeans/markdown/ui/preview/style.css.template";
-    
+
     private FontColorSettings fontColorSettings;
 
     public StyleSheet resolve() {
@@ -101,6 +101,6 @@ public final class ThemeResolver {
     }
 
     private String toRGB(Color color) {
-        return "rgb(%s,%s,%s)".formatted(color.getRed(), color.getGreen(), color.getBlue());
+        return String.format("rgb(%s,%s,%s)", color.getRed(), color.getGreen(), color.getBlue());
     }
 }
