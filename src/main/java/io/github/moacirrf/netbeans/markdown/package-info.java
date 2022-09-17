@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-@TemplateRegistration(folder = "Other", content = "MarkdownTemplate.md")
+@TemplateRegistration(folder = "Other", content = "Markdown.md", displayName = "Markdown File")
 package io.github.moacirrf.netbeans.markdown;
 
 import org.netbeans.api.templates.TemplateRegistration;

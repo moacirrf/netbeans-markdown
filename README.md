@@ -3,7 +3,7 @@
 ***
 
 ## Description
-This plugin include some additionals features to Apache Netbeans Markdown Editor.
+This plugin adds some additional features to Apache Netbeans Markdown Editor.
 - Preview
 - Split Window
 - Sugestion
@@ -20,7 +20,6 @@ This plugin include some additionals features to Apache Netbeans Markdown Editor
  - Apache Batik - Apache License, Version 2.0
  - Jsoup - The MIT License
  - Apache Commons Text - Apache License, Version 2.0
-
  
 
 ## Screenshots

@@ -45,4 +45,7 @@ public final class Icons {
     public static ImageIcon getICON_COMPLETION() {
         return loadImageIcon(PATH + "code_template.png", false);
     }
+
+    private Icons() {
+    }
 }

@@ -57,24 +57,26 @@ public final class ThemeResolver {
     }
 
     private Map<String, Object> getLightStyle() {
+        var blue = "#F5F7F9";
         HashMap<String, Object> maps = new HashMap<>();
-        maps.put("blockquote.bgColor", "#F5F7F9");
+        maps.put("blockquote.bgColor", blue);
         maps.put("blockquote.borderLeftColor", "#a1c1dd");
         maps.put("removeColorLinkWithImage.color", "#FFFFFF");
-        maps.put("pre.bgColor", "#F5F7F9");
-        maps.put("code.bgColor", "#F5F7F9");
+        maps.put("pre.bgColor", blue);
+        maps.put("code.bgColor", blue);
         maps.put("tdTh.borderColor", "#515151");
         setFontFamilySize(maps);
         return maps;
     }
 
     private Map<String, Object> getDarkStyle() {
+        var grey = "#3C3D3E";
         HashMap<String, Object> maps = new HashMap<>();
-        maps.put("blockquote.bgColor", "#3C3D3E");
+        maps.put("blockquote.bgColor", grey);
         maps.put("blockquote.borderLeftColor", "#476387");
         maps.put("removeColorLinkWithImage.color", "#2B2B2B");
-        maps.put("pre.bgColor", "#3C3D3E");
-        maps.put("code.bgColor", "#3C3D3E");
+        maps.put("pre.bgColor", grey);
+        maps.put("code.bgColor", grey);
         maps.put("tdTh.borderColor", "#515151");
         setFontFamilySize(maps);
         return maps;
@@ -91,11 +93,11 @@ public final class ThemeResolver {
 
         var att = fontColorSettings.getFontColors(FontColorNames.DEFAULT_COLORING);
 
-        maps.put("fontFamily", att.getAttribute(StyleConstants.FontConstants.FontFamily));
-        maps.put("fontSize", att.getAttribute(StyleConstants.FontConstants.FontSize));
+        maps.put("fontFamily", att.getAttribute(StyleConstants.FontFamily));
+        maps.put("fontSize", att.getAttribute(StyleConstants.FontSize));
 
-        Color fontColor = (Color) att.getAttribute(StyleConstants.FontConstants.Foreground);
-        Color bgColor = (Color) att.getAttribute(StyleConstants.FontConstants.Background);
+        Color fontColor = (Color) att.getAttribute(StyleConstants.Foreground);
+        Color bgColor = (Color) att.getAttribute(StyleConstants.Background);
         maps.put("body.color", toRGB(fontColor));
         maps.put("body.bgColor", toRGB(bgColor));
     }
