@@ -17,9 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.completion;
 
 import static io.github.moacirrf.netbeans.markdown.completion.CompletionItemImpl.newItem;
-import static io.github.moacirrf.netbeans.markdown.Icons.getICON_COMPLETION;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.text.Document;
@@ -37,93 +35,77 @@ public class CompletionQuery extends AsyncCompletionQuery {
 
     @Override
     protected void query(CompletionResultSet crs, Document document, int caretOffset) {
-        getFormatHints(caretOffset);
-        getHeadings(caretOffset);
-        getBlockquotes(caretOffset);
-        getLists(caretOffset);
-        getCode(caretOffset);
-        getLinks(caretOffset);
-        getImages(caretOffset);
-        getTables(caretOffset);
+        addFormatHints(caretOffset);
+        addLineSeparators(caretOffset);
+        addHeadings(caretOffset);
+        addBlockquotes(caretOffset);
+        addLists(caretOffset);
+        addCode(caretOffset);
+        addLinks(caretOffset);
+        addImages(caretOffset);
+        addTables(caretOffset);
         crs.addAllItems(itens);
         crs.finish();
     }
 
-    private Collection<? extends AbstractCompletionItem> getFormatHints(int caretOffset) {
-        var icon = getICON_COMPLETION();
-        itens.add(newItem(0, icon, "<i>Italic 1</i>", "*Italic 1*", caretOffset));
-        itens.add(newItem(0, icon, "<i>Italic 2</i>", "_Italic 2_", caretOffset));
-        itens.add(newItem(0, icon, "<b>Bold 1</b>", "**Bold 1**", caretOffset));
-        itens.add(newItem(0, icon, "<b>Bold 2</b>", "__Bold 2__", caretOffset));
+    private void addFormatHints(int caretOffset) {
+        itens.add(newItem(0, "<i>Italic 1</i>", "*Italic 1*", caretOffset, true));
+        itens.add(newItem(0, "<i>Italic 2</i>", "_Italic 2_", caretOffset, true));
+        itens.add(newItem(0, "<b>Bold 1</b>", "**Bold 1**", caretOffset, true));
+        itens.add(newItem(0, "<b>Bold 2</b>", "__Bold 2__", caretOffset, true));
 
-        itens.add(newItem(1, icon, "<b><i>Bold Italic 1</i></b>", "***Bold Italic 1***", caretOffset));
-        itens.add(newItem(1, icon, "<b><i>Bold Italic 2</i></b>", "___Bold Italic 2___", caretOffset));
-        itens.add(newItem(1, icon, "<b><i>Bold Italic 3</i></b>", "__*Bold Italic 3*__", caretOffset));
-        itens.add(newItem(1, icon, "<b><i>Bold Italic 4</i></b>", "**_Bold Italic 4_**", caretOffset));
-        return itens;
+        itens.add(newItem(1, "<b><i>Bold Italic 1</i></b>", "***Bold Italic 1***", caretOffset, true));
+        itens.add(newItem(1, "<b><i>Bold Italic 2</i></b>", "___Bold Italic 2___", caretOffset, true));
+        itens.add(newItem(1, "<b><i>Bold Italic 3</i></b>", "__*Bold Italic 3*__", caretOffset, true));
+        itens.add(newItem(1, "<b><i>Bold Italic 4</i></b>", "**_Bold Italic 4_**", caretOffset, true));
     }
 
-    private Collection<? extends AbstractCompletionItem> getHeadings(int caretOffset) {
-        var icon = getICON_COMPLETION();
-        itens.add(newItem(2, icon, "<h1>Heading level 1</h1>", "# Heading level 1", caretOffset));
-        itens.add(newItem(2, icon, "<h2>Heading level 2</h2>", "## Heading level 2", caretOffset));
-        itens.add(newItem(2, icon, "<h3>Heading level 3</h3>", "### Heading level 3", caretOffset));
-        itens.add(newItem(2, icon, "<h4>Heading level 4</h4>", "#### Heading level 4", caretOffset));
-        itens.add(newItem(2, icon, "<h5>Heading level 5</h5>", "##### Heading level 5", caretOffset));
-        itens.add(newItem(2, icon, "<h6>Heading level 6</h6>", "###### Heading level 6", caretOffset));
-
-        return itens;
+    private void addLineSeparators(int caretOffset) {
+        itens.add(newItem(2, "Horizontal Line Separator", "***", caretOffset, false));
+        itens.add(newItem(2, "Horizontal Line Separator", "___", caretOffset, false));
     }
 
-    private Collection<? extends AbstractCompletionItem> getBlockquotes(int caretOffset) {
-        var icon = getICON_COMPLETION();
-        itens.add(newItem(3, icon, "Blockquote", "> Blockquote", caretOffset));
-
-        return itens;
+    private void addHeadings(int caretOffset) {
+        itens.add(newItem(3, "<h1>Heading level 1</h1>", "# Heading level 1", caretOffset, true));
+        itens.add(newItem(3, "<h2>Heading level 2</h2>", "## Heading level 2", caretOffset, true));
+        itens.add(newItem(3, "<h3>Heading level 3</h3>", "### Heading level 3", caretOffset, true));
+        itens.add(newItem(3, "<h4>Heading level 4</h4>", "#### Heading level 4", caretOffset, true));
+        itens.add(newItem(3, "<h5>Heading level 5</h5>", "##### Heading level 5", caretOffset, true));
+        itens.add(newItem(3, "<h6>Heading level 6</h6>", "###### Heading level 6", caretOffset, true));
     }
 
-    private Collection<? extends AbstractCompletionItem> getLists(int caretOffset) {
-        var icon = getICON_COMPLETION();
-        itens.add(newItem(4, icon, "Ordered List", "1. Item 1\n", caretOffset));
-        itens.add(newItem(4, icon, "Unordered List", "- Item 1\n", caretOffset));
-
-        return itens;
+    private void addBlockquotes(int caretOffset) {
+        itens.add(newItem(4, "Blockquote", "> Blockquote", caretOffset, true));
     }
 
-    private Collection<? extends AbstractCompletionItem> getCode(int caretOffset) {
-        var icon = getICON_COMPLETION();
-        itens.add(newItem(5, icon, "Code Block", "    fun code(){}", caretOffset));
-
-        return itens;
+    private void addLists(int caretOffset) {
+        itens.add(newItem(5, "Ordered List", "1. Item 1\n", caretOffset, true));
+        itens.add(newItem(5, "Unordered List", "- Item 1\n", caretOffset, true));
     }
 
-    private Collection<? extends AbstractCompletionItem> getLinks(int caretOffset) {
-        var icon = getICON_COMPLETION();
-        itens.add(newItem(6, icon, "Link", "[Description](https://netbeans.apache.org/).", caretOffset));
-        itens.add(newItem(6, icon, "Email URL", "<https://netbeans.apache.org/)>\n"
-                + "<fake@fakedomain.com>", caretOffset));
-        return itens;
+    private void addCode(int caretOffset) {
+        itens.add(newItem(6, "Code Block", "    fun code(){}", caretOffset, true));
     }
 
-    private Collection<? extends AbstractCompletionItem> getImages(int caretOffset) {
-        var icon = getICON_COMPLETION();
-        itens.add(newItem(7, icon, "Image 1",
-                "![Best IDE](https://netbeans.apache.org/images/nblogo48x48.png)", caretOffset));
-        itens.add(newItem(7, icon, "Image Resizable", "<img src=\"https://netbeans.apache.org/images/nblogo48x48.png\" width=\"60\" height=\"60\">", caretOffset));
-
-        return itens;
+    private void addLinks(int caretOffset) {
+        itens.add(newItem(7, "Link", "[Description Here](https://netbeans.apache.org/).", caretOffset, false));
+        itens.add(newItem(7, "Email URL", "<https://netbeans.apache.org/)>\n"
+                + "<fake@fakedomain.com>", caretOffset, false));
     }
 
-    private Collection<? extends AbstractCompletionItem> getTables(int caretOffset) {
-        var icon = getICON_COMPLETION();
+    private void addImages(int caretOffset) {
+        itens.add(newItem(8, "Image 1",
+                "![Description Here](https://netbeans.apache.org/images/nblogo48x48.png)", caretOffset, false));
+        itens.add(newItem(8, "Image Resizable", "<img src=\"https://netbeans.apache.org/images/nblogo48x48.png\" width=\"60\" height=\"60\">", caretOffset, true));
+    }
+
+    private void addTables(int caretOffset) {
         try ( var stream = getClass().getResourceAsStream("/io/github/moacirrf/netbeans/markdown/completion/table.md")) {
-            var item = newItem(7, icon, "Table", "A Three Column Table", caretOffset);
+            var item = newItem(9, "Table", "A Three Column Table", caretOffset, false);
             item.setTemplate(new String(stream.readAllBytes()));
             itens.add(item);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-
-        return itens;
     }
 }

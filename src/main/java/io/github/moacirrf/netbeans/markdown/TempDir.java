@@ -27,7 +27,7 @@ import org.openide.util.Exceptions;
  *
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
-public class TempDir {
+public final class TempDir {
 
     public static final String TEMP_DIR_PLUGIN = getProperty("java.io.tmpdir") + "/nb_markdown";
 
@@ -59,5 +59,8 @@ public class TempDir {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+
+    private TempDir() {
     }
 }

@@ -99,7 +99,8 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
         var rightViewPort = rightJScrollPane.getViewport();
         var leftViewPort = leftJScrollPane.getViewport();
         rightViewPort.setViewPosition((Point) leftViewPort.getViewPosition().clone());
-        if (isScrolledToMaximum(leftJScrollPane)) {
+        
+        if (isScrolledToMaximum(leftJScrollPane) && leftJScrollPane.getVerticalScrollBar().isVisible()) {
             setScrollToMaximum(rightJScrollPane);
         }
     }

@@ -23,6 +23,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
+import static javax.swing.event.HyperlinkEvent.EventType.ACTIVATED;
 import org.openide.awt.HtmlBrowser;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
@@ -35,13 +36,10 @@ public class MarkdownPreviewScrollPane extends JScrollPane {
 
     public MarkdownPreviewScrollPane() {
         this.initComponents();
-        setAutoscrolls(false);
         this.setBorder(BorderFactory.createEmptyBorder(22, 0, 9, 0));
         editorPane.addHyperlinkListener((HyperlinkEvent e) -> {
-            if (e.getInputEvent() instanceof MouseEvent) {
-                if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-                    HtmlBrowser.URLDisplayer.getDefault().showURL(e.getURL());
-                }
+            if (e.getInputEvent() instanceof MouseEvent && ACTIVATED.equals(e.getEventType())) {
+                HtmlBrowser.URLDisplayer.getDefault().showURL(e.getURL());
             }
         });
     }
