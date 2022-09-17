@@ -3,7 +3,7 @@
 ***
 
 ## Description
-This plugin include some additionals features to Apache Netbeans Markdown Editor.
+This plugin adds some additional features to Apache Netbeans Markdown Editor.
 - Preview
 - Split Window
 - Sugestion
