@@ -22,7 +22,7 @@
         <connection>scm:git:https://github.com/moacirrf/netbeans-markdown</connection>
         <developerConnection>scm:git:https://github.com/moacirrf/netbeans-markdown</developerConnection>
         <url>https://github.com/moacirrf/netbeans-markdown/tree/${project.scm.tag}</url>
-        <tag>v0.0.2</tag>
+        <tag>v0.0.3</tag>
     </scm>
     
     <licenses>
