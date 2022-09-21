@@ -17,8 +17,12 @@
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.UIManager;
 import javax.swing.text.Element;
 import javax.swing.text.html.FormView;
 
@@ -37,8 +41,8 @@ public class CheckboxView extends FormView {
         Component component = super.createComponent();
         if (component instanceof JCheckBox) {
             JCheckBox c = (JCheckBox) component;
-            c.setEnabled(false);
             c.setBorder(BorderFactory.createEmptyBorder(0, 0, -4, 0));
+            c.addActionListener((ActionEvent e) -> c.setSelected(!c.isSelected()));
         }
         return component;
     }
