@@ -16,11 +16,10 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui;
 
+import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.MarkdownDataObject;
-import static io.github.moacirrf.netbeans.markdown.ui.ScrollUtils.syncronizeScrolls;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewScrollPane;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MyFileChangeListener;
-import java.awt.Point;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
@@ -38,6 +37,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
     private transient ChangeListener leftScrollListener;
     private transient MarkdownPreviewScrollPane rightJScrollPane;
     private transient JScrollPane leftJScrollPane;
+    private FileObject mdFile;
 
     public MultiViewSplitEditorElement(Lookup lookup) {
         super(lookup);
@@ -50,6 +50,14 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
             initComponents();
         }
         return splitPanel;
+    }
+
+    @Override
+    public void componentShowing() {
+        if (mdFile != null) {
+            Context.OPENED_FILE = mdFile;
+        }
+        super.componentShowing();
     }
 
     @Override
@@ -73,12 +81,12 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
     private void initComponents() {
         rightJScrollPane = new MarkdownPreviewScrollPane();
-        FileObject mdFile = super.getLookup().lookup(MarkdownDataObject.class).getPrimaryFile();
+        mdFile = super.getLookup().lookup(MarkdownDataObject.class).getPrimaryFile();
         mdFile.addFileChangeListener(new MyFileChangeListener(rightJScrollPane) {
             @Override
             public void fileChanged(FileEvent fe) {
                 super.fileChanged(fe);
-                 syncronizeScrolls(getEditorPane(), leftJScrollPane,rightJScrollPane );
+                 ScrollUtils.syncronizeScrolls(getEditorPane(), leftJScrollPane,rightJScrollPane );
             }
         });
         rightJScrollPane.setFileObject(mdFile);
@@ -92,7 +100,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
     private void onChangeScrollLeftEditor(ChangeEvent e) {
         if (e.getSource() instanceof JViewport) {
-            syncronizeScrolls(getEditorPane(),leftJScrollPane,rightJScrollPane );
+            ScrollUtils.syncronizeScrolls(getEditorPane(),leftJScrollPane,rightJScrollPane );
         }
     }
 }
