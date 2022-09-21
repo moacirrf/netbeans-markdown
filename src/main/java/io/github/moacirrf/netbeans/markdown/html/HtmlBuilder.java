@@ -17,6 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.html;
 
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
+import com.vladsch.flexmark.ext.gfm.tasklist.TaskListExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
@@ -50,7 +51,7 @@ public final class HtmlBuilder {
 
         var options = new MutableDataSet();
         options.set(Parser.EXTENSIONS, asList(TablesExtension.create(),
-                StrikethroughExtension.create()));
+                StrikethroughExtension.create(), TaskListExtension.create()));
         options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
 
         var parser = Parser.builder(options).build();
