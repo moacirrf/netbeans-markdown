@@ -69,6 +69,7 @@ public final class HtmlBuilder {
                 doc = adjuster.adjust(doc);
             }
         }
+        doc.getElementsByTag("head").remove();
         return doc.toString();
     }
 }

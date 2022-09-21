@@ -17,6 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.ui;
 
 import io.github.moacirrf.netbeans.markdown.MarkdownDataObject;
+import static io.github.moacirrf.netbeans.markdown.ui.ScrollUtils.syncronizeScrolls;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewScrollPane;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MyFileChangeListener;
 import java.awt.Point;
@@ -77,7 +78,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
             @Override
             public void fileChanged(FileEvent fe) {
                 super.fileChanged(fe);
-                syncronizeScrolls();
+                 syncronizeScrolls(getEditorPane(), leftJScrollPane,rightJScrollPane );
             }
         });
         rightJScrollPane.setFileObject(mdFile);
@@ -91,33 +92,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
     private void onChangeScrollLeftEditor(ChangeEvent e) {
         if (e.getSource() instanceof JViewport) {
-            syncronizeScrolls();
+            syncronizeScrolls(getEditorPane(),leftJScrollPane,rightJScrollPane );
         }
     }
-
-    private void syncronizeScrolls() {
-        var rightViewPort = rightJScrollPane.getViewport();
-        var leftViewPort = leftJScrollPane.getViewport();
-        rightViewPort.setViewPosition((Point) leftViewPort.getViewPosition().clone());
-        
-        if (isScrolledToMaximum(leftJScrollPane) && leftJScrollPane.getVerticalScrollBar().isVisible()) {
-            setScrollToMaximum(rightJScrollPane);
-        }
-    }
-
-    private void setScrollToMaximum(JScrollPane scrollPane) {
-        var viewPort =  scrollPane.getViewport();
-        var viewPosition = viewPort.getViewPosition();
-        var viewSize = viewPort.getViewSize();
-        
-        viewPosition.y = viewSize.height;
-        scrollPane.getViewport().setViewPosition(viewPosition);
-    }
-
-    private boolean isScrolledToMaximum(JScrollPane scrollPane) {
-        var viewPort = scrollPane.getViewport();
-        return (viewPort.getViewSize().height - viewPort.getExtentSize().getHeight()) == viewPort.getViewPosition().y;
-    }
-    
-
 }

@@ -67,4 +67,8 @@ public class MarkdownPreviewScrollPane extends JScrollPane {
         }
     }
 
+    public JEditorPane getEditorPane() {
+        return editorPane;
+    }
+
 }
