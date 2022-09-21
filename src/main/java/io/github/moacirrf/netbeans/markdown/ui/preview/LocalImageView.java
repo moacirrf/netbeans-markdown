@@ -16,32 +16,32 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
+import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.TempDir;
-import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 import javax.swing.text.Element;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.ImageView;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.openide.util.Exceptions;
-import org.openide.util.ImageUtilities;
 
 /**
- * SVG images need to be converted to PNG, this class
- * will do this job, if image its not PNG, JPG or WEBP,
- * it will suppose that is a SVG image and try converts to PNG and save 
- * on temporary directory.
- * 
+ * SVG images need to be converted to PNG, this class will do this job, if image
+ * its not PNG, JPG or WEBP, it will suppose that is a SVG image and try
+ * converts to PNG and save on temporary directory.
+ *
  * If the convertion fail will try to use the original image.
- * 
+ *
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
 public class LocalImageView extends ImageView {
@@ -54,23 +54,60 @@ public class LocalImageView extends ImageView {
     }
 
     @Override
-    public Image getImage() {
-        Image image = super.getImage();
-        return image;
+    public URL getImageURL() {
+        String src = (String) getElement().getAttributes().
+                getAttribute(HTML.Attribute.SRC);
+        if (src == null) {
+            return null;
+        }
+        URL url = null;
+        try {
+            URL reference = ((HTMLDocument) getDocument()).getBase();
+            url = new URL(reference, src);
+        } catch (MalformedURLException e) {
+            try {
+                File f = getLocalImage(src);
+                if (f == null) {
+                    return null;
+                }
+                if (f.exists()) {
+                    url = f.toURI().toURL();
+                }
+            } catch (MalformedURLException ex) {
+                return null;
+            }
+        }
+
+        return convertToPNG(url);
     }
 
-    @Override
-    public URL getImageURL() {
-        return convertToPNG(super.getImageURL());
+    /**
+     * Try to find image save on disk, with relative and absolute paths
+     *
+     * @param src The content src property of image
+     * @return The file
+     */
+    private File getLocalImage(String src) {
+        File f = new File(src.trim());
+        if (!f.exists() && Context.OPENED_FILE != null) {
+            f = new File(Context.OPENED_FILE.getParent().getPath(), File.separator + src.trim());
+        }
+        if (f.exists()) {
+            return f;
+        }
+        return null;
     }
 
     public URL convertToPNG(URL url) {
+        if (url == null) {
+            return null;
+        }
         try {
             String fileName = new File(url.getFile()).getName().toLowerCase();
             if (fileName.contains("jpg") || fileName.contains("png") || fileName.contains("jpeg") || fileName.contains("webp")) {
                 return url;
             }
-          
+
             Path imageTemp = Paths.get(tempDir.toString(), fileName + ".png");
             imageTemp.toFile().setWritable(true);
             PNGTranscoder t = new PNGTranscoder();

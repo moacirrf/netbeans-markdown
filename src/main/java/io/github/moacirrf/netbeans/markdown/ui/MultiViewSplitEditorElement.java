@@ -16,6 +16,7 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui;
 
+import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.MarkdownDataObject;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewScrollPane;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MyFileChangeListener;
@@ -27,6 +28,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
+import org.openide.filesystems.FileAttributeEvent;
 import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
@@ -37,6 +39,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
     private transient ChangeListener leftScrollListener;
     private transient MarkdownPreviewScrollPane rightJScrollPane;
     private transient JScrollPane leftJScrollPane;
+    private FileObject mdFile;
 
     public MultiViewSplitEditorElement(Lookup lookup) {
         super(lookup);
@@ -49,6 +52,14 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
             initComponents();
         }
         return splitPanel;
+    }
+
+    @Override
+    public void componentShowing() {
+        if (mdFile != null) {
+            Context.OPENED_FILE = mdFile;
+        }
+        super.componentShowing();
     }
 
     @Override
@@ -72,7 +83,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
     private void initComponents() {
         rightJScrollPane = new MarkdownPreviewScrollPane();
-        FileObject mdFile = super.getLookup().lookup(MarkdownDataObject.class).getPrimaryFile();
+        mdFile = super.getLookup().lookup(MarkdownDataObject.class).getPrimaryFile();
         mdFile.addFileChangeListener(new MyFileChangeListener(rightJScrollPane) {
             @Override
             public void fileChanged(FileEvent fe) {
@@ -99,17 +110,17 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
         var rightViewPort = rightJScrollPane.getViewport();
         var leftViewPort = leftJScrollPane.getViewport();
         rightViewPort.setViewPosition((Point) leftViewPort.getViewPosition().clone());
-        
+
         if (isScrolledToMaximum(leftJScrollPane) && leftJScrollPane.getVerticalScrollBar().isVisible()) {
             setScrollToMaximum(rightJScrollPane);
         }
     }
 
     private void setScrollToMaximum(JScrollPane scrollPane) {
-        var viewPort =  scrollPane.getViewport();
+        var viewPort = scrollPane.getViewport();
         var viewPosition = viewPort.getViewPosition();
         var viewSize = viewPort.getViewSize();
-        
+
         viewPosition.y = viewSize.height;
         scrollPane.getViewport().setViewPosition(viewPosition);
     }
@@ -118,6 +129,5 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
         var viewPort = scrollPane.getViewport();
         return (viewPort.getViewSize().height - viewPort.getExtentSize().getHeight()) == viewPort.getViewPosition().y;
     }
-    
 
 }
