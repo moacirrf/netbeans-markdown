@@ -44,11 +44,11 @@ import org.openide.util.Exceptions;
  *
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
-public class LocalImageView extends ImageView {
+public class ImageViewImpl extends ImageView {
 
     private final Path tempDir;
 
-    public LocalImageView(Element elem) {
+    public ImageViewImpl(Element elem) {
         super(elem);
         tempDir = TempDir.getTempDir();
     }

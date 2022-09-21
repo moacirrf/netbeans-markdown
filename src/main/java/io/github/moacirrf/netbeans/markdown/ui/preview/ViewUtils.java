@@ -16,23 +16,32 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
-import static io.github.moacirrf.netbeans.markdown.ui.preview.ViewUtils.isElementOfTag;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
-import javax.swing.text.View;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLEditorKit;
 
-public class LocalViewFactory extends HTMLEditorKit.HTMLFactory {
+/**
+ *
+ * @author Moacir da Roza Flores <moacirrf@gmail.com>
+ */
+public final class ViewUtils {
 
-    @Override
-    public View create(Element elem) {
-        if (isElementOfTag(elem, HTML.Tag.IMG)) {
-            return new ImageViewImpl(elem);
-        }
+    public static boolean isElementOfTag(Element elem, HTML.Tag tag) {
 
-        if (isElementOfTag(elem, HTML.Tag.INPUT)) {
-            return new CheckboxView(elem);
-        }
-        return super.create(elem);
+        AttributeSet attrs = elem.getAttributes();
+        Object elementName
+                = attrs.getAttribute(AbstractDocument.ElementNameAttribute);
+        Object o = (elementName != null)
+                ? null : attrs.getAttribute(StyleConstants.NameAttribute);
+        HTML.Tag kind = (HTML.Tag) o;
+
+        return (o instanceof HTML.Tag) && (kind == tag);
+
     }
+
+    private ViewUtils() {
+    }
+
 }
