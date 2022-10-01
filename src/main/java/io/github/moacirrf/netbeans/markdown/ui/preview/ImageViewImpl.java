@@ -23,8 +23,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import static java.time.format.DateTimeFormatter.ofPattern;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
@@ -34,6 +41,7 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.openide.util.Exceptions;
+import org.openide.util.Utilities;
 
 /**
  * SVG images need to be converted to PNG, this class will do this job, if image
@@ -47,6 +55,8 @@ import org.openide.util.Exceptions;
 public class ImageViewImpl extends ImageView {
 
     private final Path tempDir;
+
+    private static final Map<String, URL> CACHE_CONVERTED_IMAGES = new HashMap<>();
 
     public ImageViewImpl(Element elem) {
         super(elem);
@@ -71,13 +81,19 @@ public class ImageViewImpl extends ImageView {
                     return null;
                 }
                 if (f.exists()) {
-                    url = f.toURI().toURL();
+                    url = Utilities.toURI(f).toURL();
                 }
             } catch (MalformedURLException ex) {
                 return null;
             }
         }
 
+        if (url != null) {
+            String fileName = new File(url.getFile()).getName().toLowerCase();
+            if (fileName.contains("jpg") || fileName.contains("png") || fileName.contains("jpeg") || fileName.contains("webp")) {
+                return url;
+            }
+        }
         return convertToPNG(url);
     }
 
@@ -103,12 +119,12 @@ public class ImageViewImpl extends ImageView {
             return null;
         }
         try {
-            String fileName = new File(url.getFile()).getName().toLowerCase();
-            if (fileName.contains("jpg") || fileName.contains("png") || fileName.contains("jpeg") || fileName.contains("webp")) {
-                return url;
+            if (CACHE_CONVERTED_IMAGES.containsKey(url.toString())) {
+                return CACHE_CONVERTED_IMAGES.get(url.toString());
             }
-
-            Path imageTemp = Paths.get(tempDir.toString(), fileName + ".png");
+            String dateTime = LocalTime.now().format(ofPattern("hhmmss"));
+            String fileName = new File(url.getFile()).getName().toLowerCase()+dateTime + ".png";
+            Path imageTemp = Paths.get(tempDir.toString(), fileName);
             imageTemp.toFile().setWritable(true);
             PNGTranscoder t = new PNGTranscoder();
             TranscoderInput input = new TranscoderInput(url.toString());
@@ -120,11 +136,11 @@ public class ImageViewImpl extends ImageView {
                 t.transcode(input, output);
                 ostream.flush();
                 ostream.close();
-                return imageTemp.toUri().toURL();
+                CACHE_CONVERTED_IMAGES.put(url.toString(), imageTemp.toUri().toURL());
+                return CACHE_CONVERTED_IMAGES.get(url.toString());
             } catch (TranscoderException ex) {
                 Exceptions.printStackTrace(ex);
             }
-
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
