@@ -18,7 +18,7 @@ package io.github.moacirrf.netbeans.markdown.ui;
 
 import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.MarkdownDataObject;
-import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewScrollPane;
+import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewPane;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MyFileChangeListener;
 import java.awt.Point;
 import javax.swing.JComponent;
@@ -28,7 +28,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
-import org.openide.filesystems.FileAttributeEvent;
 import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
@@ -37,8 +36,9 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
     private transient SplitPanel splitPanel;
     private transient ChangeListener leftScrollListener;
-    private transient MarkdownPreviewScrollPane rightJScrollPane;
+    private transient MarkdownPreviewPane previewPane;
     private transient JScrollPane leftJScrollPane;
+    private transient JScrollPane rightJScrollPane;
     private FileObject mdFile;
 
     public MultiViewSplitEditorElement(Lookup lookup) {
@@ -82,19 +82,20 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
     }
 
     private void initComponents() {
-        rightJScrollPane = new MarkdownPreviewScrollPane();
+        previewPane = new MarkdownPreviewPane();
+        rightJScrollPane = previewPane.getScrollPane();
         mdFile = super.getLookup().lookup(MarkdownDataObject.class).getPrimaryFile();
-        mdFile.addFileChangeListener(new MyFileChangeListener(rightJScrollPane) {
+        mdFile.addFileChangeListener(new MyFileChangeListener(previewPane) {
             @Override
             public void fileChanged(FileEvent fe) {
                 super.fileChanged(fe);
                 syncronizeScrolls();
             }
         });
-        rightJScrollPane.setFileObject(mdFile);
+        previewPane.setFileObject(mdFile);
 
         this.splitPanel = new SplitPanel();
-        this.splitPanel.getSplitPanel().setRightComponent(rightJScrollPane);
+        this.splitPanel.getSplitPanel().setRightComponent(previewPane);
         this.splitPanel.getSplitPanel().setLeftComponent(super.getVisualRepresentation());
         TopBar topBar = new TopBar(splitPanel);
         this.getToolbarRepresentation().add(topBar);
