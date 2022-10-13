@@ -34,6 +34,7 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.openide.util.Exceptions;
+import org.openide.util.Utilities;
 
 /**
  * SVG images need to be converted to PNG, this class will do this job, if image
@@ -70,12 +71,25 @@ public class ImageViewImpl extends ImageView {
                 if (f == null) {
                     return null;
                 }
-                if (f.exists()) {
-                    url = f.toURI().toURL();
+                if (f.exists() && !f.isDirectory()) {
+                    url = Utilities.toURI(f).toURL();
                 }
             } catch (MalformedURLException ex) {
                 return null;
             }
+        }
+
+        if (url == null) {
+            return null;
+        }
+
+        String fileName = new File(url.getFile()).getName().toLowerCase();
+        if (fileName.contains("jpg")
+                || fileName.contains("png")
+                || fileName.contains("jpeg")
+                || fileName.contains("webp")
+                || fileName.contains("gif")) {
+            return url;
         }
 
         return convertToPNG(url);
@@ -104,9 +118,6 @@ public class ImageViewImpl extends ImageView {
         }
         try {
             String fileName = new File(url.getFile()).getName().toLowerCase();
-            if (fileName.contains("jpg") || fileName.contains("png") || fileName.contains("jpeg") || fileName.contains("webp")) {
-                return url;
-            }
 
             Path imageTemp = Paths.get(tempDir.toString(), fileName + ".png");
             imageTemp.toFile().setWritable(true);
