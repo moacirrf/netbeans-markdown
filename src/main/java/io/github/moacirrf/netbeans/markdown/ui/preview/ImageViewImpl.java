@@ -18,7 +18,6 @@ package io.github.moacirrf.netbeans.markdown.ui.preview;
 
 import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.TempDir;
-import java.awt.Image;
 import java.io.File;
 import static java.io.File.separator;
 import java.io.FileOutputStream;
