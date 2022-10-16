@@ -80,7 +80,7 @@ public class ImageViewImpl extends ImageView {
                 if (f == null) {
                     return null;
                 }
-                if (f.exists()) {
+                if (f.exists() && !f.isDirectory()) {
                     url = Utilities.toURI(f).toURL();
                 }
             } catch (MalformedURLException ex) {
@@ -88,12 +88,19 @@ public class ImageViewImpl extends ImageView {
             }
         }
 
-        if (url != null) {
-            String fileName = new File(url.getFile()).getName().toLowerCase();
-            if (fileName.contains("jpg") || fileName.contains("png") || fileName.contains("jpeg") || fileName.contains("webp")) {
-                return url;
-            }
+        if (url == null) {
+            return null;
         }
+
+        String fileName = new File(url.getFile()).getName().toLowerCase();
+        if (fileName.contains("jpg")
+                || fileName.contains("png")
+                || fileName.contains("jpeg")
+                || fileName.contains("webp")
+                || fileName.contains("gif")) {
+            return url;
+        }
+
         return convertToPNG(url);
     }
 
@@ -119,12 +126,9 @@ public class ImageViewImpl extends ImageView {
             return null;
         }
         try {
-            if (CACHE_CONVERTED_IMAGES.containsKey(url.toString())) {
-                return CACHE_CONVERTED_IMAGES.get(url.toString());
-            }
-            String dateTime = LocalTime.now().format(ofPattern("hhmmss"));
-            String fileName = new File(url.getFile()).getName().toLowerCase()+dateTime + ".png";
-            Path imageTemp = Paths.get(tempDir.toString(), fileName);
+            String fileName = new File(url.getFile()).getName().toLowerCase();
+
+            Path imageTemp = Paths.get(tempDir.toString(), fileName + ".png");
             imageTemp.toFile().setWritable(true);
             PNGTranscoder t = new PNGTranscoder();
             TranscoderInput input = new TranscoderInput(url.toString());
