@@ -43,7 +43,7 @@ public class MyFileChangeListener implements FileChangeListener {
 
     @Override
     public void fileChanged(FileEvent fe) {
-        markdownPreviewPane.fillEditorPane();
+        markdownPreviewPane.fillEditorPane(false);
     }
 
     @Override

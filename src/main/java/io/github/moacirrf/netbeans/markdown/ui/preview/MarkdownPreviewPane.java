@@ -22,6 +22,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -64,9 +65,10 @@ public class MarkdownPreviewPane extends JPanel {
 
         scrollPane = new JScrollPane();
         scrollPane.setViewportView(editorPane);
-        progressPanel = createProgressBar();
+        createProgressBar();
         add(progressPanel);
         add(scrollPane);
+
         scrollPane.setVisible(false);
         progressPanel.setVisible(true);
 
@@ -75,39 +77,44 @@ public class MarkdownPreviewPane extends JPanel {
     public void setFileObject(FileObject fileObject) {
         if (this.fileObject == null) {
             this.fileObject = fileObject;
-            fillEditorPane();
+            fillEditorPane(true);
         }
     }
 
-    private JPanel createProgressBar() {
-        var progressPanel = new JPanel();
-        var layout = new GroupLayout(progressPanel);
-        progressPanel.setLayout(layout);
-        var jProgressBar = new JProgressBar();
-        jProgressBar.setIndeterminate(true);
+    private void createProgressBar() {
+        this.progressPanel = new JPanel();
+        var progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        var labelPanel = new JPanel();
+        var loadingLabel = new JLabel("Loading...");
 
+        labelPanel.add(loadingLabel);
+        var layout = new GroupLayout(this.progressPanel);
+        this.progressPanel.setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE - 100)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
+                                        .addComponent(labelPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addContainerGap(137, Short.MAX_VALUE)
-                                .addComponent(jProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(133, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(116, 116, 116)
+                                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(labelPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(113, Short.MAX_VALUE))
         );
-
-        return progressPanel;
     }
 
-    public void fillEditorPane() {
+    public void fillEditorPane(boolean showProgressBar) {
         SwingUtilities.invokeLater(() -> {
-            scrollPane.setVisible(false);
-            progressPanel.setVisible(true);
+            scrollPane.setVisible(!showProgressBar);
+            progressPanel.setVisible(showProgressBar);
             new FillEditorPaneWorker().execute();
         });
 

@@ -19,17 +19,13 @@ package io.github.moacirrf.netbeans.markdown.ui.preview;
 import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.TempDir;
 import java.io.File;
+import static java.io.File.separator;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import static java.time.format.DateTimeFormatter.ofPattern;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.text.Element;
@@ -54,9 +50,9 @@ import org.openide.util.Utilities;
  */
 public class ImageViewImpl extends ImageView {
 
-    private final Path tempDir;
-
     private static final Map<String, URL> CACHE_CONVERTED_IMAGES = new HashMap<>();
+
+    private final Path tempDir;
 
     public ImageViewImpl(Element elem) {
         super(elem);
@@ -113,7 +109,7 @@ public class ImageViewImpl extends ImageView {
     private File getLocalImage(String src) {
         File f = new File(src.trim());
         if (!f.exists() && Context.OPENED_FILE != null) {
-            f = new File(Context.OPENED_FILE.getParent().getPath(), File.separator + src.trim());
+            f = new File(Context.OPENED_FILE.getParent().getPath(), separator + src.trim());
         }
         if (f.exists()) {
             return f;
@@ -129,10 +125,11 @@ public class ImageViewImpl extends ImageView {
             String fileName = new File(url.getFile()).getName().toLowerCase();
 
             Path imageTemp = Paths.get(tempDir.toString(), fileName + ".png");
-            imageTemp.toFile().setWritable(true);
-            PNGTranscoder t = new PNGTranscoder();
-            TranscoderInput input = new TranscoderInput(url.toString());
-            try {
+
+            if (imageTemp.toFile().setWritable(true)) {
+
+                PNGTranscoder t = new PNGTranscoder();
+                TranscoderInput input = new TranscoderInput(url.toString());
                 // I don't know why, but "try with resources are not working", so don't use.
                 var ostream = new FileOutputStream(imageTemp.toFile());
                 TranscoderOutput output = new TranscoderOutput(ostream);
@@ -142,12 +139,12 @@ public class ImageViewImpl extends ImageView {
                 ostream.close();
                 CACHE_CONVERTED_IMAGES.put(url.toString(), imageTemp.toUri().toURL());
                 return CACHE_CONVERTED_IMAGES.get(url.toString());
-            } catch (TranscoderException ex) {
-                Exceptions.printStackTrace(ex);
             }
-        } catch (IOException ex) {
+
+        } catch (TranscoderException | IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+
         return url;
     }
 }
