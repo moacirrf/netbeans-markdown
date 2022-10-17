@@ -150,7 +150,7 @@ public class TopBar extends javax.swing.JPanel {
                 }
             }
             splitModeOn = true;
-            refreshDividerLocation = true;
+            splitPanel.getSplitPanel().setDividerLocation(0.5);
         });
     }
 
@@ -161,22 +161,6 @@ public class TopBar extends javax.swing.JPanel {
             splitModeOn = false;
         });
     }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        if (refreshDividerLocation && splitModeOn) {
-            splitPanel.getSplitPanel().setDividerLocation(0.5);
-            refreshDividerLocation = false;
-        }
-    }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
