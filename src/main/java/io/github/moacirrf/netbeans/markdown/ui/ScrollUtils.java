@@ -17,7 +17,6 @@
 package io.github.moacirrf.netbeans.markdown.ui;
 
 import io.github.moacirrf.netbeans.markdown.html.HtmlBuilder;
-import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewScrollPane;
 import java.awt.Point;
 import java.awt.Rectangle;
 import javax.swing.JEditorPane;
@@ -49,7 +48,7 @@ public final class ScrollUtils {
         scrollPane.getViewport().setViewPosition(viewPosition);
     }
 
-    public static void syncronizeScrolls(JEditorPane leftEditorPane, JScrollPane leftJScrollPane, MarkdownPreviewScrollPane rightJScrollPane) {
+    public static void syncronizeScrolls(JEditorPane leftEditorPane, JScrollPane leftJScrollPane, JEditorPane rightEditor, JScrollPane rightJScrollPane) {
         try {
             var begin = leftEditorPane.viewToModel2D(new Point(0, leftJScrollPane.getViewport().getViewPosition().y));
             if (begin > 0) {
@@ -58,10 +57,10 @@ public final class ScrollUtils {
                         .build(texto.lines().filter(p -> p != null && !p.trim().isBlank())
                                 .findFirst().orElse(""));
 
-                var index = getOffSetDocument(html, (HTMLDocument) rightJScrollPane.getEditorPane().getDocument());
+                var index = getOffSetDocument(html, (HTMLDocument) rightEditor.getDocument());
                 if (StringUtils.isNoneBlank(html)) {
                     if (index > 0) {
-                        Rectangle rec = rightJScrollPane.getEditorPane().modelToView(index);
+                        Rectangle rec = rightEditor.modelToView(index);
                         Rectangle vis = rightJScrollPane.getVisibleRect();
                         rec.height = vis.height;
                         rightJScrollPane.scrollRectToVisible(rec);
@@ -73,7 +72,7 @@ public final class ScrollUtils {
         }
     }
 
-    public static void syncronizeScrolls2(JScrollPane leftJScrollPane, MarkdownPreviewScrollPane rightJScrollPane) {
+    public static void syncronizeScrolls2(JScrollPane leftJScrollPane, JScrollPane rightJScrollPane) {
         var rightViewPort = rightJScrollPane.getViewport();
         var leftViewPort = leftJScrollPane.getViewport();
         rightViewPort.setViewPosition((Point) leftViewPort.getViewPosition().clone());

@@ -44,6 +44,7 @@ public class CompletionQuery extends AsyncCompletionQuery {
         addLinks(caretOffset);
         addImages(caretOffset);
         addTables(caretOffset);
+        addCheckbox(caretOffset);
         crs.addAllItems(itens);
         crs.finish();
     }
@@ -107,5 +108,9 @@ public class CompletionQuery extends AsyncCompletionQuery {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+
+    private void addCheckbox(int caretOffset) {
+         itens.add(newItem(10, "Checkbox", "- [x]", caretOffset, false));
     }
 }

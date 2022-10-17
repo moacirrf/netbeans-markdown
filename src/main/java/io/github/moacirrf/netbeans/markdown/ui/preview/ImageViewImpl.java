@@ -19,12 +19,15 @@ package io.github.moacirrf.netbeans.markdown.ui.preview;
 import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.TempDir;
 import java.io.File;
+import static java.io.File.separator;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
@@ -34,6 +37,7 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.openide.util.Exceptions;
+import org.openide.util.Utilities;
 
 /**
  * SVG images need to be converted to PNG, this class will do this job, if image
@@ -44,15 +48,17 @@ import org.openide.util.Exceptions;
  *
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
-public class LocalImageView extends ImageView {
+public class ImageViewImpl extends ImageView {
+
+    private static final Map<String, URL> CACHE_CONVERTED_IMAGES = new HashMap<>();
 
     private final Path tempDir;
 
-    public LocalImageView(Element elem) {
+    public ImageViewImpl(Element elem) {
         super(elem);
         tempDir = TempDir.getTempDir();
     }
-
+    
     @Override
     public URL getImageURL() {
         String src = (String) getElement().getAttributes().
@@ -70,12 +76,25 @@ public class LocalImageView extends ImageView {
                 if (f == null) {
                     return null;
                 }
-                if (f.exists()) {
-                    url = f.toURI().toURL();
+                if (f.exists() && !f.isDirectory()) {
+                    url = Utilities.toURI(f).toURL();
                 }
             } catch (MalformedURLException ex) {
                 return null;
             }
+        }
+
+        if (url == null) {
+            return null;
+        }
+
+        String fileName = new File(url.getFile()).getName().toLowerCase();
+        if (fileName.contains("jpg")
+                || fileName.contains("png")
+                || fileName.contains("jpeg")
+                || fileName.contains("webp")
+                || fileName.contains("gif")) {
+            return url;
         }
 
         return convertToPNG(url);
@@ -90,7 +109,7 @@ public class LocalImageView extends ImageView {
     private File getLocalImage(String src) {
         File f = new File(src.trim());
         if (!f.exists() && Context.OPENED_FILE != null) {
-            f = new File(Context.OPENED_FILE.getParent().getPath(), File.separator + src.trim());
+            f = new File(Context.OPENED_FILE.getParent().getPath(), separator + src.trim());
         }
         if (f.exists()) {
             return f;
@@ -104,30 +123,26 @@ public class LocalImageView extends ImageView {
         }
         try {
             String fileName = new File(url.getFile()).getName().toLowerCase();
-            if (fileName.contains("jpg") || fileName.contains("png") || fileName.contains("jpeg") || fileName.contains("webp")) {
-                return url;
-            }
 
             Path imageTemp = Paths.get(tempDir.toString(), fileName + ".png");
             imageTemp.toFile().setWritable(true);
+
             PNGTranscoder t = new PNGTranscoder();
             TranscoderInput input = new TranscoderInput(url.toString());
-            try {
-                // I don't know why, but "try with resources are not working", so don't use.
-                var ostream = new FileOutputStream(imageTemp.toFile());
-                TranscoderOutput output = new TranscoderOutput(ostream);
-                // Save the image to temp.
-                t.transcode(input, output);
-                ostream.flush();
-                ostream.close();
-                return imageTemp.toUri().toURL();
-            } catch (TranscoderException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+            // I don't know why, but "try with resources are not working", so don't use.
+            var ostream = new FileOutputStream(imageTemp.toFile());
+            TranscoderOutput output = new TranscoderOutput(ostream);
+            // Save the image to temp.
+            t.transcode(input, output);
+            ostream.flush();
+            ostream.close();
+            CACHE_CONVERTED_IMAGES.put(url.toString(), imageTemp.toUri().toURL());
+            return CACHE_CONVERTED_IMAGES.get(url.toString());
 
-        } catch (IOException ex) {
+        } catch (TranscoderException | IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+
         return url;
     }
 }

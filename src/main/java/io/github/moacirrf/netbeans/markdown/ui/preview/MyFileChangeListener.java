@@ -27,10 +27,10 @@ import org.openide.filesystems.FileRenameEvent;
  */
 public class MyFileChangeListener implements FileChangeListener {
 
-    private final MarkdownPreviewScrollPane markdownPreviewScrollPane;
+    private final MarkdownPreviewPane markdownPreviewPane;
 
-    public MyFileChangeListener(MarkdownPreviewScrollPane pane) {
-        this.markdownPreviewScrollPane = pane;
+    public MyFileChangeListener(MarkdownPreviewPane markdownPreviewPane) {
+        this.markdownPreviewPane = markdownPreviewPane;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class MyFileChangeListener implements FileChangeListener {
 
     @Override
     public void fileChanged(FileEvent fe) {
-        markdownPreviewScrollPane.fillEditorPane();
+        markdownPreviewPane.fillEditorPane(false);
     }
 
     @Override

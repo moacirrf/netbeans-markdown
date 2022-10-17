@@ -18,7 +18,7 @@ package io.github.moacirrf.netbeans.markdown.ui;
 
 import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.MarkdownDataObject;
-import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewScrollPane;
+import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewPane;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MyFileChangeListener;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -35,7 +35,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
     private transient SplitPanel splitPanel;
     private transient ChangeListener leftScrollListener;
-    private transient MarkdownPreviewScrollPane rightJScrollPane;
+    private transient MarkdownPreviewPane previewPane;
     private transient JScrollPane leftJScrollPane;
     private FileObject mdFile;
 
@@ -80,19 +80,19 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
     }
 
     private void initComponents() {
-        rightJScrollPane = new MarkdownPreviewScrollPane();
+        previewPane = new MarkdownPreviewPane();
         mdFile = super.getLookup().lookup(MarkdownDataObject.class).getPrimaryFile();
-        mdFile.addFileChangeListener(new MyFileChangeListener(rightJScrollPane) {
+        mdFile.addFileChangeListener(new MyFileChangeListener(previewPane) {
             @Override
             public void fileChanged(FileEvent fe) {
                 super.fileChanged(fe);
-                 ScrollUtils.syncronizeScrolls(getEditorPane(), leftJScrollPane,rightJScrollPane );
+                ScrollUtils.syncronizeScrolls(getEditorPane(), leftJScrollPane, previewPane.getEditorPane(), previewPane.getScrollPane());
             }
         });
-        rightJScrollPane.setFileObject(mdFile);
+        previewPane.setFileObject(mdFile);
 
         this.splitPanel = new SplitPanel();
-        this.splitPanel.getSplitPanel().setRightComponent(rightJScrollPane);
+        this.splitPanel.getSplitPanel().setRightComponent(previewPane);
         this.splitPanel.getSplitPanel().setLeftComponent(super.getVisualRepresentation());
         TopBar topBar = new TopBar(splitPanel);
         this.getToolbarRepresentation().add(topBar);
@@ -100,7 +100,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
     private void onChangeScrollLeftEditor(ChangeEvent e) {
         if (e.getSource() instanceof JViewport) {
-            ScrollUtils.syncronizeScrolls(getEditorPane(),leftJScrollPane,rightJScrollPane );
+            ScrollUtils.syncronizeScrolls(getEditorPane(), leftJScrollPane, previewPane.getEditorPane(), previewPane.getScrollPane());
         }
     }
 }

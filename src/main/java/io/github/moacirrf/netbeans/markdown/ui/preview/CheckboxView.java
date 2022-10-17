@@ -16,23 +16,32 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
-import static io.github.moacirrf.netbeans.markdown.ui.preview.ViewUtils.isElementOfTag;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.text.Element;
-import javax.swing.text.View;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.FormView;
 
-public class LocalViewFactory extends HTMLEditorKit.HTMLFactory {
+/**
+ *
+ * @author Moacir da Roza Flores <moacirrf@gmail.com>
+ */
+public class CheckboxView extends FormView {
+
+    public CheckboxView(Element elem) {
+        super(elem);
+    }
 
     @Override
-    public View create(Element elem) {
-        if (isElementOfTag(elem, HTML.Tag.IMG)) {
-            return new ImageViewImpl(elem);
+    protected Component createComponent() {
+        Component component = super.createComponent();
+        if (component instanceof JCheckBox) {
+            JCheckBox c = (JCheckBox) component;
+            c.setBorder(BorderFactory.createEmptyBorder(0, 0, -4, 0));
+            c.addActionListener((ActionEvent e) -> c.setSelected(!c.isSelected()));
         }
-
-        if (isElementOfTag(elem, HTML.Tag.INPUT)) {
-            return new CheckboxView(elem);
-        }
-        return super.create(elem);
+        return component;
     }
+
 }
