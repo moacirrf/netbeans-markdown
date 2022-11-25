@@ -16,6 +16,7 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui;
 
+import io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollPreviewUtils;
 import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.MarkdownDataObject;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewPane;
@@ -76,7 +77,6 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
             leftScrollListener = this::onChangeScrollLeftEditor;
             leftJScrollPane.getViewport().addChangeListener(leftScrollListener);
         }
-
     }
 
     private void initComponents() {
@@ -86,7 +86,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
             @Override
             public void fileChanged(FileEvent fe) {
                 super.fileChanged(fe);
-                ScrollUtils.syncronizeScrolls(getEditorPane(), leftJScrollPane, previewPane.getEditorPane(), previewPane.getScrollPane());
+                ScrollPreviewUtils.syncronizeScrolls(getEditorPane(), leftJScrollPane, previewPane.getEditorPane(), previewPane.getScrollPane());
             }
         });
         previewPane.setFileObject(mdFile);
@@ -98,9 +98,14 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
         this.getToolbarRepresentation().add(topBar);
     }
 
+    private void onChangeScrollRightEditor(ChangeEvent e) {
+        if (e.getSource() instanceof JViewport) {
+            ScrollPreviewUtils.syncronizeScrolls(getEditorPane(), leftJScrollPane, previewPane.getEditorPane(), previewPane.getScrollPane());
+        }
+    }
     private void onChangeScrollLeftEditor(ChangeEvent e) {
         if (e.getSource() instanceof JViewport) {
-            ScrollUtils.syncronizeScrolls(getEditorPane(), leftJScrollPane, previewPane.getEditorPane(), previewPane.getScrollPane());
+            ScrollPreviewUtils.syncronizeScrolls(getEditorPane(), leftJScrollPane, previewPane.getEditorPane(), previewPane.getScrollPane());
         }
     }
 }
