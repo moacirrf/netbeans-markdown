@@ -17,16 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.ui.scroll;
 
 import io.github.moacirrf.netbeans.markdown.ui.preview.JEditorPaneImpl;
-import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.isScrolledToMaximum;
-import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.setScrollToMaximum;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.text.BadLocationException;
@@ -41,19 +32,9 @@ import org.openide.util.Exceptions;
  */
 public final class ScrollCodeViewUtils {
 
-    private static String writeTofile(String doc) {
-        try {
-            Files.writeString(Path.of("/tmp/teste.html"), doc, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return doc;
-    }
-
     public static void syncronizeScrolls(JEditorPane leftEditor, JEditorPane rightEditor) {
         JScrollPane scrollPane = ScrollUtils.getScrollPaneOf(rightEditor);
         var text = JEditorPaneImpl.getVisibleText(rightEditor, scrollPane);
-        writeTofile(text);
         Document document = Jsoup.parse(text);
         String id = document.getElementsByTag("body").get(0).child(0).attr("id");
         if (StringUtils.isNotBlank(id)) {
@@ -62,7 +43,6 @@ public final class ScrollCodeViewUtils {
                 Rectangle positionToScrol = leftEditor.modelToView(pos);
                 Rectangle actualPosition = leftEditor.getVisibleRect();
                 positionToScrol.height = actualPosition.height;
-//                leftEditor.setCaretPosition(pos);
                 leftEditor.scrollRectToVisible(positionToScrol);
             } catch (BadLocationException ex) {
                 Exceptions.printStackTrace(ex);
