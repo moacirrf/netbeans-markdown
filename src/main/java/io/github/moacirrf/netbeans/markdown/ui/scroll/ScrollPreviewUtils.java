@@ -17,11 +17,10 @@
 package io.github.moacirrf.netbeans.markdown.ui.scroll;
 
 import io.github.moacirrf.netbeans.markdown.ui.preview.JEditorPaneImpl;
+import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.getScrollPaneOf;
+import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.isScrolledToMaximum;
+import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.setScrollToMaximum;
 import java.awt.Point;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
@@ -35,38 +34,18 @@ import org.openide.util.Exceptions;
  */
 public final class ScrollPreviewUtils {
 
-    private static boolean isScrolledToMaximum(JScrollPane scrollPane) {
-        var viewPort = scrollPane.getViewport();
-        return (viewPort.getViewSize().height - viewPort.getExtentSize().getHeight()) == viewPort.getViewPosition().y;
-    }
+    public static void syncronizeScrolls(JEditorPane leftEditorPane, JEditorPane rightEditor) {
 
-    private static void setScrollToMaximum(JScrollPane scrollPane) {
-        var viewPort = scrollPane.getViewport();
-        var viewPosition = viewPort.getViewPosition();
-        var viewSize = viewPort.getViewSize();
+        JScrollPane leftJScrollPane = getScrollPaneOf(leftEditorPane);
+        JScrollPane rightJScrollPane = getScrollPaneOf(rightEditor);
 
-        viewPosition.y = viewSize.height;
-        scrollPane.getViewport().setViewPosition(viewPosition);
-    }
-
-    private static String writeTofile(String doc) {
-        try {
-            Files.writeString(Path.of("/tmp/teste.html"), doc, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return doc;
-    }
-
-    public static void syncronizeScrolls(JEditorPane leftEditorPane, JScrollPane leftJScrollPane, JEditorPane rightEditor, JScrollPane rightJScrollPane) {
-        writeTofile(rightEditor.getText());
         if (isScrolledToMaximum(leftJScrollPane)) {
             setScrollToMaximum(rightJScrollPane);
         } else {
             try {
                 var leftTextVisible = JEditorPaneImpl.getVisibleText(leftEditorPane, leftJScrollPane);
                 if (leftTextVisible.length() > 0) {
-                    scrollPreview(leftEditorPane.getText(), leftTextVisible, (JEditorPaneImpl) rightEditor);
+                    scrollByTextContent(leftEditorPane.getText(), leftTextVisible, (JEditorPaneImpl) rightEditor);
                 } else {
                     rightJScrollPane.getViewport().setViewPosition(new Point(leftJScrollPane.getViewport().getViewPosition()));
                 }
@@ -76,7 +55,7 @@ public final class ScrollPreviewUtils {
         }
     }
 
-    private static void scrollPreview(String completeText, String visibleText, JEditorPaneImpl rightEdit) throws BadLocationException {
+    private static void scrollByTextContent(String completeText, String visibleText, JEditorPaneImpl rightEdit) throws BadLocationException {
         var list = ScrollableModel.from(Jsoup.parse(rightEdit.getText()), completeText);
         Collections.sort(list);
         visibleText = visibleText.trim();

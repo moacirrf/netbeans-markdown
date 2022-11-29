@@ -18,6 +18,11 @@ package io.github.moacirrf.netbeans.markdown.ui.preview;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.text.BadLocationException;
@@ -47,9 +52,10 @@ public class JEditorPaneImpl extends JEditorPane {
         int begin = jEditorPane.viewToModel2D(point);
         int end = jEditorPane.viewToModel2D(pointMax);
         if (begin > 0) {
-            try {
-                return jEditorPane.getText(begin, end - begin);
-            } catch (BadLocationException ex) {
+            try ( var outputStream = new ByteArrayOutputStream()) {
+                jEditorPane.getEditorKit().write(outputStream, jEditorPane.getDocument(), begin, end - begin);
+                return outputStream.toString();
+            } catch (BadLocationException | IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
@@ -66,7 +72,7 @@ public class JEditorPaneImpl extends JEditorPane {
      */
     public void scrollToId(String id) throws IllegalArgumentException {
         if (!(getEditorKit() instanceof HTMLEditorKit)) {
-            throw new IllegalArgumentException("JEditor kit must have a subclass of HTMLEditorkit ");
+            throw new IllegalArgumentException("JEditor kit must is a subclass of HTMLEditorkit ");
         }
         Document d = getDocument();
         if (d instanceof HTMLDocument) {
