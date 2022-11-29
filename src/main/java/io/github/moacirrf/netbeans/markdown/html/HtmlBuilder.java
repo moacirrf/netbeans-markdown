@@ -31,6 +31,8 @@ import org.jsoup.nodes.Document;
 
 public final class HtmlBuilder {
 
+    public static final String MD_SOURCE_POSITION_ATTR = "id";
+
     public static HtmlBuilder getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new HtmlBuilder();
@@ -51,17 +53,23 @@ public final class HtmlBuilder {
 
         var options = new MutableDataSet();
         options.set(Parser.EXTENSIONS, asList(TablesExtension.create(),
-                StrikethroughExtension.create(), TaskListExtension.create()));
-        options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
+                StrikethroughExtension.create(),
+                TaskListExtension.create()));
+        //.set(HtmlRenderer.SOFT_BREAK, "<br/>\n");
 
         var parser = Parser.builder(options).build();
+        options.set(HtmlRenderer.SOURCE_POSITION_ATTRIBUTE, MD_SOURCE_POSITION_ATTR);
+        options.set(HtmlRenderer.SOURCE_POSITION_PARAGRAPH_LINES, true);
+
         var renderer = HtmlRenderer.builder(options).build();
 
         Node document = parser.parse(markdownText);
+
         if (document == null) {
             return "";
         }
         Document doc = Jsoup.parse(renderer.render(document));
+
         if (doc == null) {
             return "";
         }
@@ -70,6 +78,8 @@ public final class HtmlBuilder {
                 doc = adjuster.adjust(doc);
             }
         }
-        return doc.toString();
+        return doc.html();
     }
+
+  
 }

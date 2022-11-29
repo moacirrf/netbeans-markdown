@@ -59,12 +59,13 @@ public class MarkdownPreviewPane extends JPanel {
         var layout = new CardLayout();
         setLayout(layout);
 
-        editorPane = new JEditorPane();
+        editorPane = new JEditorPaneImpl();
         editorPane.setEditable(false);
         editorPane.setEditorKit(new MarkdownEditorKit());
 
         scrollPane = new JScrollPane();
         scrollPane.setViewportView(editorPane);
+        scrollPane.getVerticalScrollBar().setBlockIncrement(12);
         createProgressBar();
         add(progressPanel);
         add(scrollPane);
@@ -122,6 +123,10 @@ public class MarkdownPreviewPane extends JPanel {
 
     public JScrollPane getScrollPane() {
         return scrollPane;
+    }
+
+    public JEditorPane getEditorPane() {
+        return editorPane;
     }
 
     private final class FillEditorPaneWorker extends SwingWorker<Object, Object> {
