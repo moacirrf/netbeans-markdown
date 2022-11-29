@@ -72,7 +72,7 @@ public class JEditorPaneImpl extends JEditorPane {
      */
     public void scrollToId(String id) throws IllegalArgumentException {
         if (!(getEditorKit() instanceof HTMLEditorKit)) {
-            throw new IllegalArgumentException("JEditor kit must is a subclass of HTMLEditorkit ");
+            throw new IllegalArgumentException("JEditor kit must be a subclass of HTMLEditorkit ");
         }
         Document d = getDocument();
         if (d instanceof HTMLDocument) {
