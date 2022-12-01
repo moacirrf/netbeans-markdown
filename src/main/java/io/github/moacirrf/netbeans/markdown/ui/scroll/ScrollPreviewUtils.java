@@ -35,22 +35,22 @@ import org.openide.util.Exceptions;
 public final class ScrollPreviewUtils {
 
     public static void syncronizeScrolls(JEditorPane leftEditorPane, JEditorPane rightEditor) {
-
         JScrollPane leftJScrollPane = getScrollPaneOf(leftEditorPane);
         JScrollPane rightJScrollPane = getScrollPaneOf(rightEditor);
-
-        if (isScrolledToMaximum(leftJScrollPane)) {
-            setScrollToMaximum(rightJScrollPane);
-        } else {
-            try {
-                var leftTextVisible = JEditorPaneImpl.getVisibleText(leftEditorPane, leftJScrollPane);
-                if (leftTextVisible.length() > 0) {
-                    scrollByTextContent(leftEditorPane.getText(), leftTextVisible, (JEditorPaneImpl) rightEditor);
-                } else {
-                    rightJScrollPane.getViewport().setViewPosition(new Point(leftJScrollPane.getViewport().getViewPosition()));
+        if (leftJScrollPane != null) {
+            if (isScrolledToMaximum(leftJScrollPane)) {
+                setScrollToMaximum(rightJScrollPane);
+            } else {
+                try {
+                    var leftTextVisible = JEditorPaneImpl.getVisibleText(leftEditorPane, leftJScrollPane);
+                    if (leftTextVisible.length() > 0) {
+                        scrollByTextContent(leftEditorPane.getText(), leftTextVisible, (JEditorPaneImpl) rightEditor);
+                    } else {
+                        rightJScrollPane.getViewport().setViewPosition(new Point(leftJScrollPane.getViewport().getViewPosition()));
+                    }
+                } catch (BadLocationException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
-            } catch (BadLocationException ex) {
-                Exceptions.printStackTrace(ex);
             }
         }
     }

@@ -23,13 +23,15 @@ import io.github.moacirrf.netbeans.markdown.ui.preview.MarkdownPreviewPane;
 import io.github.moacirrf.netbeans.markdown.ui.preview.MyFileChangeListener;
 import io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollCodeViewUtils;
 import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.getScrollPaneOf;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Date;
+import java.util.Arrays;
+import java.util.TimerTask;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
-import javax.swing.JViewport;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
@@ -38,7 +40,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 
 public class MultiViewSplitEditorElement extends MultiViewEditorElement {
-
+    private static final int SCROLL_DELAY = 500;
     private enum SCROLL_STATE {
         CODE,
         PREVIEW
@@ -48,6 +50,9 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
     private transient MarkdownPreviewPane previewPane;
     private FileObject mdFile;
     private SCROLL_STATE currentScroll;
+    private JEditorPane leftEditorPane;
+
+    private Timer timer;
 
     public MultiViewSplitEditorElement(Lookup lookup) {
         super(lookup);
@@ -78,6 +83,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
     @Override
     public void componentActivated() {
         super.componentActivated();
+        leftEditorPane = this.getEditorPane();
         JScrollPane leftJScrollPane = getScrollPaneOf(this.getEditorPane());
         if (scrollListener == null) {
             scrollListener = this::onChangeScrollEditor;
@@ -120,10 +126,31 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
     }
 
     private void onChangeScrollEditor(ChangeEvent e) {
-        if (SCROLL_STATE.CODE == currentScroll) {
-            ScrollPreviewUtils.syncronizeScrolls(getEditorPane(), previewPane.getEditorPane());
-        } else if (SCROLL_STATE.PREVIEW == currentScroll) {
-            ScrollCodeViewUtils.syncronizeScrolls(getEditorPane(), previewPane.getEditorPane());
+        var listener = (ActionListener) (ActionEvent e1) -> {
+            if (SCROLL_STATE.CODE == currentScroll) {
+                ScrollPreviewUtils.syncronizeScrolls(getEditorPane(), previewPane.getEditorPane());
+            } else if (SCROLL_STATE.PREVIEW == currentScroll) {
+                ScrollCodeViewUtils.syncronizeScrolls(getEditorPane(), previewPane.getEditorPane());
+            }
+        };
+
+        if (timer == null) {
+            timer = new Timer(SCROLL_DELAY, listener);
+            timer.start();
+        } else {
+            Arrays.stream(timer.getActionListeners())
+                    .forEach(timer::removeActionListener);
+            timer.addActionListener(listener);
+            timer.restart();
         }
     }
+
+    @Override
+    public JEditorPane getEditorPane() {
+        if (super.getEditorPane() == null) {
+            return leftEditorPane;
+        }
+        return super.getEditorPane();
+    }
+
 }
