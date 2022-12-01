@@ -17,12 +17,16 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-          repo_token: "${{ secrets.NETBEANS_MARKDOWN_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            target/*.jar
-            target/*.nbm
       - name: NBM
         run: mvn verify
+        
+      - uses: actions/checkout@v2
+        with: 
+           repo_token: "${{ secrets.NETBEANS_MARKDOWN_TOKEN }}"
+           automatic_release_tag: "latest"
+           prerelease: true
+           title: "Development Build"
+           files: |
+              target/*.jar
+              target/*.nbm
+
