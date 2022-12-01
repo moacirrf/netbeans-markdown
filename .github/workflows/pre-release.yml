@@ -20,7 +20,7 @@ jobs:
       - name: NBM
         run: mvn verify
         
-      - uses: actions/checkout@v2
+      - uses: marvinpinto/action-automatic-releases@latest
         with: 
            repo_token: "${{ secrets.NETBEANS_MARKDOWN_TOKEN }}"
            automatic_release_tag: "latest"
