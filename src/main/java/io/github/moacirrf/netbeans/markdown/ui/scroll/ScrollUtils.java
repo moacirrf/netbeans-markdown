@@ -32,12 +32,7 @@ public final class ScrollUtils {
     }
 
     public static void setScrollToMaximum(JScrollPane scrollPane) {
-        var viewPort = scrollPane.getViewport();
-        var viewPosition = viewPort.getViewPosition();
-        var viewSize = viewPort.getViewSize();
-
-        viewPosition.y = viewSize.height;
-        scrollPane.getViewport().setViewPosition(viewPosition);
+        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
     }
 
     public static JScrollPane getScrollPaneOf(JEditorPane editorPane) {
