@@ -19,7 +19,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: NBM
-        run: mvn veriy        
+        run: mvn verify
       - uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.NETBEANS_MARKDOWN_TOKEN }}"
