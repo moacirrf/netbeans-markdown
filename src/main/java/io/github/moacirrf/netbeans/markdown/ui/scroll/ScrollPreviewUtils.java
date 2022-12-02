@@ -59,11 +59,18 @@ public final class ScrollPreviewUtils {
         var list = ScrollableModel.from(Jsoup.parse(rightEdit.getText()), completeText);
         Collections.sort(list);
         visibleText = visibleText.trim();
-        for (ScrollableModel item : list) {
-            int numberChars = item.getMdEnd() - item.getMdBegin();
-            if (visibleText.substring(0, numberChars).contains(item.getMdText())) {
-                rightEdit.scrollToId(item.id());
+        try {
+            for (ScrollableModel item : list) {
+                int numberChars = item.getMdEnd() - item.getMdBegin();
+                if (visibleText.length() < numberChars) {
+                    numberChars = visibleText.length() - 1;
+                }
+                if (visibleText.substring(0, numberChars).contains(item.getMdText())) {
+                    rightEdit.scrollToId(item.id());
+                }
             }
+        } catch (StringIndexOutOfBoundsException ex) {
+            Exceptions.printStackTrace(ex);
         }
     }
 
