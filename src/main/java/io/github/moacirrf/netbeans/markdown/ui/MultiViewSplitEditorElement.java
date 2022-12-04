@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
-import java.util.TimerTask;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
@@ -40,7 +39,9 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 
 public class MultiViewSplitEditorElement extends MultiViewEditorElement {
+
     private static final int SCROLL_DELAY = 50;
+
     private enum SCROLL_STATE {
         CODE,
         PREVIEW
@@ -93,6 +94,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
             this.getEditorPane().addMouseListener(new MouseListenerImpl() {
                 @Override
                 public void onMouseEntered(MouseEvent e) {
+                    timer.stop();
                     currentScroll = SCROLL_STATE.CODE;
                 }
             });
@@ -100,6 +102,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
             previewPane.getEditorPane().addMouseListener(new MouseListenerImpl() {
                 @Override
                 public void onMouseEntered(MouseEvent e) {
+                    timer.stop();
                     currentScroll = SCROLL_STATE.PREVIEW;
                 }
             });
