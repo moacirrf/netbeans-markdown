@@ -65,7 +65,8 @@ public final class ScrollPreviewUtils {
                 if (visibleText.length() < numberChars) {
                     numberChars = visibleText.length() - 1;
                 }
-                if (visibleText.substring(0, numberChars).contains(item.getMdText())) {
+                var subText = visibleText.substring(0, numberChars);
+                if (subText != null && item.getMdText() != null && subText.trim().contains(item.getMdText().trim())) {
                     rightEdit.scrollToId(item.id());
                 }
             }
