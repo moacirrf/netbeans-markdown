@@ -40,7 +40,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 
 public class MultiViewSplitEditorElement extends MultiViewEditorElement {
-    private static final int SCROLL_DELAY = 500;
+    private static final int SCROLL_DELAY = 50;
     private enum SCROLL_STATE {
         CODE,
         PREVIEW
