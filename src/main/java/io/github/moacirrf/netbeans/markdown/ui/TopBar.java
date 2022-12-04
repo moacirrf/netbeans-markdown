@@ -17,6 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.ui;
 
 import io.github.moacirrf.netbeans.markdown.Icons;
+import java.awt.Component;
 import java.awt.Graphics;
 import static javax.swing.JSplitPane.HORIZONTAL_SPLIT;
 import static javax.swing.JSplitPane.VERTICAL_SPLIT;
@@ -45,6 +46,7 @@ public class TopBar extends javax.swing.JPanel {
         showPreviewBtn.setIcon(Icons.getICON_PREVIEW());
         split();
         splitPanel.getSplitPanel().setOrientation(HORIZONTAL_SPLIT);
+        this.exportBtn.add(jPopupMenu1);
     }
 
     /**
@@ -57,9 +59,20 @@ public class TopBar extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         showSourceBtn = new javax.swing.JToggleButton();
         splitModeBtn = new javax.swing.JToggleButton();
         showPreviewBtn = new javax.swing.JToggleButton();
+        exportBtn = new javax.swing.JButton();
+
+        org.openide.awt.Mnemonics.setLocalizedText(jMenuItem1, org.openide.util.NbBundle.getMessage(TopBar.class, "TopBar.jMenuItem1.text")); // NOI18N
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItem1);
 
         showSourceBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/io/github/moacirrf/netbeans/markdown/icon_source.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(showSourceBtn, org.openide.util.NbBundle.getMessage(TopBar.class, "TopBar.showSourceBtn.text")); // NOI18N
@@ -88,6 +101,13 @@ public class TopBar extends javax.swing.JPanel {
             }
         });
 
+        exportBtn.setLabel(org.openide.util.NbBundle.getMessage(TopBar.class, "TopBar.exportBtn.label")); // NOI18N
+        exportBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -99,17 +119,23 @@ public class TopBar extends javax.swing.JPanel {
                 .addComponent(splitModeBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(showPreviewBtn)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(exportBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(showSourceBtn)
-                    .addComponent(splitModeBtn)
-                    .addComponent(showPreviewBtn))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(showSourceBtn)
+                            .addComponent(splitModeBtn)
+                            .addComponent(showPreviewBtn))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(exportBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -124,6 +150,16 @@ public class TopBar extends javax.swing.JPanel {
     private void showPreviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPreviewBtnActionPerformed
         this.onlyPreview();
     }//GEN-LAST:event_showPreviewBtnActionPerformed
+
+    private void exportBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportBtnActionPerformed
+      
+        Component c = (Component) evt.getSource();
+        this.jPopupMenu1.show(c, c.getX(), c.getY());
+    }//GEN-LAST:event_exportBtnActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void onlySource() {
         SwingUtilities.invokeLater(() -> {
@@ -164,6 +200,9 @@ public class TopBar extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton exportBtn;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JToggleButton showPreviewBtn;
     private javax.swing.JToggleButton showSourceBtn;
     private javax.swing.JToggleButton splitModeBtn;
