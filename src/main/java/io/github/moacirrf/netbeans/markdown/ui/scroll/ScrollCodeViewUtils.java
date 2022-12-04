@@ -24,6 +24,7 @@ import javax.swing.text.BadLocationException;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.openide.util.Exceptions;
 
 /**
@@ -36,7 +37,12 @@ public final class ScrollCodeViewUtils {
         JScrollPane scrollPane = ScrollUtils.getScrollPaneOf(rightEditor);
         var text = JEditorPaneImpl.getVisibleText(rightEditor, scrollPane);
         Document document = Jsoup.parse(text);
-        String id = document.getElementsByTag("body").get(0).child(0).attr("id");
+        Element childElement = document.getElementsByTag("body").get(0).child(0);
+        String id = findIdWithText(childElement);
+
+        if (StringUtils.isBlank(id)) { //search a child with id
+            id = childElement.child(0).attr("id");
+        }
         if (StringUtils.isNotBlank(id)) {
             try {
                 int pos = Integer.parseInt(id.split("-")[0]);
@@ -48,6 +54,16 @@ public final class ScrollCodeViewUtils {
                 Exceptions.printStackTrace(ex);
             }
         }
+    }
+
+    private static String findIdWithText(Element element) {
+        var id = element.attr("id");
+        if (StringUtils.isBlank(id) || element.childrenSize() > 0 || StringUtils.isBlank(element.val())) {
+            for(Element el: element.children()){
+                  return findIdWithText(el);
+            }
+        }
+        return id;
     }
 
     private ScrollCodeViewUtils() {
