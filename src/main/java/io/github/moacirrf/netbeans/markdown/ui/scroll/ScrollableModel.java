@@ -33,13 +33,13 @@ import org.jsoup.select.Elements;
  */
 public final class ScrollableModel implements Comparable<ScrollableModel> {
 
-    private static List<String> LISTA_TAGS =Arrays.asList("p","h1","h2","h3","h4","h5","h6","li");
+    private static List<String> LIST_TAGS =Arrays.asList("p","h1","h2","h3","h4","h5","h6","li", "pre","code", "a");
 
     public static ScrollableModelList from(Document document, String completeMdText) {
         Elements elements = document.getElementsByAttribute(MD_SOURCE_POSITION_ATTR);
         var lista = new ScrollableModelList();
         elements.forEach(element -> {
-            if(LISTA_TAGS.contains(element.tagName().toLowerCase())){
+            if(LIST_TAGS.contains(element.tagName().toLowerCase())){
                 String[] attrs = element.attr(MD_SOURCE_POSITION_ATTR).split("-");
                 String mdText = completeMdText.substring(parseInt(attrs[0]),  parseInt(attrs[1]));
                 lista.add(new ScrollableModel(parseInt(attrs[0]), parseInt(attrs[1]), element,mdText));
