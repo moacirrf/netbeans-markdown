@@ -146,7 +146,26 @@
             <artifactId>flexmark-util</artifactId>
             <version>0.64.0</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-docx-converter</artifactId>
+            <version>0.64.0</version>
+        </dependency>
 
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-pdf-converter</artifactId>
+            <version>0.64.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-profile-pegdown</artifactId>
+            <version>0.64.0</version>
+            <type>jar</type>
+        </dependency>
+        
         <!-- jsoup -->
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -172,6 +191,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>1.9</version>
+        </dependency>
+
+        <!--  Objectweb -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.4</version>
         </dependency>
                        
         <!-- Junit -->
@@ -272,7 +298,26 @@
             <version>RELEASE140</version>
             <type>jar</type>
         </dependency>
+
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-dialogs</artifactId>
+            <version>RELEASE140</version>
+            <type>jar</type>
+        </dependency>
         
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-filesystems-nb</artifactId>
+            <version>RELEASE140</version>
+            <type>jar</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE160</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

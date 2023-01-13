@@ -17,6 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.ui;
 
 import io.github.moacirrf.netbeans.markdown.Icons;
+import java.awt.Component;
 import java.awt.Graphics;
 import static javax.swing.JSplitPane.HORIZONTAL_SPLIT;
 import static javax.swing.JSplitPane.VERTICAL_SPLIT;
