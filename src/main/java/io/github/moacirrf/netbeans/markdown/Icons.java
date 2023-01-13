@@ -17,6 +17,8 @@
 package io.github.moacirrf.netbeans.markdown;
 
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
+import org.apache.commons.text.StringSubstitutor;
 import static org.openide.util.ImageUtilities.loadImageIcon;
 
 /**
@@ -44,6 +46,20 @@ public final class Icons {
 
     public static ImageIcon getICON_COMPLETION() {
         return loadImageIcon(PATH + "code_template.png", false);
+    }
+
+    public static ImageIcon getICON_EXPORT_DOWN() {
+        if (UIManager.getBoolean("nb.dark.theme")) {
+            return loadImageIcon(PATH + "down_dark.png", false);
+        }
+        return loadImageIcon(PATH + "down_light.png", false);
+    }
+
+    public static ImageIcon getICON_EXPORT_UP() {
+        if (UIManager.getBoolean("nb.dark.theme")) {
+            return loadImageIcon(PATH + "up_dark.png", false);
+        }
+        return loadImageIcon(PATH + "up_light.png", false);
     }
 
     private Icons() {
