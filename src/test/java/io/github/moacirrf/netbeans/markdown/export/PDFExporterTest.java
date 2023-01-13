@@ -38,7 +38,7 @@ public class PDFExporterTest {
     
     @Test
     public void testExportJoinMds() {
-        var mdFiles = asList(InputModel.from(getMdfile("teste.md"), 1), InputModel.from(getMdfile("README.md"), 0));
+        var mdFiles = asList(InputModel.from(getMdfile("test.md"), 1), InputModel.from(getMdfile("test_2.md"), 0));
         
         var exporterConfig = ExporterConfig.newUniqueFile(folder.getRoot(), mdFiles, "output");
         var exporter = new PDFExporter();
@@ -50,7 +50,7 @@ public class PDFExporterTest {
     @Test
     public void testExportSepratedMds() {
         
-        var mdFiles = asList(InputModel.from(getMdfile("teste.md"), 1), InputModel.from(getMdfile("README.md"), 0));
+        var mdFiles = asList(InputModel.from(getMdfile("test.md"), 1), InputModel.from(getMdfile("test_2.md"), 0));
         
         var exporterConfig = ExporterConfig.newSeparatedFile(folder.getRoot(), mdFiles);
         var exporter = new PDFExporter();

@@ -1,4 +1,4 @@
-name: Java CI
+name: Tests
 
 on:
   push:
@@ -17,5 +17,5 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: NBM
+      - name: Tests
         run: mvn test
