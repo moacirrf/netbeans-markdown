@@ -16,61 +16,63 @@
  */
 package io.github.moacirrf.netbeans.markdown.export;
 
-import com.vladsch.flexmark.docx.converter.DocxRenderer;
-import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.ext.toc.TocExtension;
+import com.vladsch.flexmark.pdf.converter.PdfConverterExtension;
+import static com.vladsch.flexmark.pdf.converter.PdfConverterExtension.exportToPdf;
 import com.vladsch.flexmark.profile.pegdown.Extensions;
 import com.vladsch.flexmark.profile.pegdown.PegdownOptionsAdapter;
-import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.DataHolder;
+import io.github.moacirrf.netbeans.markdown.html.HtmlBuilder;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import static java.util.Collections.sort;
 import java.util.List;
-import java.util.Optional;
-import org.docx4j.Docx4J;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.openide.util.Exceptions;
 
 /**
  *
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
-public class DocxExporter implements Exporter {
+public class PDFExporter implements Exporter {
 
-    private static final String EXT = ".docx";
-
-    private static DataHolder OPTIONS = PegdownOptionsAdapter.flexmarkOptions(
-            Extensions.ALL & ~(Extensions.ANCHORLINKS | Extensions.EXTANCHORLINKS_WRAP))
-            .toMutable()
-            .set(DocxRenderer.SUPPRESS_HTML, true)
-            .set(DocxRenderer.DEFAULT_LINK_RESOLVER, true)
-            //.set(DocxRenderer.DOC_RELATIVE_URL, "file:///Users/vlad/src/pdf")
-            //.set(DocxRenderer.DOC_ROOT_URL, "file:///Users/vlad/src/pdf")
+    private static final DataHolder OPTIONS = PegdownOptionsAdapter.flexmarkOptions(
+            Extensions.ALL & ~(Extensions.ANCHORLINKS | Extensions.EXTANCHORLINKS_WRAP),
+            TocExtension.create()).toMutable()
+            .set(TocExtension.LIST_CLASS, PdfConverterExtension.DEFAULT_TOC_LIST_CLASS)
             .toImmutable();
+
+    private static final String EXT = ".pdf";
 
     @Override
     public List<File> export(ExporterConfig config) {
         var lista = new ArrayList<File>();
-
         sort(config.getMdfiles());
-        if (config.isUniqueFile()) {
-            var out = new File(config.getDestinyFolder(), config.getOutputFileName() + EXT);
-            Node node = parse(mergeMd(config.getMdfiles()));
-            writeDocx(node, out).ifPresent(lista::add);
-        } else {
-            config.getMdfiles().forEach(input -> {
-                String name = input.getName().replace(".md", EXT);
-                writeDocx(parse(input.getFile()), new File(config.getDestinyFolder(), name)).ifPresent(lista::add);
-            });
+        try {
+
+            if (config.isUniqueFile()) {
+                var html = getHtml(mergeMd(config.getMdfiles()));
+                String name = config.getOutputFileName().replace(".md", EXT)+EXT;
+                var file = new File(config.getDestinyFolder(), name);
+                exportToPdf(new FileOutputStream(file), html, "", OPTIONS);
+                lista.add(file);
+            } else {
+                for (InputModel input : config.getMdfiles()) {
+                    var html = getHtml(input.getFile());
+                    String name = input.getName().replace(".md", EXT);
+                    var file = new File(config.getDestinyFolder(), name);
+                    exportToPdf(new FileOutputStream(file), html, "", OPTIONS);
+                    lista.add(file);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Exceptions.printStackTrace(ex);
         }
-
         return lista;
-
     }
 
     private File mergeMd(List<InputModel> mds) {
@@ -97,9 +99,8 @@ public class DocxExporter implements Exporter {
         return file;
     }
 
-    private Node parse(File input) {
-        var parser = Parser.builder(OPTIONS).build();
-        return parser.parse(getMarkdownContent(input));
+    private String getHtml(File input) {
+        return HtmlBuilder.getInstance().build(getMarkdownContent(input));
     }
 
     private String getMarkdownContent(File input) {
@@ -110,23 +111,4 @@ public class DocxExporter implements Exporter {
         }
         return "";
     }
-
-    private Optional<File> writeDocx(Node document, File outPut) {
-        DocxRenderer renderer = DocxRenderer.builder(OPTIONS).build();
-        // to get XML
-        //String xml = RENDERER.render(document);
-        // or to control the package
-        WordprocessingMLPackage template = DocxRenderer.getDefaultTemplate();
-
-        renderer.render(document, template);
-
-        try {
-            template.save(outPut, Docx4J.FLAG_SAVE_ZIP_FILE);
-            return Optional.of(outPut);
-        } catch (Docx4JException e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
-    }
-
 }

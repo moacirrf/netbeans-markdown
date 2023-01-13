@@ -16,7 +16,9 @@
  */
 package io.github.moacirrf.netbeans.markdown.export;
 
+import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -24,5 +26,18 @@ import java.util.List;
  */
 public interface Exporter {
 
-    public void export(List<PageModel> items);
+    public List<File> export(ExporterConfig exporterConfig);
+
+    public static Optional<Exporter> newExporter(String type) {
+        
+        if (type.toLowerCase().contains("pdf")) {
+            return Optional.of(new PDFExporter());
+        }
+        
+        if (type.toLowerCase().contains("docx")) {
+            return Optional.of(new DocxExporter());
+        }
+        
+        return Optional.empty();
+    }
 }
