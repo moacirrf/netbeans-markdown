@@ -18,7 +18,6 @@ package io.github.moacirrf.netbeans.markdown;
 
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
-import org.apache.commons.text.StringSubstitutor;
 import static org.openide.util.ImageUtilities.loadImageIcon;
 
 /**

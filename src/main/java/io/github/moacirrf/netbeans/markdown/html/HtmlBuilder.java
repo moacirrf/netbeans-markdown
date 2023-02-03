@@ -23,53 +23,66 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import io.github.moacirrf.netbeans.markdown.html.flexmark.ImageRendererExtension;
 import java.util.ArrayList;
 import static java.util.Arrays.asList;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 public final class HtmlBuilder {
 
     public static final String MD_SOURCE_POSITION_ATTR = "id";
+    private boolean includeFormTag;
+
+    public static final MutableDataSet OPTIONS = new MutableDataSet()
+            .set(Parser.EXTENSIONS, asList(
+                    TablesExtension.create(),
+                    StrikethroughExtension.create(),
+                    ImageRendererExtension.create(),
+                    TaskListExtension.create()));
+
+    public static final MutableDataSet OPTIONS_RENDERER = new MutableDataSet(OPTIONS)
+            .set(HtmlRenderer.SOURCE_POSITION_ATTRIBUTE, MD_SOURCE_POSITION_ATTR)
+            .set(HtmlRenderer.SOURCE_POSITION_PARAGRAPH_LINES, true);
 
     public static HtmlBuilder getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new HtmlBuilder();
-        }
-        return INSTANCE;
+        return new HtmlBuilder(null);
     }
 
     private final List<HtmlAdjuster> htmlAdjusters = new ArrayList<>();
-    private static HtmlBuilder INSTANCE;
 
-    private HtmlBuilder() {
+    private final MutableDataSet localOptions;
+
+    private HtmlBuilder(MutableDataSet options) {
+        this.localOptions = options;
+        this.includeFormTag = false;
         htmlAdjusters.add(new TablesAdjuster());
         htmlAdjusters.add(new LinksAdjuster());
         htmlAdjusters.add(new FirstElementAdjuster());
     }
 
     public String build(String markdownText) {
-
-        var options = new MutableDataSet();
-        options.set(Parser.EXTENSIONS, asList(TablesExtension.create(),
-                StrikethroughExtension.create(),
-                TaskListExtension.create()));
-        //.set(HtmlRenderer.SOFT_BREAK, "<br/>\n");
-
-        var parser = Parser.builder(options).build();
-        options.set(HtmlRenderer.SOURCE_POSITION_ATTRIBUTE, MD_SOURCE_POSITION_ATTR);
-        options.set(HtmlRenderer.SOURCE_POSITION_PARAGRAPH_LINES, true);
-
-        var renderer = HtmlRenderer.builder(options).build();
-
+        var parser = Parser.builder(OPTIONS).build();
+        MutableDataSet renderOptions = new MutableDataSet(OPTIONS_RENDERER.toDataSet());
+        if (localOptions != null) {
+            renderOptions.setAll(localOptions);
+        }
+        var renderer = HtmlRenderer.builder(OPTIONS_RENDERER).build();
         Node document = parser.parse(markdownText);
 
         if (document == null) {
             return "";
         }
         Document doc = Jsoup.parse(renderer.render(document));
-
+        doc.getElementsByTag("head").remove();
+        if (includeFormTag) {
+            Element body = doc.getElementsByTag("body").get(0);
+            var html = "<form>" + body.html() + "</form>";
+            body.empty();
+            body.append(html);
+        }
         if (doc == null) {
             return "";
         }
@@ -78,8 +91,14 @@ public final class HtmlBuilder {
                 doc = adjuster.adjust(doc);
             }
         }
+        doc.outputSettings().syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml);
+        doc.outputSettings().charset("UTF-8");
         return doc.html();
     }
 
-  
+    public HtmlBuilder includeFormTag() {
+        includeFormTag = true;
+        return this;
+    }
+
 }

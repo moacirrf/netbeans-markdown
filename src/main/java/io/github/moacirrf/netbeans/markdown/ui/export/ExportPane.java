@@ -260,7 +260,9 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
                 .setDirectoriesOnly(true)
                 .setFileHiding(false)
                 .showOpenDialog();
-        this.pathDestiny.setText(file.getAbsolutePath());
+        if(file != null){
+            this.pathDestiny.setText(file.getAbsolutePath());
+        }
         isDestinyFolderValid();
     }
 

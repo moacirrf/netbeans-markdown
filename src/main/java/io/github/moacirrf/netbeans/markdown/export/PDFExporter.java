@@ -18,7 +18,6 @@ package io.github.moacirrf.netbeans.markdown.export;
 
 import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.pdf.converter.PdfConverterExtension;
-import static com.vladsch.flexmark.pdf.converter.PdfConverterExtension.exportToPdf;
 import com.vladsch.flexmark.profile.pegdown.Extensions;
 import com.vladsch.flexmark.profile.pegdown.PegdownOptionsAdapter;
 import com.vladsch.flexmark.util.data.DataHolder;
@@ -44,6 +43,7 @@ public class PDFExporter implements Exporter {
             Extensions.ALL & ~(Extensions.ANCHORLINKS | Extensions.EXTANCHORLINKS_WRAP),
             TocExtension.create()).toMutable()
             .set(TocExtension.LIST_CLASS, PdfConverterExtension.DEFAULT_TOC_LIST_CLASS)
+            .setAll(HtmlBuilder.OPTIONS_RENDERER)
             .toImmutable();
 
     private static final String EXT = ".pdf";
@@ -56,16 +56,16 @@ public class PDFExporter implements Exporter {
 
             if (config.isUniqueFile()) {
                 var html = getHtml(mergeMd(config.getMdfiles()));
-                String name = config.getOutputFileName().replace(".md", EXT)+EXT;
+                String name = config.getOutputFileName().replace(".md", EXT) + EXT;
                 var file = new File(config.getDestinyFolder(), name);
-                exportToPdf(new FileOutputStream(file), html, "", OPTIONS);
+                PdfConverterExtension.exportToPdf(new FileOutputStream(file), html, "", OPTIONS);
                 lista.add(file);
             } else {
                 for (InputModel input : config.getMdfiles()) {
                     var html = getHtml(input.getFile());
                     String name = input.getName().replace(".md", EXT);
                     var file = new File(config.getDestinyFolder(), name);
-                    exportToPdf(new FileOutputStream(file), html, "", OPTIONS);
+                    PdfConverterExtension.exportToPdf(new FileOutputStream(file), html, "", OPTIONS);
                     lista.add(file);
                 }
             }
@@ -100,7 +100,9 @@ public class PDFExporter implements Exporter {
     }
 
     private String getHtml(File input) {
-        return HtmlBuilder.getInstance().build(getMarkdownContent(input));
+        return HtmlBuilder.getInstance()
+                .includeFormTag()
+                .build(getMarkdownContent(input));
     }
 
     private String getMarkdownContent(File input) {
@@ -111,4 +113,24 @@ public class PDFExporter implements Exporter {
         }
         return "";
     }
+
+    public String getHtmlTeste() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<html>");
+        sb.append(" <body>");
+        sb.append("  <form class=\"removeMarginPaddingTop\">");
+        sb.append("   <h1 id=\"0-7\"><span id=\"2-7\">Teste</span></h1>");
+        sb.append("   <ul>");
+        sb.append("    <li class=\"task-list-item\" id=\"9-14\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled readonly>&nbsp;</li>");
+        sb.append("    <li class=\"task-list-item\" id=\"15-20\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled readonly>&nbsp;</li>");
+        sb.append("    <li class=\"task-list-item\" id=\"21-26\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" checked disabled readonly>&nbsp;</li>");
+        sb.append("    <li class=\"task-list-item\" id=\"27-32\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled readonly>&nbsp;</li>");
+        sb.append("   </ul>");
+        sb.append("  </form>");
+        sb.append(" </body>");
+        sb.append("</html>");
+        return sb.toString();
+    }
+
 }

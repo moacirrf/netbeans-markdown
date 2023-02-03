@@ -150,10 +150,15 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
     @Override
     public JEditorPane getEditorPane() {
-        if (super.getEditorPane() == null) {
-            return leftEditorPane;
+        try {
+            if (super.getEditorPane() == null) {
+                return leftEditorPane;
+            }else{
+                leftEditorPane = super.getEditorPane();
+            }
+        } catch (java.lang.AssertionError ex) {
         }
-        return super.getEditorPane();
+        return leftEditorPane;
     }
 
 }

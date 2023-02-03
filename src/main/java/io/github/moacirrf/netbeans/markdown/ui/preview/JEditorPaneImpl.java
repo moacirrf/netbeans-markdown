@@ -51,7 +51,7 @@ public class JEditorPaneImpl extends JEditorPane {
         pointMax.move(pointMax.x, pointMax.y + scrollPane.getViewport().getHeight());
         int begin = jEditorPane.viewToModel2D(point);
         int end = jEditorPane.viewToModel2D(pointMax);
-        if (begin > 0) {
+        if (begin >= 0) {
             try ( var outputStream = new ByteArrayOutputStream()) {
                 jEditorPane.getEditorKit().write(outputStream, jEditorPane.getDocument(), begin, end - begin);
                 return outputStream.toString();

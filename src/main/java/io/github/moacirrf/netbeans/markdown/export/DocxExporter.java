@@ -22,6 +22,9 @@ import com.vladsch.flexmark.profile.pegdown.Extensions;
 import com.vladsch.flexmark.profile.pegdown.PegdownOptionsAdapter;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.data.MutableDataSet;
+import io.github.moacirrf.netbeans.markdown.html.HtmlBuilder;
+import io.github.moacirrf.netbeans.markdown.html.flexmark.MyCoreNodeDocxRenderer;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,9 +52,9 @@ public class DocxExporter implements Exporter {
             .toMutable()
             .set(DocxRenderer.SUPPRESS_HTML, true)
             .set(DocxRenderer.DEFAULT_LINK_RESOLVER, true)
-            //.set(DocxRenderer.DOC_RELATIVE_URL, "file:///Users/vlad/src/pdf")
-            //.set(DocxRenderer.DOC_ROOT_URL, "file:///Users/vlad/src/pdf")
             .toImmutable();
+
+    public static final MutableDataSet OPTIONS_RENDERER = HtmlBuilder.OPTIONS_RENDERER;
 
     @Override
     public List<File> export(ExporterConfig config) {
@@ -81,7 +84,7 @@ public class DocxExporter implements Exporter {
             Exceptions.printStackTrace(ex);
         }
 
-        try ( var writer = new BufferedOutputStream(new FileOutputStream(file));) {
+        try ( var writer = new BufferedOutputStream(new FileOutputStream(file))) {
             mds.forEach(input -> {
                 try {
                     writer.write(getMarkdownContent(input.getFile()).getBytes());
@@ -89,7 +92,6 @@ public class DocxExporter implements Exporter {
                     Exceptions.printStackTrace(ex);
                 }
             });
-
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -112,14 +114,11 @@ public class DocxExporter implements Exporter {
     }
 
     private Optional<File> writeDocx(Node document, File outPut) {
-        DocxRenderer renderer = DocxRenderer.builder(OPTIONS).build();
-        // to get XML
-        //String xml = RENDERER.render(document);
-        // or to control the package
+        DocxRenderer renderer = DocxRenderer.builder(OPTIONS_RENDERER)
+                .nodeFormatterFactory(MyCoreNodeDocxRenderer::new)
+                .build();
         WordprocessingMLPackage template = DocxRenderer.getDefaultTemplate();
-
         renderer.render(document, template);
-
         try {
             template.save(outPut, Docx4J.FLAG_SAVE_ZIP_FILE);
             return Optional.of(outPut);
