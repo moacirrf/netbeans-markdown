@@ -16,26 +16,13 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
-import io.github.moacirrf.netbeans.markdown.Context;
-import io.github.moacirrf.netbeans.markdown.TempDir;
+import static io.github.moacirrf.netbeans.markdown.ImageHelper.getLocalImage;
 import java.io.File;
-import static java.io.File.separator;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.ImageView;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
@@ -50,99 +37,30 @@ import org.openide.util.Utilities;
  */
 public class ImageViewImpl extends ImageView {
 
-    private static final Map<String, URL> CACHE_CONVERTED_IMAGES = new HashMap<>();
-
-    private final Path tempDir;
-
     public ImageViewImpl(Element elem) {
         super(elem);
-        tempDir = TempDir.getTempDir();
     }
-    
+
     @Override
     public URL getImageURL() {
-        String src = (String) getElement().getAttributes().
-                getAttribute(HTML.Attribute.SRC);
-        if (src == null) {
-            return null;
-        }
-        URL url = null;
-        try {
-            URL reference = ((HTMLDocument) getDocument()).getBase();
-            url = new URL(reference, src);
-        } catch (MalformedURLException e) {
-            try {
-                File f = getLocalImage(src);
-                if (f == null) {
-                    return null;
-                }
-                if (f.exists() && !f.isDirectory()) {
-                    url = Utilities.toURI(f).toURL();
-                }
-            } catch (MalformedURLException ex) {
-                return null;
-            }
-        }
-
-        if (url == null) {
-            return null;
-        }
-
-        String fileName = new File(url.getFile()).getName().toLowerCase();
-        if (fileName.contains("jpg")
-                || fileName.contains("png")
-                || fileName.contains("jpeg")
-                || fileName.contains("webp")
-                || fileName.contains("gif")) {
-            return url;
-        }
-
-        return convertToPNG(url);
-    }
-
-    /**
-     * Try to find image save on disk, with relative and absolute paths
-     *
-     * @param src The content src property of image
-     * @return The file
-     */
-    private File getLocalImage(String src) {
-        File f = new File(src.trim());
-        if (!f.exists() && Context.OPENED_FILE != null) {
-            f = new File(Context.OPENED_FILE.getParent().getPath(), separator + src.trim());
-        }
-        if (f.exists()) {
-            return f;
-        }
-        return null;
-    }
-
-    public URL convertToPNG(URL url) {
-        if (url == null) {
-            return null;
-        }
-        try {
-            String fileName = new File(url.getFile()).getName().toLowerCase();
-
-            Path imageTemp = Paths.get(tempDir.toString(), fileName + ".png");
-            imageTemp.toFile().setWritable(true);
-
-            PNGTranscoder t = new PNGTranscoder();
-            TranscoderInput input = new TranscoderInput(url.toString());
-            // I don't know why, but "try with resources are not working", so don't use.
-            var ostream = new FileOutputStream(imageTemp.toFile());
-            TranscoderOutput output = new TranscoderOutput(ostream);
-            // Save the image to temp.
-            t.transcode(input, output);
-            ostream.flush();
-            ostream.close();
-            CACHE_CONVERTED_IMAGES.put(url.toString(), imageTemp.toUri().toURL());
-            return CACHE_CONVERTED_IMAGES.get(url.toString());
-
-        } catch (TranscoderException | IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-
-        return url;
+        return super.getImageURL();
+//        String src = (String) getElement().getAttributes().
+//                getAttribute(HTML.Attribute.SRC);
+//        if (src == null) {
+//            return null;
+//        }
+//        URL url = null;
+//        try {
+//            File f = getLocalImage(src);
+//            if (f == null) {
+//                return null;
+//            }
+//            if (f.exists() && !f.isDirectory()) {
+//                url = Utilities.toURI(f).toURL();
+//            }
+//        } catch (MalformedURLException ex) {
+//            Exceptions.printStackTrace(ex);
+//        }
+//        return url;
     }
 }

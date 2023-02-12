@@ -17,10 +17,13 @@
 package io.github.moacirrf.netbeans.markdown;
 
 import java.io.IOException;
+import java.io.InputStream;
 import static java.lang.System.getProperty;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import org.openide.util.Exceptions;
 
 /**
@@ -34,15 +37,24 @@ public final class TempDir {
     public static Path getTempDir() {
         Path path = Paths.get(TEMP_DIR_PLUGIN);
         if (!Files.exists(path)) {
-            if (!Files.exists(path)) {
-                try {
-                    Files.createDirectory(path);
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
+            try {
+                Files.createDirectory(path);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
             }
+            createCantLoadImage();
         }
         return path;
+    }
+
+    private static void createCantLoadImage() {
+        try ( var inputStream = Icons.class.getResourceAsStream("not_load_image.png")) {
+            byte[] bytes = inputStream.readAllBytes();
+            Path image = Path.of(TEMP_DIR_PLUGIN, "not_load_image.png");
+            Files.write(image, bytes, CREATE, TRUNCATE_EXISTING);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     public static void removeTempDir() {

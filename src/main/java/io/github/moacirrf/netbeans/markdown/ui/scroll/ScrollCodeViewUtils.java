@@ -37,21 +37,23 @@ public final class ScrollCodeViewUtils {
         JScrollPane scrollPane = ScrollUtils.getScrollPaneOf(rightEditor);
         var text = JEditorPaneImpl.getVisibleText(rightEditor, scrollPane);
         Document document = Jsoup.parse(text);
-        Element childElement = document.getElementsByTag("body").get(0).child(0);
-        String id = findIdWithText(childElement);
+        if ((!document.getElementsByTag("body").isEmpty()) && document.getElementsByTag("body").get(0).childNodeSize() > 0) {
+            Element childElement = document.getElementsByTag("body").get(0).child(0);
+            String id = findIdWithText(childElement);
 
-        if (StringUtils.isBlank(id)) { //search a child with id
-            id = childElement.child(0).attr("id");
-        }
-        if (StringUtils.isNotBlank(id)) {
-            try {
-                int pos = Integer.parseInt(id.split("-")[0]);
-                Rectangle positionToScrol = leftEditor.modelToView(pos);
-                Rectangle actualPosition = leftEditor.getVisibleRect();
-                positionToScrol.height = actualPosition.height;
-                leftEditor.scrollRectToVisible(positionToScrol);
-            } catch (BadLocationException ex) {
-                Exceptions.printStackTrace(ex);
+            if (StringUtils.isBlank(id) && childElement.childNodeSize() > 0) { //search a child with id
+                id = childElement.child(0).attr("id");
+            }
+            if (StringUtils.isNotBlank(id)) {
+                try {
+                    int pos = Integer.parseInt(id.split("-")[0]);
+                    Rectangle positionToScrol = leftEditor.modelToView(pos);
+                    Rectangle actualPosition = leftEditor.getVisibleRect();
+                    positionToScrol.height = actualPosition.height;
+                    leftEditor.scrollRectToVisible(positionToScrol);
+                } catch (BadLocationException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             }
         }
     }
@@ -59,8 +61,8 @@ public final class ScrollCodeViewUtils {
     private static String findIdWithText(Element element) {
         var id = element.attr("id");
         if (StringUtils.isBlank(id) || element.childrenSize() > 0 || StringUtils.isBlank(element.val())) {
-            for(Element el: element.children()){
-                  return findIdWithText(el);
+            for (Element el : element.children()) {
+                return findIdWithText(el);
             }
         }
         return id;

@@ -36,12 +36,17 @@ public final class ScrollableModel implements Comparable<ScrollableModel> {
     private static List<String> LIST_TAGS =Arrays.asList("p","h1","h2","h3","h4","h5","h6","li", "pre","code", "a");
 
     public static ScrollableModelList from(Document document, String completeMdText) {
+        int size = completeMdText.length();
         Elements elements = document.getElementsByAttribute(MD_SOURCE_POSITION_ATTR);
         var lista = new ScrollableModelList();
         elements.forEach(element -> {
             if(LIST_TAGS.contains(element.tagName().toLowerCase())){
                 String[] attrs = element.attr(MD_SOURCE_POSITION_ATTR).split("-");
-                String mdText = completeMdText.substring(parseInt(attrs[0]),  parseInt(attrs[1]));
+                int endIndex = parseInt(attrs[1]);
+                if(endIndex > size){
+                    endIndex = size-1;
+                }
+                String mdText = completeMdText.substring(parseInt(attrs[0]),  endIndex);
                 lista.add(new ScrollableModel(parseInt(attrs[0]), parseInt(attrs[1]), element,mdText));
             }
         });

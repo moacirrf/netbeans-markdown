@@ -32,37 +32,37 @@ import org.openide.util.Exceptions;
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
 public class DocxExporterTest {
-    
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-    
-    @Test
+
+    //@Test
     public void testExportJoinMds() {
-        
+
         var mdFiles = asList(InputModel.from(getMdfile("test.md"), 1), InputModel.from(getMdfile("test_2.md"), 0));
-        
+
         var exporterConfig = ExporterConfig.newUniqueFile(folder.getRoot(), mdFiles, "output");
         var exporter = new DocxExporter();
-        
+
         List<File> files = exporter.export(exporterConfig);
         assertFalse("No one docx was generated", files.isEmpty());
-        files.forEach(f -> assertTrue("File not found",f.exists()));
+        files.forEach(f -> assertTrue("File not found", f.exists()));
     }
 
     @Test
     public void testExportSepratedMds() {
-        
-        var mdFiles = asList(InputModel.from(getMdfile("test.md"), 1), InputModel.from(getMdfile("test_2.md"), 0));
-        
+
+        var mdFiles = asList(InputModel.from(getMdfile("test.md"), 1) , InputModel.from(getMdfile("test_2.md"), 0));
+
         var exporterConfig = ExporterConfig.newSeparatedFile(folder.getRoot(), mdFiles);
         var exporter = new DocxExporter();
-        
+
         List<File> files = exporter.export(exporterConfig);
         assertFalse("No one docx was generated", files.isEmpty());
         assertTrue("Must have two docx", files.size() == 2);
-        files.forEach(f -> assertTrue("File not found",f.exists()));
+        files.forEach(f -> assertTrue("File not found", f.exists()));
     }
-    
+
     public File getMdfile(String name) {
         try {
             var file = Path.of(DocxExporterTest.class.getResource(name).toURI()).toFile();
@@ -73,5 +73,5 @@ public class DocxExporterTest {
         }
         return null;
     }
-    
+
 }

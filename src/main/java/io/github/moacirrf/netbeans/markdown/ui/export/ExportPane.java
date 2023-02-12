@@ -110,7 +110,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
 
         pathDestiny.setText(org.openide.util.NbBundle.getMessage(ExportPane.class, "ExportPane.pathDestiny.text")); // NOI18N
         pathDestiny.setAlignmentY(0.0F);
-        destinyPane.add(pathDestiny, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 400, -1));
+        destinyPane.add(pathDestiny, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 390, -1));
 
         destinyFolderErrorMessage.setFont(new java.awt.Font("sansserif", 1, 10)); // NOI18N
         destinyFolderErrorMessage.setForeground(new java.awt.Color(255, 51, 51));
@@ -125,7 +125,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
                 jButton1ActionPerformed(evt);
             }
         });
-        destinyPane.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, -1, -1));
+        destinyPane.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 0, -1, -1));
 
         tableFiles.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -146,7 +146,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
         jPanel1.add(uniqueNameErrorLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(178, 37, 380, 10));
 
         newUniqueName.setText(org.openide.util.NbBundle.getMessage(ExportPane.class, "ExportPane.newUniqueName.text")); // NOI18N
-        jPanel1.add(newUniqueName, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 10, 410, -1));
+        jPanel1.add(newUniqueName, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 10, 390, -1));
 
         jLabel1.setLabelFor(newUniqueName);
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(ExportPane.class, "ExportPane.jLabel1.text")); // NOI18N
@@ -164,19 +164,16 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
         uniqueFilePane.setLayout(uniqueFilePaneLayout);
         uniqueFilePaneLayout.setHorizontalGroup(
             uniqueFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, uniqueFilePaneLayout.createSequentialGroup()
-                .addGroup(uniqueFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
         uniqueFilePaneLayout.setVerticalGroup(
             uniqueFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(uniqueFilePaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -187,11 +184,11 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
         progressPane.setLayout(progressPaneLayout);
         progressPaneLayout.setHorizontalGroup(
             progressPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 568, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         progressPaneLayout.setVerticalGroup(
             progressPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
         );
 
         org.openide.awt.Mnemonics.setLocalizedText(pdfExport, org.openide.util.NbBundle.getMessage(ExportPane.class, "ExportPane.pdfExport.text")); // NOI18N
@@ -203,11 +200,11 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
         buttonsPaneLayout.setHorizontalGroup(
             buttonsPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonsPaneLayout.createSequentialGroup()
-                .addContainerGap(400, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(docxExport)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pdfExport)
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
         buttonsPaneLayout.setVerticalGroup(
             buttonsPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -223,13 +220,14 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(buttonsPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(destinyPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(uniqueFilePane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(progressPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(buttonsPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(progressPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(destinyPane, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,7 +238,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
                 .addComponent(uniqueFilePane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(progressPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addComponent(buttonsPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -260,7 +258,9 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
                 .setDirectoriesOnly(true)
                 .setFileHiding(false)
                 .showOpenDialog();
-        this.pathDestiny.setText(file.getAbsolutePath());
+        if(file != null){
+            this.pathDestiny.setText(file.getAbsolutePath());
+        }
         isDestinyFolderValid();
     }
 
