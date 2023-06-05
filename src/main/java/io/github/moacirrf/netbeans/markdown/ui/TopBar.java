@@ -17,8 +17,6 @@
 package io.github.moacirrf.netbeans.markdown.ui;
 
 import io.github.moacirrf.netbeans.markdown.Icons;
-import java.awt.Component;
-import java.awt.Graphics;
 import static javax.swing.JSplitPane.HORIZONTAL_SPLIT;
 import static javax.swing.JSplitPane.VERTICAL_SPLIT;
 import javax.swing.SwingUtilities;
@@ -27,10 +25,6 @@ public class TopBar extends javax.swing.JPanel {
 
     private final SplitPanel splitPanel;
 
-    /**
-     * Force recalculation of position of divider, align to center
-     */
-    private boolean refreshDividerLocation;
     private boolean splitModeOn;
 
     /**

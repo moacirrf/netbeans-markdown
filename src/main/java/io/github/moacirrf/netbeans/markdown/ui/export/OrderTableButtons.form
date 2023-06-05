@@ -36,7 +36,7 @@
     <Component class="javax.swing.JButton" name="upBtn">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/io/github/moacirrf/netbeans/markdown/up_light.png"/>
+          <Image iconType="3" name="/io/github/moacirrf/netbeans/markdown/anchor_n.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="io/github/moacirrf/netbeans/markdown/ui/export/Bundle.properties" key="OrderTableButtons.upBtn.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
@@ -51,7 +51,7 @@
     <Component class="javax.swing.JButton" name="downBtn">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/io/github/moacirrf/netbeans/markdown/down_light.png"/>
+          <Image iconType="3" name="/io/github/moacirrf/netbeans/markdown/anchor_s.png"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="io/github/moacirrf/netbeans/markdown/ui/export/Bundle.properties" key="OrderTableButtons.downBtn.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>

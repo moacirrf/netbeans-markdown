@@ -72,12 +72,12 @@ public class OrderTableButtons extends javax.swing.JPanel {
         setOpaque(false);
         setLayout(new java.awt.GridLayout(0, 2));
 
-        upBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/io/github/moacirrf/netbeans/markdown/up_light.png"))); // NOI18N
+        upBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/io/github/moacirrf/netbeans/markdown/anchor_n.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(upBtn, org.openide.util.NbBundle.getMessage(OrderTableButtons.class, "OrderTableButtons.upBtn.text")); // NOI18N
         add(upBtn);
         upBtn.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(OrderTableButtons.class, "OrderTableButtons.upBtn.AccessibleContext.accessibleName")); // NOI18N
 
-        downBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/io/github/moacirrf/netbeans/markdown/down_light.png"))); // NOI18N
+        downBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/io/github/moacirrf/netbeans/markdown/anchor_s.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(downBtn, org.openide.util.NbBundle.getMessage(OrderTableButtons.class, "OrderTableButtons.downBtn.text")); // NOI18N
         downBtn.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         add(downBtn);

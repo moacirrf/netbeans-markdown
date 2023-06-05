@@ -48,17 +48,11 @@ public final class Icons {
     }
 
     public static ImageIcon getICON_EXPORT_DOWN() {
-        if (UIManager.getBoolean("nb.dark.theme")) {
-            return loadImageIcon(PATH + "down_dark.png", false);
-        }
-        return loadImageIcon(PATH + "down_light.png", false);
+        return loadImageIcon(PATH + "anchor_s.png", false);
     }
 
     public static ImageIcon getICON_EXPORT_UP() {
-        if (UIManager.getBoolean("nb.dark.theme")) {
-            return loadImageIcon(PATH + "up_dark.png", false);
-        }
-        return loadImageIcon(PATH + "up_light.png", false);
+        return loadImageIcon(PATH + "anchor_n.png", false);
     }
 
     private Icons() {
