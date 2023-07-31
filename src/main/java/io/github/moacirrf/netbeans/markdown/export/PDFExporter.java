@@ -114,23 +114,4 @@ public class PDFExporter implements Exporter {
         return "";
     }
 
-    public String getHtmlTeste() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("<html>");
-        sb.append(" <body>");
-        sb.append("  <form class=\"removeMarginPaddingTop\">");
-        sb.append("   <h1 id=\"0-7\"><span id=\"2-7\">Teste</span></h1>");
-        sb.append("   <ul>");
-        sb.append("    <li class=\"task-list-item\" id=\"9-14\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled readonly>&nbsp;</li>");
-        sb.append("    <li class=\"task-list-item\" id=\"15-20\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled readonly>&nbsp;</li>");
-        sb.append("    <li class=\"task-list-item\" id=\"21-26\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" checked disabled readonly>&nbsp;</li>");
-        sb.append("    <li class=\"task-list-item\" id=\"27-32\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled readonly>&nbsp;</li>");
-        sb.append("   </ul>");
-        sb.append("  </form>");
-        sb.append(" </body>");
-        sb.append("</html>");
-        return sb.toString();
-    }
-
 }
