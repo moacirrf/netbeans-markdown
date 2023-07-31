@@ -37,6 +37,10 @@ public interface Exporter {
         if (type.toLowerCase().contains("docx")) {
             return Optional.of(new DocxExporter());
         }
+
+        if (type.toLowerCase().contains("html")) {
+            return Optional.of(new HtmlExporter());
+        }
         
         return Optional.empty();
     }
