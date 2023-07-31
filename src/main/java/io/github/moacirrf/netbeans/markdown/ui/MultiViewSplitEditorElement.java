@@ -30,6 +30,7 @@ import java.util.Arrays;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -40,7 +41,7 @@ import org.openide.util.Lookup;
 
 public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
-    private static final int SCROLL_DELAY = 50;
+    private static final int SCROLL_DELAY = 100;
 
     private enum SCROLL_STATE {
         CODE,
@@ -91,21 +92,19 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
             leftJScrollPane.getViewport().addChangeListener(scrollListener);
             previewPane.getScrollPane().getViewport().addChangeListener(scrollListener);
 
-            this.getEditorPane().addMouseListener(new MouseListenerImpl() {
-                @Override
-                public void onMouseEntered(MouseEvent e) {
+            this.getEditorPane().addMouseListener(MouseListenerBuilder.build((event, type) -> {
+                if (type == MouseListenerBuilder.EventType.ENTERED) {
                     timer.stop();
                     currentScroll = SCROLL_STATE.CODE;
                 }
-            });
+            }));
 
-            previewPane.getEditorPane().addMouseListener(new MouseListenerImpl() {
-                @Override
-                public void onMouseEntered(MouseEvent e) {
+            previewPane.getEditorPane().addMouseListener(MouseListenerBuilder.build((event, type) -> {
+                if (type == MouseListenerBuilder.EventType.ENTERED) {
                     timer.stop();
                     currentScroll = SCROLL_STATE.PREVIEW;
                 }
-            });
+            }));
         }
     }
 
@@ -140,6 +139,8 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
         if (timer == null) {
             timer = new Timer(SCROLL_DELAY, listener);
             timer.start();
+            timer.setRepeats(false);
+            timer.setCoalesce(false);
         } else {
             Arrays.stream(timer.getActionListeners())
                     .forEach(timer::removeActionListener);
@@ -153,7 +154,7 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
         try {
             if (super.getEditorPane() == null) {
                 return leftEditorPane;
-            }else{
+            } else {
                 leftEditorPane = super.getEditorPane();
             }
         } catch (java.lang.AssertionError ex) {

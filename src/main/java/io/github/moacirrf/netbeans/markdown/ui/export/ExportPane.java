@@ -18,13 +18,14 @@ package io.github.moacirrf.netbeans.markdown.ui.export;
 
 import io.github.moacirrf.netbeans.markdown.export.Exporter;
 import io.github.moacirrf.netbeans.markdown.export.ExporterConfig;
-import io.github.moacirrf.netbeans.markdown.export.InputModel;
+import io.github.moacirrf.netbeans.markdown.ui.MouseListenerBuilder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DropMode;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -67,10 +68,13 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
      */
     private ExportPane() {
         initComponents();
+
         this.destinyFolderErrorMessage.setVisible(false);
         this.progressPane.setVisible(false);
+
         this.pdfExport.addActionListener(this);
         this.docxExport.addActionListener(this);
+        htmlExport.addActionListener(this);
         this.newUniqueName.setEnabled(this.joinFiles.isSelected());
         this.uniqueNameErrorLabel.setVisible(false);
         this.tableFiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -103,6 +107,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
         buttonsPane = new javax.swing.JPanel();
         pdfExport = new javax.swing.JButton();
         docxExport = new javax.swing.JButton();
+        htmlExport = new javax.swing.JButton();
 
         setFont(new java.awt.Font("sansserif", 0, 10)); // NOI18N
 
@@ -195,6 +200,8 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
 
         org.openide.awt.Mnemonics.setLocalizedText(docxExport, org.openide.util.NbBundle.getMessage(ExportPane.class, "ExportPane.docxExport.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(htmlExport, org.openide.util.NbBundle.getMessage(ExportPane.class, "ExportPane.htmlExport.text")); // NOI18N
+
         javax.swing.GroupLayout buttonsPaneLayout = new javax.swing.GroupLayout(buttonsPane);
         buttonsPane.setLayout(buttonsPaneLayout);
         buttonsPaneLayout.setHorizontalGroup(
@@ -204,7 +211,9 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
                 .addComponent(docxExport)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pdfExport)
-                .addGap(0, 0, 0))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(htmlExport)
+                .addContainerGap())
         );
         buttonsPaneLayout.setVerticalGroup(
             buttonsPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -212,7 +221,8 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
                 .addContainerGap()
                 .addGroup(buttonsPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(pdfExport)
-                    .addComponent(docxExport))
+                    .addComponent(docxExport)
+                    .addComponent(htmlExport))
                 .addContainerGap())
         );
 
@@ -258,7 +268,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
                 .setDirectoriesOnly(true)
                 .setFileHiding(false)
                 .showOpenDialog();
-        if(file != null){
+        if (file != null) {
             this.pathDestiny.setText(file.getAbsolutePath());
         }
         isDestinyFolderValid();
@@ -309,7 +319,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (isDestinyFolderValid() && isValidUniqueName()) {
-           MyDefaultTableModel model = (MyDefaultTableModel) tableFiles.getModel();
+            MyDefaultTableModel model = (MyDefaultTableModel) tableFiles.getModel();
             exporterConfig.setMdfiles(model.toInputModel());
             this.exporterConfig.setUniqueFile(this.joinFiles.isSelected());
             this.exporterConfig.setOutputFileName(this.newUniqueName.getText());
@@ -319,6 +329,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
                     getProgressPane().setVisible(true);
                     docxExport.setEnabled(false);
                     pdfExport.setEnabled(false);
+                    htmlExport.setEnabled(false);
                     Exporter.newExporter(e.getActionCommand())
                             .ifPresent(exp -> exp.export(exporterConfig));
                     return null;
@@ -330,6 +341,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
                         getProgressPane().setVisible(false);
                         docxExport.setEnabled(true);
                         pdfExport.setEnabled(true);
+                        htmlExport.setEnabled(true);
                         onExportedFile.actionPerformed(e);
                     });
                 }
@@ -343,6 +355,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
     private javax.swing.JLabel destinyFolderErrorMessage;
     private javax.swing.JPanel destinyPane;
     private javax.swing.JButton docxExport;
+    private javax.swing.JButton htmlExport;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
