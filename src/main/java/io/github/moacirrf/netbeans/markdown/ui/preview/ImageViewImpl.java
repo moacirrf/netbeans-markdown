@@ -16,15 +16,9 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
-import static io.github.moacirrf.netbeans.markdown.ImageHelper.getLocalImage;
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.text.Element;
-import javax.swing.text.html.HTML;
 import javax.swing.text.html.ImageView;
-import org.openide.util.Exceptions;
-import org.openide.util.Utilities;
 
 /**
  * SVG images need to be converted to PNG, this class will do this job, if image
@@ -44,23 +38,5 @@ public class ImageViewImpl extends ImageView {
     @Override
     public URL getImageURL() {
         return super.getImageURL();
-//        String src = (String) getElement().getAttributes().
-//                getAttribute(HTML.Attribute.SRC);
-//        if (src == null) {
-//            return null;
-//        }
-//        URL url = null;
-//        try {
-//            File f = getLocalImage(src);
-//            if (f == null) {
-//                return null;
-//            }
-//            if (f.exists() && !f.isDirectory()) {
-//                url = Utilities.toURI(f).toURL();
-//            }
-//        } catch (MalformedURLException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-//        return url;
     }
 }
