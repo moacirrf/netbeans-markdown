@@ -17,7 +17,6 @@
 package io.github.moacirrf.netbeans.markdown;
 
 import java.io.IOException;
-import java.io.InputStream;
 import static java.lang.System.getProperty;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +30,10 @@ import org.openide.util.Exceptions;
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
 public final class TempDir {
+
+    private static final String NB_MARKDOWN_NOT_LOAD_IMAGE = "nb_markdown_not_load_image.png";
+
+    private static Path NOT_LOADED_IMAGE;
 
     public static final String TEMP_DIR_PLUGIN = getProperty("java.io.tmpdir") + "/nb_markdown";
 
@@ -47,11 +50,20 @@ public final class TempDir {
         return path;
     }
 
+    public static Path getCantLoadImage() {
+        if (Files.exists(getTempDir())) {
+            if (NOT_LOADED_IMAGE == null) {
+                createCantLoadImage();
+            }
+        }
+        return NOT_LOADED_IMAGE;
+    }
+
     private static void createCantLoadImage() {
-        try ( var inputStream = Icons.class.getResourceAsStream("not_load_image.png")) {
+        try (var inputStream = Icons.class.getResourceAsStream(NB_MARKDOWN_NOT_LOAD_IMAGE)) {
             byte[] bytes = inputStream.readAllBytes();
-            Path image = Path.of(TEMP_DIR_PLUGIN, "not_load_image.png");
-            Files.write(image, bytes, CREATE, TRUNCATE_EXISTING);
+            NOT_LOADED_IMAGE = Path.of(TEMP_DIR_PLUGIN, NB_MARKDOWN_NOT_LOAD_IMAGE);
+            Files.write(NOT_LOADED_IMAGE, bytes, CREATE, TRUNCATE_EXISTING);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

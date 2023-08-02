@@ -53,8 +53,6 @@ public final class ImageHelper {
 
     private static final Path TEMP_DIR = TempDir.getTempDir();
 
-    public static final Path NOT_LOADED_IMAGE = Path.of(TEMP_DIR.toString(), "not_load_image.png");
-
     private static final Map<String, URL> CACHE_CONVERTED_IMAGES = new HashMap<>();
 
     public static boolean isNonSVG(URL url) {
@@ -160,7 +158,11 @@ public final class ImageHelper {
             return file;
         }
 
-        return NOT_LOADED_IMAGE.toFile();
+        return getNotLoadedImage().toFile();
+    }
+
+    public static Path getNotLoadedImage() {
+        return TempDir.getCantLoadImage();
     }
 
     private ImageHelper() {
