@@ -71,7 +71,12 @@ public class ImageNodeHelper {
             if (element != null) {
                 URL url = buildURL(element.attr(SRC_ATTR));
                 if (url != null) {
-                    element.attr(SRC_ATTR, url.toString());
+                    String urlString = url.toString();
+                    element.attr(SRC_ATTR, urlString);
+                    if(urlString.contains(ImageHelper.getNotLoadedImage().getFileName().toString())){
+                        element.removeAttr(WIDTH_ATTR);
+                        element.removeAttr(HEIGHT_ATTR);
+                    }
                     htmlBlock.setContent(List.of(BasedSequence.of(element.outerHtml())));
                     htmlBlock.setChars(BasedSequence.of(element.outerHtml()));
                 }
