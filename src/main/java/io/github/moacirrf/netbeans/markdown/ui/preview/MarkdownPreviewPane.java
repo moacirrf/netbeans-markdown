@@ -65,7 +65,7 @@ public class MarkdownPreviewPane extends JPanel {
 
         scrollPane = new JScrollPane();
         scrollPane.setViewportView(editorPane);
-        scrollPane.getVerticalScrollBar().setBlockIncrement(12);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(10);
         createProgressBar();
         add(progressPanel);
         add(scrollPane);
