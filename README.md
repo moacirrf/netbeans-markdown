@@ -6,11 +6,11 @@
 This plugin adds some additional features to Apache Netbeans Markdown Editor.
 - Preview
 - Split Window
-- Sugestion
+- Hints
 - Export to DOCX and PDF
 
 ## Requirements
- - Apache Netbeans 14, 15
+ - Apache Netbeans 14+
  - JDK 11+
 
 ## Licenses
@@ -24,4 +24,4 @@ This plugin adds some additional features to Apache Netbeans Markdown Editor.
  
 
 ## Screenshots
-<img src="https://user-images.githubusercontent.com/950706/190041477-71d5b5fc-d887-4934-810a-0ceb1048c607.png" width="1700"  />
+<img src="https://github.com/moacirrf/netbeans-markdown/assets/950706/9c0508ba-1556-4ca2-9edc-6dadb7e06fa3" width="1700"  />
