@@ -55,7 +55,7 @@ public class ImageNodeRenderer implements NodeRenderer, CustomNodeRenderer {
         if (node instanceof Image) {
             imageNodeHelper.renderImage((Image) node);
         } else if (node instanceof HtmlBlock) {
-            imageNodeHelper.renderHtmlBlock((HtmlBlock) node);
+            imageNodeHelper.renderHtmlImageNode((HtmlBlock) node);
         }
         context.delegateRender();
     }

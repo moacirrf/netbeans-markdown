@@ -17,6 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.html.flexmark;
 
 import com.vladsch.flexmark.ast.HtmlBlock;
+import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
@@ -37,12 +38,12 @@ import org.openide.util.Utilities;
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
 public class ImageNodeHelper {
-    
+
     private static final String IMG_TAG = "img";
     public static final String SRC_ATTR = "src";
     public static final String WIDTH_ATTR = "width";
     public static final String HEIGHT_ATTR = "height";
-    
+
     public void renderImage(Image image) {
         if (image.getUrl() != null && ImageHelper.isImage(image.getUrl().toString())) {
             URL url = buildURL(image.getUrl().toString());
@@ -51,39 +52,41 @@ public class ImageNodeHelper {
             }
         }
     }
-    
-    public boolean isImageNode(HtmlBlock htmlBlock) {
-        var tagImageContent = htmlBlock.getChars().toString();
+
+    public boolean isImageNode(Node node) {
+        var tagImageContent = node.getChars().toString();
         return tagImageContent.toLowerCase().contains(IMG_TAG);
     }
 
     /**
-     * A tag img on a md file is regognized as a HtmlBlock node and not a Image
-     * node
+     * A tag img on a md file is regognized as a HtmlBlock or HtmlInline node and not a Image
+     * node. so this method will include image attributes to a tag
      *
      * @param node
      * @param context
      */
-    public void renderHtmlBlock(HtmlBlock htmlBlock) {
-        if (isImageNode(htmlBlock)) {
-            var tagImageContent = htmlBlock.getChars().toString();
-            var element = Jsoup.parseBodyFragment(tagImageContent).body().firstChild();
-            if (element != null) {
-                URL url = buildURL(element.attr(SRC_ATTR));
-                if (url != null) {
-                    String urlString = url.toString();
-                    element.attr(SRC_ATTR, urlString);
-                    if(urlString.contains(ImageHelper.getNotLoadedImage().getFileName().toString())){
-                        element.removeAttr(WIDTH_ATTR);
-                        element.removeAttr(HEIGHT_ATTR);
-                    }
-                    htmlBlock.setContent(List.of(BasedSequence.of(element.outerHtml())));
-                    htmlBlock.setChars(BasedSequence.of(element.outerHtml()));
+    public void renderHtmlImageNode(Node node) {
+
+        var tagImageContent = node.getChars().toString();
+        var element = Jsoup.parseBodyFragment(tagImageContent).body().firstChild();
+        if (element != null) {
+            URL url = buildURL(element.attr(SRC_ATTR));
+            if (url != null) {
+                String urlString = url.toString();
+                element.attr(SRC_ATTR, urlString);
+                if (urlString.contains(ImageHelper.getNotLoadedImage().getFileName().toString())) {
+                    element.removeAttr(WIDTH_ATTR);
+                    element.removeAttr(HEIGHT_ATTR);
                 }
+                if (isImageNode(node) && node instanceof HtmlBlock) {
+                    ((HtmlBlock) node).setContent(List.of(BasedSequence.of(element.outerHtml())));
+                }
+                node.setChars(BasedSequence.of(element.outerHtml()));
             }
         }
+
     }
-    
+
     public String extractAttribute(Node htmlBlock, String attr) {
         var tagImageContent = htmlBlock.getChars().toString();
         var element = Jsoup.parseBodyFragment(tagImageContent).body().firstChild();
@@ -92,7 +95,7 @@ public class ImageNodeHelper {
         }
         return null;
     }
-    
+
     private URL buildURL(String url) {
         URL resultUrl = null;
         try {

@@ -938,7 +938,11 @@ public class MyCoreNodeDocxRenderer implements PhasedNodeDocxRenderer {
         //if (docx.getDocxRendererOptions().sourceWrapInlineHtml) {
         //    html.srcPos(node.getChars()).withAttr(AttributablePart.NODE_POSITION).tag("span");
         //}
-        renderInlineHtml(node, docx, docx.getDocxRendererOptions().suppressInlineHtml, true /*|| docx.getDocxRendererOptions().escapeInlineHtml*/);
+        if (this.imageNodeHelper.isImageNode(node)) {
+            renderHtmlInlineImage(node, docx);
+        } else {
+            renderInlineHtml(node, docx, docx.getDocxRendererOptions().suppressInlineHtml, true /*|| docx.getDocxRendererOptions().escapeInlineHtml*/);
+        }
         //if (docx.getDocxRendererOptions().sourceWrapInlineHtml) {
         //    html.tag("/span");
         //}
@@ -2023,18 +2027,25 @@ public class MyCoreNodeDocxRenderer implements PhasedNodeDocxRenderer {
     }
 
     private void renderHtmlBlockImage(HtmlBlock htmlBlockImage, DocxRendererContext docx) {
-        this.imageNodeHelper.renderHtmlBlock(htmlBlockImage);
-        String width = imageNodeHelper.extractAttribute(htmlBlockImage, ImageNodeHelper.WIDTH_ATTR);
-        String heigh = imageNodeHelper.extractAttribute(htmlBlockImage, ImageNodeHelper.HEIGHT_ATTR);
+        rendeHtmlNode(htmlBlockImage, docx);
+    }
 
-        ResolvedLink resolvedLink = new ResolvedLink(LinkType.IMAGE, imageNodeHelper.extractAttribute(htmlBlockImage, ImageNodeHelper.SRC_ATTR));
+    private void renderHtmlInlineImage(HtmlInline htmlInline, DocxRendererContext docx) {
+        rendeHtmlNode(htmlInline, docx);
+    }
+
+    private void rendeHtmlNode(Node node, DocxRendererContext docx) {
+        this.imageNodeHelper.renderHtmlImageNode(node);
+        String width = imageNodeHelper.extractAttribute(node, ImageNodeHelper.WIDTH_ATTR);
+        String heigh = imageNodeHelper.extractAttribute(node, ImageNodeHelper.HEIGHT_ATTR);
+
+        ResolvedLink resolvedLink = new ResolvedLink(LinkType.IMAGE, imageNodeHelper.extractAttribute(node, ImageNodeHelper.SRC_ATTR));
         MutableAttributes attributes = new MutableAttributes();
         attributes.addValue(ImageNodeHelper.WIDTH_ATTR, width);
         attributes.addValue(ImageNodeHelper.HEIGHT_ATTR, heigh);
-        attributes.addValue(ImageNodeHelper.SRC_ATTR, imageNodeHelper.extractAttribute(htmlBlockImage, ImageNodeHelper.SRC_ATTR));
+        attributes.addValue(ImageNodeHelper.SRC_ATTR, imageNodeHelper.extractAttribute(node, ImageNodeHelper.SRC_ATTR));
         renderImage(docx, resolvedLink, attributes, 1.0);
         // newImage(docx, image, filenameHint, attributes, id1, id2, scale);
-
     }
 
     private Tbl myTbl;
