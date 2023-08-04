@@ -84,7 +84,7 @@ public class DocxExporter implements Exporter {
             Exceptions.printStackTrace(ex);
         }
 
-        try ( var writer = new BufferedOutputStream(new FileOutputStream(file))) {
+        try (var writer = new BufferedOutputStream(new FileOutputStream(file))) {
             mds.forEach(input -> {
                 try {
                     writer.write(getMarkdownContent(input.getFile()).getBytes());
@@ -120,6 +120,11 @@ public class DocxExporter implements Exporter {
         WordprocessingMLPackage template = DocxRenderer.getDefaultTemplate();
         renderer.render(document, template);
         try {
+            String orignalName = outPut.getName();
+            int contRepeat = 0;
+            while (outPut.exists()) {
+                outPut = new File(outPut.getParent(), (contRepeat++) + "_" + orignalName);
+            }
             template.save(outPut, Docx4J.FLAG_SAVE_ZIP_FILE);
             return Optional.of(outPut);
         } catch (Docx4JException e) {
