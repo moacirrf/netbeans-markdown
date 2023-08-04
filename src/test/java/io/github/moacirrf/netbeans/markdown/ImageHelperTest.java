@@ -17,13 +17,20 @@
 package io.github.moacirrf.netbeans.markdown;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -35,13 +42,15 @@ public class ImageHelperTest {
             = "https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg";
 
     private static final String PNG_HTTP_URL
-            = "https://user-images.githubusercontent.com/950706/190041477-71d5b5fc-d887-4934-810a-0ceb1048c607.png";
+            = "https://raw.githubusercontent.com/moacirrf/netbeans-markdown/main/src/main/resources/io/github/moacirrf/netbeans/markdown/code_template.png";
 
-        
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @Test
-    public void testIsNonSVG() throws MalformedURLException {
-        assertFalse(ImageHelper.isNonSVG(new URL(SVG_HTTP_URL)));
-        assertTrue(ImageHelper.isNonSVG(new URL(PNG_HTTP_URL)));
+    public void testIsSVG() throws MalformedURLException {
+        assertTrue(ImageHelper.isSVG(new URL(SVG_HTTP_URL)));
+        assertFalse(ImageHelper.isSVG(new URL(PNG_HTTP_URL)));
     }
 
     @Test
@@ -74,5 +83,30 @@ public class ImageHelperTest {
 
         file.delete();
     }
+    
+    @Test
+    public void testGetImageType(){
+        try {
+            assertEquals(ImageHelper.getImageType(URI.create(SVG_HTTP_URL).toURL()), "svg"); ;
+            assertEquals(ImageHelper.getImageType(URI.create(PNG_HTTP_URL).toURL()), "png"); ;
+        } catch (MalformedURLException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
 
+    @Test
+    public void testFileExistsByHash() {
+        try {
+            Path path = folder.newFile("teste.png").toPath();
+            byte[] bytes = URI.create(PNG_HTTP_URL).toURL().openStream().readAllBytes();
+            Files.write(path, bytes, TRUNCATE_EXISTING, WRITE);
+            assertTrue(Files.exists(path));
+            assertTrue(ImageHelper.fileExistsByHash(path, bytes));
+            Files.delete(path);
+
+            folder.delete();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
 }

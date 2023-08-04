@@ -44,6 +44,8 @@ public class HtmlExporter implements Exporter {
 
     private static final String EXT = ".html";
 
+    private static final String IMAGES_FOLDER_NAME = "nb_markdown_images";
+
     @Override
     public List<File> export(ExporterConfig config) {
         var lista = new ArrayList<File>();
@@ -81,7 +83,7 @@ public class HtmlExporter implements Exporter {
         try (var writer = new BufferedOutputStream(new FileOutputStream(file));) {
             mds.forEach(input -> {
                 try {
-                    writer.write(("\n"+getMarkdownContent(input.getFile())).getBytes());
+                    writer.write(("\n" + getMarkdownContent(input.getFile())).getBytes());
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
@@ -112,6 +114,11 @@ public class HtmlExporter implements Exporter {
     private void writeHtml(Path path, String htmlContent) {
 
         try {
+            int contRepeat = 0;
+            String originalName = path.getFileName().toString();
+            while (Files.exists(path)) {
+                path = Path.of(path.getParent().toString(), (contRepeat++) + "_" + originalName);
+            }
             Files.writeString(path, htmlContent, CREATE_NEW, WRITE, TRUNCATE_EXISTING);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
@@ -120,32 +127,34 @@ public class HtmlExporter implements Exporter {
 
     /**
      * Creates a folder image and copy all imges to this folder.
-     * 
+     *
      * @param path Directory selected top export the html
      * @param html The actual Html in string format
      * @return Returns the html text with images with new address.
      */
     private String moveImages(Path path, String html) {
-        Path images = Path.of(path.toString(), "images");
+
+        Path images = Path.of(path.toString(), IMAGES_FOLDER_NAME);
         try {
             if (!Files.exists(images)) {
-                images = Files.createDirectory(Path.of(path.toString(), "images"));
+                images = Files.createDirectory(Path.of(path.toString(), IMAGES_FOLDER_NAME));
             }
 
             if (images != null && Files.exists(images)) {
                 Document doc = Jsoup.parse(html);
                 Elements elements = doc.getElementsByTag("img");
                 for (Element element : elements) {
-                    
+
                     Path originalImage = null;
                     originalImage = Path.of(URI.create(element.attr("src")));
                     if (Files.exists(originalImage)) {
                         Path image = Path.of(images.toString(), originalImage.getFileName().toString());
-                        if (Files.exists(image)) {
-                            image = Path.of(images.toString(), System.currentTimeMillis() + "_" + originalImage.getFileName().toString());
+                        int contRepeatedImage = 0;
+                        while (Files.exists(image)) {
+                            image = Path.of(images.toString(), (contRepeatedImage++) + "_" + originalImage.getFileName().toString());
                         }
                         Files.copy(originalImage, image);
-                        element.attr("src", "images/" + image.getFileName().toString());
+                        element.attr("src", IMAGES_FOLDER_NAME + "/" + image.getFileName().toString());
                     }
                 }
                 return doc.html();

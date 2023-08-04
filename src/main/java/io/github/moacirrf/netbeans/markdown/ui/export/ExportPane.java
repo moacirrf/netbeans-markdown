@@ -18,14 +18,12 @@ package io.github.moacirrf.netbeans.markdown.ui.export;
 
 import io.github.moacirrf.netbeans.markdown.export.Exporter;
 import io.github.moacirrf.netbeans.markdown.export.ExporterConfig;
-import io.github.moacirrf.netbeans.markdown.ui.MouseListenerBuilder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DropMode;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -201,6 +199,7 @@ public class ExportPane extends javax.swing.JPanel implements ActionListener {
         org.openide.awt.Mnemonics.setLocalizedText(docxExport, org.openide.util.NbBundle.getMessage(ExportPane.class, "ExportPane.docxExport.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(htmlExport, org.openide.util.NbBundle.getMessage(ExportPane.class, "ExportPane.htmlExport.text")); // NOI18N
+        htmlExport.setToolTipText(org.openide.util.NbBundle.getMessage(ExportPane.class, "ExportPane.htmlExport.toolTipText")); // NOI18N
 
         javax.swing.GroupLayout buttonsPaneLayout = new javax.swing.GroupLayout(buttonsPane);
         buttonsPane.setLayout(buttonsPaneLayout);

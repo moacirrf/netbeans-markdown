@@ -21,6 +21,7 @@ import static java.io.File.separator;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -34,12 +35,17 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import java.security.InvalidParameterException;
 import static java.util.Arrays.asList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.openide.util.Exceptions;
 
@@ -55,29 +61,65 @@ public final class ImageHelper {
 
     private static final Map<String, URL> CACHE_CONVERTED_IMAGES = new HashMap<>();
 
-    public static boolean isNonSVG(URL url) {
+    public static boolean isSVG(URL url) {
         String fileName = url.getFile().toLowerCase();
-        return (fileName.contains("jpg")
-                || fileName.contains("png")
-                || fileName.contains("jpeg")
-                || fileName.contains("webp")
-                || fileName.contains("gif"));
-
+        return getImageType(url).contains("svg") || fileName.endsWith("svg");
     }
 
     public static boolean isImage(String url) {
-        for (String ext : EXTENSION_IMAGES) {
-            if (url.toLowerCase().endsWith(ext)) {
-                return true;
+        try {
+            for (String ext : EXTENSION_IMAGES) {
+                if (url.toLowerCase().endsWith(ext)) {
+                    return true;
+                }
             }
+            String type = getImageType(URI.create(url).toURL());
+            for (String ext : EXTENSION_IMAGES) {
+                if (type.toLowerCase().contains(ext)) {
+                    return true;
+                }
+            }
+        } catch (MalformedURLException ex) {
+            Exceptions.printStackTrace(ex);
         }
         return false;
+    }
+
+    public static String getImageType(URL url) {
+        try {
+            ImageInputStream iis = ImageIO.createImageInputStream(url.openStream());
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            if (readers != null) {
+                while (readers.hasNext()) {
+                    ImageReader reader = readers.next();
+                    return reader.getFormatName().toLowerCase();
+                }
+
+            }
+            String header = new String(url.openStream().readAllBytes()).substring(0, 5);
+            iis.close();
+            if (header.toLowerCase().contains("svg")) {
+                return "svg";
+            }
+
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return "";
+
     }
 
     public static boolean isHttpUrl(String url) {
         return url.toLowerCase().contains("http");
     }
 
+    /**
+     * Download image from internet, if file exists with same name but with different hash
+     * a new file will be create with number concatenated ex.: 0_java.png.
+     *
+     * @param url
+     * @return
+     */
     public static URL downloadImage(URL url) {
 
         if (!isHttpUrl(url.toString())) {
@@ -85,14 +127,23 @@ public final class ImageHelper {
         }
         URL returnUrl = null;
         try {
-            HttpRequest request = HttpRequest.newBuilder(url.toURI()).GET().build();
-            HttpClient http = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder(url.toURI())
+                    .GET()
+                    .build();
+
+            HttpClient http = HttpClient.newBuilder()
+                    .followRedirects(HttpClient.Redirect.ALWAYS)
+                    .build();
 
             byte[] bytes = http.send(request, ofByteArray())
                     .body();
 
             Path file = Path.of(TEMP_DIR.toString(), Path.of(url.getFile()).getFileName().toString());
             if (file != null) {
+                int contRepeatImage = 0;
+                while (Files.exists(file) && !fileExistsByHash(file, bytes)) {
+                    file = Path.of(TEMP_DIR.toString(), (contRepeatImage++) + "_" + Path.of(url.getFile()).getFileName().toString());
+                }
                 Files.write(file, bytes, CREATE, TRUNCATE_EXISTING);
                 returnUrl = file.toUri().toURL();
             }
@@ -103,33 +154,42 @@ public final class ImageHelper {
                 Thread.currentThread().interrupt();
             }
         }
+        getImageType(returnUrl);
         return returnUrl;
     }
 
+    /**
+     * Convert SVG to png
+     *
+     * @param url
+     * @return Return a new png url referencing a existing file
+     */
     public static URL convertSVGToPNG(URL url) {
         if (url == null) {
             return null;
         }
-        try {
-            String fileName = new File(url.getFile()).getName().toLowerCase();
+        if (isSVG(url)) {
+            try {
+                String fileName = new File(url.getFile()).getName().toLowerCase();
 
-            Path imageTemp = Paths.get(TEMP_DIR.toString(), fileName + ".png");
-            imageTemp.toFile().setWritable(true);
+                Path imageTemp = Paths.get(TEMP_DIR.toString(), fileName + ".png");
+                imageTemp.toFile().setWritable(true);
 
-            var t = new PNGTranscoder();
-            var input = new TranscoderInput(url.toString());
-            // I don't know why, but "try with resources are not working", so don't use.
-            var ostream = new FileOutputStream(imageTemp.toFile());
-            TranscoderOutput output = new TranscoderOutput(ostream);
-            // Save the image to temp.
-            t.transcode(input, output);
-            ostream.flush();
-            ostream.close();
-            CACHE_CONVERTED_IMAGES.put(url.toString(), imageTemp.toUri().toURL());
-            return CACHE_CONVERTED_IMAGES.get(url.toString());
+                var t = new PNGTranscoder();
+                var input = new TranscoderInput(url.toString());
+                // I don't know why, but "try with resources are not working", so don't use.
+                var ostream = new FileOutputStream(imageTemp.toFile());
+                TranscoderOutput output = new TranscoderOutput(ostream);
+                // Save the image to temp.
+                t.transcode(input, output);
+                ostream.flush();
+                ostream.close();
+                CACHE_CONVERTED_IMAGES.put(url.toString(), imageTemp.toUri().toURL());
+                return CACHE_CONVERTED_IMAGES.get(url.toString());
 
-        } catch (TranscoderException | IOException ex) {
-            Exceptions.printStackTrace(ex);
+            } catch (TranscoderException | IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
 
         return url;
@@ -166,5 +226,26 @@ public final class ImageHelper {
     }
 
     private ImageHelper() {
+    }
+
+    /**
+     * Test if a file is the same based on md5Hex, compare Path with the byte
+     * array
+     *
+     * @param path File existing on disk to compare with a byte array.
+     * @param bytes Byte arrays to compare to path
+     * @return true if file exists(is the same), false if not
+     */
+    public static boolean fileExistsByHash(Path path, byte[] bytes) {
+        try {
+            if (Files.exists(path)) {
+                String hash = DigestUtils.md5Hex(Files.readAllBytes(path));
+
+                return hash.equals(DigestUtils.md5Hex(bytes));
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return false;
     }
 }

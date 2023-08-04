@@ -6,8 +6,8 @@
 This plugin adds some additional features to Apache Netbeans Markdown Editor.
 - Preview
 - Split Window
-- Hints
-- Export to DOCX and PDF
+- Suggestion
+- Export to DOCX, PDF and HTML
 
 ## Requirements
  - Apache Netbeans 14+

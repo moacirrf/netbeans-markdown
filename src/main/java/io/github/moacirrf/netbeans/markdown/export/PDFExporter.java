@@ -57,22 +57,29 @@ public class PDFExporter implements Exporter {
             if (config.isUniqueFile()) {
                 var html = getHtml(mergeMd(config.getMdfiles()));
                 String name = config.getOutputFileName().replace(".md", EXT) + EXT;
-                var file = new File(config.getDestinyFolder(), name);
-                PdfConverterExtension.exportToPdf(new FileOutputStream(file), html, "", OPTIONS);
-                lista.add(file);
+                lista.add(writePdf(new File(config.getDestinyFolder(), name), html));
             } else {
                 for (InputModel input : config.getMdfiles()) {
                     var html = getHtml(input.getFile());
                     String name = input.getName().replace(".md", EXT);
-                    var file = new File(config.getDestinyFolder(), name);
-                    PdfConverterExtension.exportToPdf(new FileOutputStream(file), html, "", OPTIONS);
-                    lista.add(file);
+                    lista.add(writePdf(new File(config.getDestinyFolder(), name), html));
                 }
             }
         } catch (FileNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
         return lista;
+    }
+
+    private File writePdf(File file, String html) throws FileNotFoundException {
+
+        String originalName = file.getName();
+        int contRepeat = 0;
+        while (file.exists()) {
+            file = new File(file.getParent(), (contRepeat++) + "_" + originalName);
+        }
+        PdfConverterExtension.exportToPdf(new FileOutputStream(file), html, "", OPTIONS);
+        return file;
     }
 
     private File mergeMd(List<InputModel> mds) {
@@ -83,7 +90,7 @@ public class PDFExporter implements Exporter {
             Exceptions.printStackTrace(ex);
         }
 
-        try ( var writer = new BufferedOutputStream(new FileOutputStream(file));) {
+        try (var writer = new BufferedOutputStream(new FileOutputStream(file));) {
             mds.forEach(input -> {
                 try {
                     writer.write(getMarkdownContent(input.getFile()).getBytes());

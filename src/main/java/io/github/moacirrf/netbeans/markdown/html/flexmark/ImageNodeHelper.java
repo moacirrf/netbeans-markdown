@@ -17,12 +17,10 @@
 package io.github.moacirrf.netbeans.markdown.html.flexmark;
 
 import com.vladsch.flexmark.ast.HtmlBlock;
-import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 import io.github.moacirrf.netbeans.markdown.ImageHelper;
-import static io.github.moacirrf.netbeans.markdown.ImageHelper.isNonSVG;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -59,8 +57,9 @@ public class ImageNodeHelper {
     }
 
     /**
-     * A tag img on a md file is regognized as a HtmlBlock or HtmlInline node and not a Image
-     * node. so this method will include image attributes to a tag
+     * A tag img on a md file is regognized as a HtmlBlock or HtmlInline node
+     * and not a Image node. so this method will include image attributes to a
+     * tag
      *
      * @param node
      * @param context
@@ -101,16 +100,15 @@ public class ImageNodeHelper {
         try {
             if (ImageHelper.isHttpUrl(url)) {
                 resultUrl = new URL(url);
-                if (!isNonSVG(resultUrl)) {
+                resultUrl = ImageHelper.downloadImage(resultUrl);
+                if (ImageHelper.isSVG(resultUrl)) {
                     resultUrl = ImageHelper.convertSVGToPNG(resultUrl);
-                } else {
-                    resultUrl = ImageHelper.downloadImage(resultUrl);
                 }
             } else {
                 File localFile = ImageHelper.getLocalImage(url);
                 if (localFile != null) {
                     resultUrl = Utilities.toURI(localFile).toURL();
-                    if (!ImageHelper.isNonSVG(resultUrl)) {
+                    if (ImageHelper.isSVG(resultUrl)) {
                         resultUrl = ImageHelper.convertSVGToPNG(resultUrl);
                     }
                 }
