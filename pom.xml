@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.moacirrf</groupId>
     <artifactId>netbeans-markdown</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>nbm</packaging>
     <name>Netbeans Markdown</name>
     <url>https://github.com/moacirrf/netbeans-markdown</url>
