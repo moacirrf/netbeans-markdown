@@ -17,10 +17,9 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: NBM
+      - name: "Generate java artifacts"
         run: mvn -Dkeypass=${{secrets.KEYPASS}} verify
-      - name: "Automatic Releases"
-      - uses: actions/checkout@v3
+      - name: "Generate pre-release"  
       - uses: ncipollo/release-action@v1
         with:
           token: "${{ secrets.NETBEANS_ACTION_TOKEN }}"
