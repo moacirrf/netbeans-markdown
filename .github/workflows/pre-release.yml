@@ -20,7 +20,8 @@ jobs:
           distribution: 'adopt'
       - name: NBM
         run: mvn -Dkeypass=${{secrets.KEYPASS}} verify
-      - uses: marvinpinto/action-automatic-releases@latest
+      - name: "Automatic Releases"  
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: "${{ secrets.NETBEANS_ACTION_TOKEN }}"
           automatic_release_tag: "latest"
