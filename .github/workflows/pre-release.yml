@@ -18,8 +18,11 @@ jobs:
           distribution: 'adopt'
       - name: Generate java artifacts
         run: mvn -Dkeypass=${{secrets.KEYPASS}} verify
+      - name: "Pre-Release"
+        uses: actions/checkout@v3
       - uses: ncipollo/release-action@v1
         with:
+          name: "Development Build"
           token: "${{ secrets.NETBEANS_ACTION_TOKEN }}"
           tag: "latest"
           prerelease: true
