@@ -18,18 +18,24 @@ package io.github.moacirrf.netbeans.markdown.ui.preview;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.event.HyperlinkEvent;
+import static javax.swing.event.HyperlinkEvent.EventType.ACTIVATED;
+import static javax.swing.event.HyperlinkEvent.EventType.ENTERED;
+import static javax.swing.event.HyperlinkEvent.EventType.EXITED;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import org.apache.commons.lang3.StringUtils;
+import org.openide.awt.HtmlBrowser;
 import org.openide.util.Exceptions;
 
 /**
@@ -37,6 +43,34 @@ import org.openide.util.Exceptions;
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
 public class JEditorPaneImpl extends JEditorPane {
+
+    public JEditorPaneImpl() {
+        this.addHyperlinkListener((HyperlinkEvent e) -> {
+            if (e.getInputEvent() instanceof MouseEvent) {
+                if (ACTIVATED.equals(e.getEventType())) {
+                    HtmlBrowser.URLDisplayer.getDefault().showURL(e.getURL());
+                } else if (ENTERED.equals(e.getEventType())) {
+                    setToolTipText(getTitle(e.getSourceElement()));
+                } else if (EXITED.equals(e.getEventType())) {
+                    setToolTipText(null);
+                }
+            }
+        });
+    }
+
+    private String getTitle(Element e) {
+        if (e != null && e.getAttributes() != null) {
+            var simpleAttributeSet = (SimpleAttributeSet) e.getAttributes().getAttribute(HTML.getTag(HTML.Tag.A.toString()));
+            if (simpleAttributeSet != null) {
+                String title = (String) simpleAttributeSet.getAttribute(HTML.getAttributeKey(HTML.Attribute.TITLE.toString()));
+                if (StringUtils.isNotBlank(title)) {
+                    return title;
+                }
+            }
+        }
+ 
+        return null;
+    }
 
     /**
      * Get visible text of JEditorPane.
@@ -52,7 +86,7 @@ public class JEditorPaneImpl extends JEditorPane {
         int begin = jEditorPane.viewToModel2D(point);
         int end = jEditorPane.viewToModel2D(pointMax);
         if (begin >= 0) {
-            try ( var outputStream = new ByteArrayOutputStream()) {
+            try (var outputStream = new ByteArrayOutputStream()) {
                 jEditorPane.getEditorKit().write(outputStream, jEditorPane.getDocument(), begin, end - begin);
                 return outputStream.toString();
             } catch (BadLocationException | IOException ex) {

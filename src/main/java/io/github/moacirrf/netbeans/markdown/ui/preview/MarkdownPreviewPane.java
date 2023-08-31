@@ -48,11 +48,6 @@ public class MarkdownPreviewPane extends JPanel {
         this.setBorder(BorderFactory.createEmptyBorder(22, 0, 9, 0));
         editorPane.setBorder(BorderFactory.createEmptyBorder());
         editorPane.setFocusable(true);
-        editorPane.addHyperlinkListener((HyperlinkEvent e) -> {
-            if (e.getInputEvent() instanceof MouseEvent && ACTIVATED.equals(e.getEventType())) {
-                HtmlBrowser.URLDisplayer.getDefault().showURL(e.getURL());
-            }
-        });
     }
 
     private void initComponents() {
@@ -61,7 +56,7 @@ public class MarkdownPreviewPane extends JPanel {
 
         editorPane = new JEditorPaneImpl();
         editorPane.setEditable(false);
-        editorPane.setEditorKit(new MarkdownEditorKit());
+        editorPane.setEditorKit(new MarkdownEditorKit(editorPane));
 
         scrollPane = new JScrollPane();
         scrollPane.setViewportView(editorPane);

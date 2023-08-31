@@ -17,6 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
 import static io.github.moacirrf.netbeans.markdown.ui.preview.ViewUtils.isElementOfTag;
+import javax.swing.JEditorPane;
 import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.html.HTML;
@@ -24,15 +25,22 @@ import javax.swing.text.html.HTMLEditorKit;
 
 public class LocalViewFactory extends HTMLEditorKit.HTMLFactory {
 
+    private JEditorPane editorPane;
+
+    public LocalViewFactory(JEditorPane editorPane) {
+        this.editorPane = editorPane;
+    }
+
     @Override
     public View create(Element elem) {
         if (isElementOfTag(elem, HTML.Tag.IMG)) {
-            return new ImageViewImpl(elem);
+            return new ImageView(elem,editorPane);
         }
 
         if (isElementOfTag(elem, HTML.Tag.INPUT)) {
             return new CheckboxView(elem);
         }
+
         return super.create(elem);
     }
 }

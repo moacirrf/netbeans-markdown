@@ -41,6 +41,23 @@ public final class ViewUtils {
 
     }
 
+    public static String getAttributeFrom(HTML.Attribute attribute, Element element) {
+        if (element.getAttributes() != null && element.getAttributes().getAttributeNames() != null) {
+            var iterator = element.getAttributes().getAttributeNames().asIterator();
+            while (iterator.hasNext()) {
+                var attr = iterator.next();
+                if (attr != null
+                        && attribute.toString().trim().equalsIgnoreCase(attr.toString().trim())
+                        && element.getAttributes().getAttribute(attr) != null) {
+
+                    return element.getAttributes().getAttribute(attr).toString();
+                }
+            }
+        }
+        return null;
+
+    }
+
     private ViewUtils() {
     }
 

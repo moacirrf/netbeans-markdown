@@ -16,6 +16,7 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
+import javax.swing.JEditorPane;
 import javax.swing.text.ViewFactory;
 
 import javax.swing.text.html.HTMLEditorKit;
@@ -24,7 +25,12 @@ import javax.swing.text.html.StyleSheet;
 public class MarkdownEditorKit extends HTMLEditorKit {
 
     private final StyleSheet styleSheet = new ThemeResolver().resolve();
-    private final ViewFactory viewFactory = new LocalViewFactory();
+    private final transient ViewFactory viewFactory;
+
+    public MarkdownEditorKit(JEditorPane editorPane) {
+        super();
+        this.viewFactory = new LocalViewFactory(editorPane);
+    }
 
     @Override
     public StyleSheet getStyleSheet() {

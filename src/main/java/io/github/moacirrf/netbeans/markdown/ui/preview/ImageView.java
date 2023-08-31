@@ -16,27 +16,24 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
-import java.net.URL;
+import io.github.moacirrf.netbeans.markdown.ui.preview.image.ImageLabel;
+import java.awt.Component;
+import javax.swing.JEditorPane;
+import javax.swing.text.ComponentView;
 import javax.swing.text.Element;
-import javax.swing.text.html.ImageView;
 
-/**
- * SVG images need to be converted to PNG, this class will do this job, if image
- * its not PNG, JPG or WEBP, it will suppose that is a SVG image and try
- * converts to PNG and save on temporary directory.
- *
- * If the convertion fail will try to use the original image.
- *
- * @author Moacir da Roza Flores <moacirrf@gmail.com>
- */
-public class ImageViewImpl extends ImageView {
 
-    public ImageViewImpl(Element elem) {
+public class ImageView extends ComponentView {
+
+    private JEditorPane editorPane;
+
+    public ImageView(Element elem, JEditorPane editorPane) {
         super(elem);
+        this.editorPane = editorPane;
     }
 
     @Override
-    public URL getImageURL() {
-        return super.getImageURL();
+    protected Component createComponent() {
+        return new ImageLabel(getElement(), editorPane);
     }
 }
