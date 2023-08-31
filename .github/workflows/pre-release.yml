@@ -18,3 +18,10 @@ jobs:
           distribution: 'adopt'
       - name: Generate java artifacts
         run: mvn -Dkeypass=${{secrets.KEYPASS}} verify
+      - uses: ncipollo/release-action@v1
+        with:
+          token: "${{ secrets.NETBEANS_ACTION_TOKEN }}"
+          tag: "latest"
+          prerelease: true
+          artifacts: "target/*.jar,target/*.nbm"
+        
