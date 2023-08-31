@@ -23,5 +23,6 @@ jobs:
           token: "${{ secrets.NETBEANS_ACTION_TOKEN }}"
           tag: "latest"
           prerelease: true
+          allowUpdates: true
           artifacts: "target/*.jar,target/*.nbm"
         
