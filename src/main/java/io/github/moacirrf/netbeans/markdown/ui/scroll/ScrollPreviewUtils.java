@@ -16,6 +16,7 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.scroll;
 
+import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.ui.preview.JEditorPaneImpl;
 import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.getScrollPaneOf;
 import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.isScrolledToMaximum;
@@ -35,43 +36,47 @@ import org.openide.util.Exceptions;
 public final class ScrollPreviewUtils {
 
     public static void syncronizeScrolls(JEditorPane leftEditorPane, JEditorPane rightEditor) {
-        JScrollPane leftJScrollPane = getScrollPaneOf(leftEditorPane);
-        JScrollPane rightJScrollPane = getScrollPaneOf(rightEditor);
-        if (leftJScrollPane != null) {
-            if (isScrolledToMaximum(leftJScrollPane)) {
-                setScrollToMaximum(rightJScrollPane);
-            } else {
-                try {
-                    var leftTextVisible = JEditorPaneImpl.getVisibleText(leftEditorPane, leftJScrollPane);
-                    if (leftTextVisible.length() > 0) {
-                        scrollByTextContent(leftEditorPane.getText(), leftTextVisible, (JEditorPaneImpl) rightEditor);
-                    } else {
-                        rightJScrollPane.getViewport().setViewPosition(new Point(leftJScrollPane.getViewport().getViewPosition()));
+        if (Context.SCROLL_SYNC) {
+            JScrollPane leftJScrollPane = getScrollPaneOf(leftEditorPane);
+            JScrollPane rightJScrollPane = getScrollPaneOf(rightEditor);
+            if (leftJScrollPane != null) {
+                if (isScrolledToMaximum(leftJScrollPane)) {
+                    setScrollToMaximum(rightJScrollPane);
+                } else {
+                    try {
+                        var leftTextVisible = JEditorPaneImpl.getVisibleText(leftEditorPane, leftJScrollPane);
+                        if (leftTextVisible.length() > 0) {
+                            scrollByTextContent(leftEditorPane.getText(), leftTextVisible, (JEditorPaneImpl) rightEditor);
+                        } else {
+                            rightJScrollPane.getViewport().setViewPosition(new Point(leftJScrollPane.getViewport().getViewPosition()));
+                        }
+                    } catch (BadLocationException ex) {
+                        Exceptions.printStackTrace(ex);
                     }
-                } catch (BadLocationException ex) {
-                    Exceptions.printStackTrace(ex);
                 }
             }
         }
     }
 
     private static void scrollByTextContent(String completeText, String visibleText, JEditorPaneImpl rightEdit) throws BadLocationException {
-        var list = ScrollableModel.from(Jsoup.parse(rightEdit.getText()), completeText);
-        Collections.sort(list);
-        visibleText = visibleText.trim();
-        try {
-            for (ScrollableModel item : list) {
-                int numberChars = item.getMdEnd() - item.getMdBegin();
-                if (visibleText.length() < numberChars) {
-                    numberChars = visibleText.length() - 1;
+        if (Context.SCROLL_SYNC) {
+            var list = ScrollableModel.from(Jsoup.parse(rightEdit.getText()), completeText);
+            Collections.sort(list);
+            visibleText = visibleText.trim();
+            try {
+                for (ScrollableModel item : list) {
+                    int numberChars = item.getMdEnd() - item.getMdBegin();
+                    if (visibleText.length() < numberChars) {
+                        numberChars = visibleText.length() - 1;
+                    }
+                    var subText = visibleText.substring(0, numberChars);
+                    if (subText != null && item.getMdText() != null && subText.trim().contains(item.getMdText().trim())) {
+                        rightEdit.scrollToId(item.id());
+                    }
                 }
-                var subText = visibleText.substring(0, numberChars);
-                if (subText != null && item.getMdText() != null && subText.trim().contains(item.getMdText().trim())) {
-                    rightEdit.scrollToId(item.id());
-                }
+            } catch (StringIndexOutOfBoundsException ex) {
+                Exceptions.printStackTrace(ex);
             }
-        } catch (StringIndexOutOfBoundsException ex) {
-            Exceptions.printStackTrace(ex);
         }
     }
 
