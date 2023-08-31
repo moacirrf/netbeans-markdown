@@ -208,3 +208,7 @@ code {
 .task-list-item {
     list-style-type: none;
 }
+
+.margin-bottom{
+    margin-bottom:10px;
+}

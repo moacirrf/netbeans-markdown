@@ -61,6 +61,7 @@ public final class HtmlBuilder {
         htmlAdjusters.add(new TablesAdjuster());
         htmlAdjusters.add(new LinksAdjuster());
         htmlAdjusters.add(new FirstElementAdjuster());
+        htmlAdjusters.add(new ListAdjuster());
     }
 
     public String build(String markdownText) {
