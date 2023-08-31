@@ -29,6 +29,9 @@ public final class Context {
      */
     public static FileObject OPENED_FILE;
 
+    /**
+     * Keeps the state of checkbox that controls panel's(code-preview) scroll synchornization.
+     */
     public static boolean SCROLL_SYNC = true;
 
 }
