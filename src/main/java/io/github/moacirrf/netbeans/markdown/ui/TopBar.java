@@ -92,6 +92,8 @@ public class TopBar extends javax.swing.JPanel {
 
         scrollSync.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(scrollSync, org.openide.util.NbBundle.getMessage(TopBar.class, "TopBar.scrollSync.text")); // NOI18N
+        scrollSync.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        scrollSync.setMargin(new java.awt.Insets(2, 0, 2, 2));
         scrollSync.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 scrollSyncActionPerformed(evt);
