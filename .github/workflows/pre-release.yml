@@ -10,7 +10,7 @@ jobs:
   pre-release:
     name: "Pre Release"
     runs-on: "ubuntu-latest"
-
+    using: 'node16'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
