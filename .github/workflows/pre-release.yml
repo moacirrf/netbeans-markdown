@@ -27,6 +27,7 @@ jobs:
           name: "Development Build"
           token: "${{ secrets.NETBEANS_ACTION_TOKEN }}"
           tag: "latest"
+          removeArtifacts: true
           prerelease: true
           allowUpdates: true
           artifacts: "target/*.jar,target/*.nbm"
