@@ -16,5 +16,5 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: "Generate java artifacts"
+      - name: Generate java artifacts
         run: mvn -Dkeypass=${{secrets.KEYPASS}} verify
