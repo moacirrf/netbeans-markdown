@@ -19,7 +19,8 @@ jobs:
           distribution: 'adopt'
       - name: NBM
         run: mvn -Dkeypass=${{secrets.KEYPASS}} verify
-      - name: "Automatic Releases"  
+      - name: "Automatic Releases"
+      - uses: actions/checkout@v3
       - uses: ncipollo/release-action@v1
         with:
           token: "${{ secrets.NETBEANS_ACTION_TOKEN }}"
