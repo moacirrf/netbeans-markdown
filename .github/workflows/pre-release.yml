@@ -20,3 +20,4 @@ jobs:
       - name: "Generate java artifacts"
         run: mvn -Dkeypass=${{secrets.KEYPASS}} verify
       - name: "Generate pre-release"
+      - uses: ncipollo/release-action@v1
