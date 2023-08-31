@@ -29,4 +29,6 @@ public final class Context {
      */
     public static FileObject OPENED_FILE;
 
+    public static boolean SCROLL_SYNC = true;
+
 }

@@ -16,6 +16,7 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.scroll;
 
+import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.ui.preview.JEditorPaneImpl;
 import java.awt.Rectangle;
 import javax.swing.JEditorPane;
@@ -34,25 +35,27 @@ import org.openide.util.Exceptions;
 public final class ScrollCodeViewUtils {
 
     public static void syncronizeScrolls(JEditorPane leftEditor, JEditorPane rightEditor) {
-        JScrollPane scrollPane = ScrollUtils.getScrollPaneOf(rightEditor);
-        var text = JEditorPaneImpl.getVisibleText(rightEditor, scrollPane);
-        Document document = Jsoup.parse(text);
-        if ((!document.getElementsByTag("body").isEmpty()) && document.getElementsByTag("body").get(0).childNodeSize() > 0) {
-            Element childElement = document.getElementsByTag("body").get(0).child(0);
-            String id = findIdWithText(childElement);
+        if (Context.SCROLL_SYNC) {
+            JScrollPane scrollPane = ScrollUtils.getScrollPaneOf(rightEditor);
+            var text = JEditorPaneImpl.getVisibleText(rightEditor, scrollPane);
+            Document document = Jsoup.parse(text);
+            if ((!document.getElementsByTag("body").isEmpty()) && document.getElementsByTag("body").get(0).childNodeSize() > 0) {
+                Element childElement = document.getElementsByTag("body").get(0).child(0);
+                String id = findIdWithText(childElement);
 
-            if (StringUtils.isBlank(id) && childElement.childNodeSize() > 0) { //search a child with id
-                id = childElement.child(0).attr("id");
-            }
-            if (StringUtils.isNotBlank(id)) {
-                try {
-                    int pos = Integer.parseInt(id.split("-")[0]);
-                    Rectangle positionToScrol = leftEditor.modelToView(pos);
-                    Rectangle actualPosition = leftEditor.getVisibleRect();
-                    positionToScrol.height = actualPosition.height;
-                    leftEditor.scrollRectToVisible(positionToScrol);
-                } catch (BadLocationException ex) {
-                    Exceptions.printStackTrace(ex);
+                if (StringUtils.isBlank(id) && childElement.childNodeSize() > 0) { //search a child with id
+                    id = childElement.child(0).attr("id");
+                }
+                if (StringUtils.isNotBlank(id)) {
+                    try {
+                        int pos = Integer.parseInt(id.split("-")[0]);
+                        Rectangle positionToScrol = leftEditor.modelToView(pos);
+                        Rectangle actualPosition = leftEditor.getVisibleRect();
+                        positionToScrol.height = actualPosition.height;
+                        leftEditor.scrollRectToVisible(positionToScrol);
+                    } catch (BadLocationException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
                 }
             }
         }
