@@ -1,3 +1,4 @@
+name: Maven build and test
 on:
   push:
       branches:
