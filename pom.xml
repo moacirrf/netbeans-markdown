@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.moacirrf</groupId>
     <artifactId>netbeans-markdown</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>3.0</version>
     <packaging>nbm</packaging>
     <name>Netbeans Markdown</name>
     <url>https://github.com/moacirrf/netbeans-markdown</url>
@@ -22,7 +22,7 @@
         <connection>scm:git:https://github.com/moacirrf/netbeans-markdown</connection>
         <developerConnection>scm:git:https://github.com/moacirrf/netbeans-markdown</developerConnection>
         <url>https://github.com/moacirrf/netbeans-markdown/tree/${project.scm.tag}</url>
-        <tag>v2.0</tag>
+        <tag>v3.0</tag>
     </scm>
     
     <licenses>
@@ -101,7 +101,13 @@
                     <netbeansInstallation>${netbeansInstalationPath}</netbeansInstallation> -->
                     <keystore>${basedir}/keystore.jks</keystore>
                     <keystorepassword>${keypass}</keystorepassword>
-                    <keystorealias>netbeans-markdown-key</keystorealias>                                                    
+                    <keystorealias>netbeans-markdown-key</keystorealias>
+                    <moduleDependencies>       
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-bootstrap</id>
+                            <type>impl</type>
+                        </dependency>
+                    </moduleDependencies>                            
                 </configuration>
             </plugin>
             
@@ -244,112 +250,125 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
         </dependency>
         
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-modules</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
         
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-core-multiview</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
         
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-textmate-lexer</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-awt</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-filesystems</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-loaders</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util-lookup</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util-ui</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
         
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-editor-completion</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
             
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-editor-mimelookup</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>    
 
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-editor-settings</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-dialogs</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
         
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-filesystems-nb</artifactId>
-            <version>RELEASE140</version>
+            <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
         
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
-            <version>RELEASE160</version>
-        </dependency>        
+            <version>RELEASE210</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-bootstrap</artifactId>
+            <version>RELEASE210</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-windows</artifactId>
+            <version>RELEASE210</version>
+        </dependency>
+                
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

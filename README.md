@@ -1,7 +1,7 @@
 # Markdown for Netbeans ![master](https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg)
 
 ***
-
+ 
 ## Description
 This plugin adds some additional features to Apache Netbeans Markdown Editor.
 - Preview
@@ -10,7 +10,8 @@ This plugin adds some additional features to Apache Netbeans Markdown Editor.
 - Export to DOCX, PDF and HTML
 
 ## Requirements
- - Apache Netbeans 14+
+ - Apache Netbeans 14-20(until version 2.0) 
+ - Apache Netbeans 21+(version 3.0) 
  - JDK 11+
 
 ## Licenses
