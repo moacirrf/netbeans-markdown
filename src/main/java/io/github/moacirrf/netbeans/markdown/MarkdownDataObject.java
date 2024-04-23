@@ -98,14 +98,14 @@ import org.openide.windows.TopComponent;
             position = 1400
     )
 })
-@GrammarRegistration(mimeType = "text/x-markdown-nb", grammar = "markdown.tmLanguage.json")
+@GrammarRegistration(mimeType = MarkdownDataObject.MIME_TYPE, grammar = "markdown.tmLanguage.json")
 public class MarkdownDataObject extends MultiDataObject {
 
     public static final String MIME_TYPE = "text/x-markdown-nb";
 
     public MarkdownDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-        registerEditor(MarkdownDataObject.MIME_TYPE, true);
+        registerEditor("text/x-markdown", true);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class MarkdownDataObject extends MultiDataObject {
     @MultiViewElement.Registration(
             displayName = "#LBL_Markdown_EDITOR",
             iconBase = "io/github/moacirrf/netbeans/markdown/markdown.png",
-            mimeType = "text/x-markdown-nb",
+            mimeType = "text/x-markdown",
             persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,
             preferredID = "io.github.moacirrf.netbeans.markdown.ui.MultiViewSplitEditorElement",
             position = 1000
