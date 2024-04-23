@@ -16,14 +16,46 @@
  */
 package io.github.moacirrf.netbeans.markdown;
 
+import javax.swing.JOptionPane;
+import org.netbeans.InvalidException;
+import org.netbeans.ModuleManager;
 import org.openide.modules.ModuleInstall;
+import org.openide.util.Exceptions;
 
 /**
  *
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
 public class Installer extends ModuleInstall {
-    
+
+    private static final String MARKDOWN_SUPPORT = "org.netbeans.modules.markdown";
+
+    @Override
+    public void restored() {
+        ModuleManager mg = (ModuleManager) ModuleManager.getDefault();
+        if (mg != null) {
+            org.netbeans.Module module = mg.get(MARKDOWN_SUPPORT);
+            if (module != null && module.isEnabled()) {
+                mg.disable(module);
+            }
+        }
+    }
+
+    @Override
+    public void uninstalled() {
+        ModuleManager mg = (ModuleManager) ModuleManager.getDefault();
+        if (mg != null) {
+            org.netbeans.Module module = mg.get(MARKDOWN_SUPPORT);
+            if (module != null && !module.isEnabled()) {
+                try {
+                    mg.enable(module);
+                } catch (IllegalArgumentException | InvalidException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
+    }
+
     @Override
     public boolean closing() {
         TempDir.removeTempDir();
