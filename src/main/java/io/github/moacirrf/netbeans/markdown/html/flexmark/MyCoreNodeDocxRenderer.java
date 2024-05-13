@@ -170,7 +170,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.docx4j.UnitsOfMeasurement;
 import org.docx4j.dml.wordprocessingDrawing.Anchor;
 import org.docx4j.dml.wordprocessingDrawing.Inline;
@@ -273,8 +273,6 @@ public class MyCoreNodeDocxRenderer implements PhasedNodeDocxRenderer {
     Runnable ordinalRunnable;
     final private HtmlIdGenerator headerIdGenerator; // used for enumerated text reference
     final private HashMap<String, Integer> formControlCounts = new HashMap<>();
-//    final HashMap<JekyllTagBlock, Document> includedDocumentsMap = new HashMap<>();
-//    Parser parser;
     private final ImageNodeHelper imageNodeHelper = new ImageNodeHelper();
 
     final private FootnoteRepository footnoteRepository;
