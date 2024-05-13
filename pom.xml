@@ -141,7 +141,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>0.8.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -164,43 +164,43 @@
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-ext-gfm-strikethrough</artifactId>
-            <version>0.64.0</version>
+            <version>0.64.8</version>
         </dependency>
 
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-ext-tables</artifactId>
-            <version>0.64.0</version>
+            <version>0.64.8</version>
         </dependency>
 
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-ext-gfm-tasklist</artifactId>
-            <version>0.64.0</version>
+            <version>0.64.8</version>
         </dependency>
 
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-util</artifactId>
-            <version>0.64.0</version>
+            <version>0.64.8</version>
         </dependency>
         
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-docx-converter</artifactId>
-            <version>0.64.0</version>
+            <version>0.64.8</version>
         </dependency>
 
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-pdf-converter</artifactId>
-            <version>0.64.0</version>
+            <version>0.64.8</version>
         </dependency>
         
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-profile-pegdown</artifactId>
-            <version>0.64.0</version>
+            <version>0.64.8</version>
             <type>jar</type>
         </dependency>
         
@@ -208,34 +208,34 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.15.3</version>
+            <version>1.17.2</version>
         </dependency>
         
         <!--  Apache Batik Transcoder-->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>
-            <version>1.14</version>
+            <version>1.17</version>
         </dependency>
         
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-codec</artifactId>
-            <version>1.14</version>
+            <version>1.17</version>
         </dependency>
 
         <!--  Commons Text-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.9</version>
+            <version>1.12.0</version>
         </dependency>
 
         <!--  Objectweb -->
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>9.4</version>
+            <version>9.7</version>
         </dependency>
                        
         <!-- Junit -->
