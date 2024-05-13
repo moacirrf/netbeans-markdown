@@ -16,8 +16,6 @@
  */
 package io.github.moacirrf.netbeans.markdown;
 
-import javax.swing.JOptionPane;
-import org.netbeans.InvalidException;
 import org.netbeans.ModuleManager;
 import org.openide.modules.ModuleInstall;
 import org.openide.util.Exceptions;
@@ -32,24 +30,13 @@ public class Installer extends ModuleInstall {
 
     @Override
     public void restored() {
-        ModuleManager mg = (ModuleManager) ModuleManager.getDefault();
-        if (mg != null) {
-            org.netbeans.Module module = mg.get(MARKDOWN_SUPPORT);
-            if (module != null && module.isEnabled()) {
-                mg.disable(module);
-            }
-        }
-    }
-
-    @Override
-    public void uninstalled() {
-        ModuleManager mg = (ModuleManager) ModuleManager.getDefault();
-        if (mg != null) {
-            org.netbeans.Module module = mg.get(MARKDOWN_SUPPORT);
-            if (module != null && !module.isEnabled()) {
+        ModuleManager moduleManager = (ModuleManager) ModuleManager.getDefault();
+        if (moduleManager != null) {
+            org.netbeans.Module markdownSupport = moduleManager.get(MARKDOWN_SUPPORT);
+            if (markdownSupport != null && markdownSupport.isEnabled()) {
                 try {
-                    mg.enable(module);
-                } catch (IllegalArgumentException | InvalidException ex) {
+                    moduleManager.disable(markdownSupport);
+                } catch (IllegalArgumentException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
