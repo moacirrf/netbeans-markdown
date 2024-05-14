@@ -857,13 +857,23 @@ public class MyCoreNodeDocxRenderer implements PhasedNodeDocxRenderer {
                 idNum = bulletLists[listLevel];
             }
         }
-
-        docx.setBlockFormatProvider(new ListItemBlockFormatProvider<>(docx, listParagraphStyleId, listSpacingStyle, idNum, listLevel, ListItem.class, ListBlock.class));
-        addBlockAttributeFormatting(node, AttributablePart.NODE, docx, false);
+        boolean hasChildCheckbox = false;
+        if (node.hasChildren()) {
+            var childChar = node.getChildChars();
+            if (childChar != null && childChar.isNotBlank() && childChar.length() > 3) {
+                hasChildCheckbox = childChar.firstChar() == '['
+                        && childChar.charAt(2) == ']';
+            }
+        }
+        if (!hasChildCheckbox) {
+            docx.setBlockFormatProvider(new ListItemBlockFormatProvider<>(docx, listParagraphStyleId, listSpacingStyle, idNum, listLevel, ListItem.class, ListBlock.class));
+            addBlockAttributeFormatting(node, AttributablePart.NODE, docx, false);
+        }
         docx.renderChildren(node);
     }
 
-    private void render(SoftLineBreak node, DocxRendererContext docx) {
+
+private void render(SoftLineBreak node, DocxRendererContext docx) {
         docx.addTextCreateR(" ");
     }
 
@@ -2049,9 +2059,13 @@ public class MyCoreNodeDocxRenderer implements PhasedNodeDocxRenderer {
     private Tbl myTbl;
     private Tr myTr;
 
-    private void render(TableBlock node, DocxRendererContext docx) {
+    private 
+
+void render(TableBlock node, DocxRendererContext docx) {
         // if we have a caption and it goes before the table, we add it here
-        Node caption = node.getFirstChildAny(TableCaption.class);
+        Node caption = node.getFirstChildAny(TableCaption.class  
+
+);
         if (caption != null && tableCaptionBeforeTable) {
             renderTableCaption((TableCaption) caption, docx);
         }
@@ -2349,8 +2363,11 @@ public class MyCoreNodeDocxRenderer implements PhasedNodeDocxRenderer {
             }
         } else {
             String type = EnumeratedReferenceRepository.getType(text.toString());
-            if (type.isEmpty() || text.equals(type + ":")) {
-                Node parent = node.getAncestorOfType(Heading.class);
+
+if (type.isEmpty() || text.equals(type + ":")) {
+                Node parent = node.getAncestorOfType(Heading.class  
+
+);
 
                 if (parent instanceof Heading) {
                     text = (type.isEmpty() ? text : type) + ":" + headerIdGenerator.getId(parent);
@@ -2381,66 +2398,67 @@ public class MyCoreNodeDocxRenderer implements PhasedNodeDocxRenderer {
 
             attributes = docx.extendRenderingNodeAttributes(AttributablePart.NODE, attributes);
             renderURL(node.getText(), docx, "#" + text, attributes, () -> EnumeratedReferences.renderReferenceOrdinals(renderings, new OrdinalRenderer(MyCoreNodeDocxRenderer.this, docx)));
-        }
+
+}
     }
 
     private static class OrdinalRenderer implements EnumeratedOrdinalRenderer {
 
-        final MyCoreNodeDocxRenderer renderer;
-        final DocxRendererContext docx;
+    final MyCoreNodeDocxRenderer renderer;
+    final DocxRendererContext docx;
 
-        public OrdinalRenderer(MyCoreNodeDocxRenderer renderer, DocxRendererContext docx) {
-            this.renderer = renderer;
-            this.docx = docx;
-        }
+    public OrdinalRenderer(MyCoreNodeDocxRenderer renderer, DocxRendererContext docx) {
+        this.renderer = renderer;
+        this.docx = docx;
+    }
 
-        @Override
-        public void startRendering(EnumeratedReferenceRendering[] renderings) {
+    @Override
+    public void startRendering(EnumeratedReferenceRendering[] renderings) {
 
-        }
+    }
 
-        @Override
-        public void setEnumOrdinalRunnable(Runnable runnable) {
-            renderer.ordinalRunnable = runnable;
-        }
+    @Override
+    public void setEnumOrdinalRunnable(Runnable runnable) {
+        renderer.ordinalRunnable = runnable;
+    }
 
-        @Override
-        public Runnable getEnumOrdinalRunnable() {
-            return renderer.ordinalRunnable;
-        }
+    @Override
+    public Runnable getEnumOrdinalRunnable() {
+        return renderer.ordinalRunnable;
+    }
 
-        @Override
-        public void render(int referenceOrdinal, EnumeratedReferenceBlock referenceFormat, String defaultText, boolean needSeparator) {
-            Runnable compoundRunnable = renderer.ordinalRunnable;
-            String text = referenceOrdinal + (needSeparator ? "." : "");
+    @Override
+    public void render(int referenceOrdinal, EnumeratedReferenceBlock referenceFormat, String defaultText, boolean needSeparator) {
+        Runnable compoundRunnable = renderer.ordinalRunnable;
+        String text = referenceOrdinal + (needSeparator ? "." : "");
 
-            if (referenceFormat != null) {
-                renderer.ordinalRunnable = () -> {
-                    if (compoundRunnable != null) {
-                        compoundRunnable.run();
-                    }
-                    docx.addTextCreateR(text);
-                };
-
-                docx.renderChildren(referenceFormat);
-            } else {
+        if (referenceFormat != null) {
+            renderer.ordinalRunnable = () -> {
                 if (compoundRunnable != null) {
-                    docx.addTextCreateR(defaultText + " ");
                     compoundRunnable.run();
-                    docx.addTextCreateR(text);
-                } else {
-                    docx.addTextCreateR(defaultText + " " + text);
                 }
+                docx.addTextCreateR(text);
+            };
+
+            docx.renderChildren(referenceFormat);
+        } else {
+            if (compoundRunnable != null) {
+                docx.addTextCreateR(defaultText + " ");
+                compoundRunnable.run();
+                docx.addTextCreateR(text);
+            } else {
+                docx.addTextCreateR(defaultText + " " + text);
             }
-        }
-
-        @Override
-        public void endRendering() {
-
         }
     }
 
-    private void render(EnumeratedReferenceBlock node, DocxRendererContext docx) {
+    @Override
+    public void endRendering() {
+
+    }
+}
+
+private void render(EnumeratedReferenceBlock node, DocxRendererContext docx) {
 
     }
 
@@ -2492,245 +2510,247 @@ public class MyCoreNodeDocxRenderer implements PhasedNodeDocxRenderer {
 //                docx.render(inclChild);
 //            }
 //        }
-    }
+
+
+}
 
     private static class UrlRenderer implements Runnable {
 
-        final private DocxRendererContext myDocx;
-        final private String myLinkText;
-        final private String myLinkUrl;
+    final private DocxRendererContext myDocx;
+    final private String myLinkText;
+    final private String myLinkUrl;
 
-        public UrlRenderer(DocxRendererContext docx, String linkText, String linkUrl) {
-            myDocx = docx;
-            myLinkText = linkText;
-            myLinkUrl = linkUrl;
-        }
-
-        @Override
-        public void run() {
-            // Create object for r
-            myDocx.addTextCreateR(myLinkText == null ? myLinkUrl : myLinkText);
-        }
+    public UrlRenderer(DocxRendererContext docx, String linkText, String linkUrl) {
+        myDocx = docx;
+        myLinkText = linkText;
+        myLinkUrl = linkUrl;
     }
 
-    private static class UrlRunContainer implements RunContainer {
+    @Override
+    public void run() {
+        // Create object for r
+        myDocx.addTextCreateR(myLinkText == null ? myLinkUrl : myLinkText);
+    }
+}
 
-        final private P.Hyperlink myHyperlink;
+private static class UrlRunContainer implements RunContainer {
 
-        public UrlRunContainer(P.Hyperlink hyperlink) {
-            myHyperlink = hyperlink;
+    final private P.Hyperlink myHyperlink;
+
+    public UrlRunContainer(P.Hyperlink hyperlink) {
+        myHyperlink = hyperlink;
+    }
+
+    @Override
+    public void addR(R r) {
+        myHyperlink.getContent().add(r);
+    }
+
+    @Override
+    public R getLastR() {
+        List<Object> content = myHyperlink.getContent();
+        if (content == null || content.size() == 0) {
+            return null;
         }
+        Object o = content.get(content.size() - 1);
+        return o instanceof R ? (R) o : null;
+    }
+}
 
-        @Override
-        public void addR(R r) {
-            myHyperlink.getContent().add(r);
-        }
+private static class ChildRenderer implements Runnable {
 
-        @Override
-        public R getLastR() {
-            List<Object> content = myHyperlink.getContent();
-            if (content == null || content.size() == 0) {
-                return null;
+    final private DocxRendererContext myDocx;
+    final private Node myNode;
+
+    public ChildRenderer(DocxRendererContext docx, Node node) {
+        myDocx = docx;
+        myNode = node;
+    }
+
+    @Override
+    public void run() {
+        myDocx.renderChildren(myNode);
+    }
+}
+
+private static class FootnoteFrame implements Runnable {
+
+    final DocxRendererContext myDocx;
+    final CTFtnEdn myFtnEdn;
+    final private FootnoteBlock myFootnoteBlock;
+
+    public FootnoteFrame(DocxRendererContext docx, CTFtnEdn ftnEdn, FootnoteBlock footnoteBlock) {
+        myDocx = docx;
+        myFtnEdn = ftnEdn;
+        myFootnoteBlock = footnoteBlock;
+    }
+
+    @Override
+    public void run() {
+        myDocx.setBlockFormatProvider(new FootnoteBlockFormatProvider<>(myDocx));
+        myDocx.setRunFormatProvider(new FootnoteRunFormatProvider<>(myDocx));
+        myDocx.setParaContainer(new ParaContainer() {
+            @Override
+            public void addP(P p) {
+                myFtnEdn.getContent().add(p);
             }
-            Object o = content.get(content.size() - 1);
-            return o instanceof R ? (R) o : null;
-        }
+
+            @Override
+            public P getLastP() {
+                List<Object> content = myFtnEdn.getContent();
+                if (content == null || content.size() == 0) {
+                    return null;
+                }
+                Object o = content.get(content.size() - 1);
+                return o instanceof P ? (P) o : null;
+            }
+        });
+
+        myDocx.setContentContainer(new ContentContainer() {
+            @Override
+            public RelationshipsPart getRelationshipsPart() {
+                try {
+                    return myDocx.getFootnotesPart().getRelationshipsPart();
+                } catch (Docx4JException e) {
+                    e.printStackTrace();
+                    return myDocx.getDocxDocument().getRelationshipsPart();
+                }
+            }
+
+            @Override
+            public Part getContainerPart() {
+                try {
+                    return myDocx.getFootnotesPart();
+                } catch (Docx4JException e) {
+                    e.printStackTrace();
+                    return myDocx.getDocxDocument();
+                }
+            }
+
+            @Override
+            public List<Object> getContent() {
+                return myFtnEdn.getContent();
+            }
+
+            @Override
+            public Object getLastContentElement() {
+                List<Object> content = getContent();
+                return content != null && content.size() > 0 ? content.get(content.size() - 1) : null;
+            }
+
+            @Override
+            public void addContentElement(Object element) {
+                getContent().add(element);
+            }
+        });
+        myDocx.renderChildren(myFootnoteBlock);
+    }
+}
+
+private static class TableCaptionRenderer implements Runnable {
+
+    final private DocxRendererContext myDocx;
+    final private TableCaption myNode;
+
+    public TableCaptionRenderer(DocxRendererContext docx, TableCaption node) {
+        myDocx = docx;
+        myNode = node;
     }
 
-    private static class ChildRenderer implements Runnable {
+    @Override
+    public void run() {
+        myDocx.setBlockFormatProvider(new BlockFormatProviderBase<>(myDocx, myDocx.getDocxRendererOptions().TABLE_CAPTION));
+        myDocx.createP();
+        myDocx.renderChildren(myNode);
+    }
+}
 
-        final private DocxRendererContext myDocx;
-        final private Node myNode;
+private static class TableCellContentContainer implements ContentContainer {
 
-        public ChildRenderer(DocxRendererContext docx, Node node) {
-            myDocx = docx;
-            myNode = node;
-        }
+    final private Tc myTc;
+    final private DocxRendererContext myDocx;
+    final private Part myContainerPart;
+    final private boolean[] myFirstP;
 
-        @Override
-        public void run() {
-            myDocx.renderChildren(myNode);
-        }
+    public TableCellContentContainer(Tc tc, DocxRendererContext docx, boolean[] firstP) {
+        myTc = tc;
+        myDocx = docx;
+        myFirstP = firstP;
+        myContainerPart = myDocx.getContainerPart();
     }
 
-    private static class FootnoteFrame implements Runnable {
-
-        final DocxRendererContext myDocx;
-        final CTFtnEdn myFtnEdn;
-        final private FootnoteBlock myFootnoteBlock;
-
-        public FootnoteFrame(DocxRendererContext docx, CTFtnEdn ftnEdn, FootnoteBlock footnoteBlock) {
-            myDocx = docx;
-            myFtnEdn = ftnEdn;
-            myFootnoteBlock = footnoteBlock;
-        }
-
-        @Override
-        public void run() {
-            myDocx.setBlockFormatProvider(new FootnoteBlockFormatProvider<>(myDocx));
-            myDocx.setRunFormatProvider(new FootnoteRunFormatProvider<>(myDocx));
-            myDocx.setParaContainer(new ParaContainer() {
-                @Override
-                public void addP(P p) {
-                    myFtnEdn.getContent().add(p);
-                }
-
-                @Override
-                public P getLastP() {
-                    List<Object> content = myFtnEdn.getContent();
-                    if (content == null || content.size() == 0) {
-                        return null;
-                    }
-                    Object o = content.get(content.size() - 1);
-                    return o instanceof P ? (P) o : null;
-                }
-            });
-
-            myDocx.setContentContainer(new ContentContainer() {
-                @Override
-                public RelationshipsPart getRelationshipsPart() {
-                    try {
-                        return myDocx.getFootnotesPart().getRelationshipsPart();
-                    } catch (Docx4JException e) {
-                        e.printStackTrace();
-                        return myDocx.getDocxDocument().getRelationshipsPart();
-                    }
-                }
-
-                @Override
-                public Part getContainerPart() {
-                    try {
-                        return myDocx.getFootnotesPart();
-                    } catch (Docx4JException e) {
-                        e.printStackTrace();
-                        return myDocx.getDocxDocument();
-                    }
-                }
-
-                @Override
-                public List<Object> getContent() {
-                    return myFtnEdn.getContent();
-                }
-
-                @Override
-                public Object getLastContentElement() {
-                    List<Object> content = getContent();
-                    return content != null && content.size() > 0 ? content.get(content.size() - 1) : null;
-                }
-
-                @Override
-                public void addContentElement(Object element) {
-                    getContent().add(element);
-                }
-            });
-            myDocx.renderChildren(myFootnoteBlock);
-        }
+    @Override
+    public List<Object> getContent() {
+        return myTc.getContent();
     }
 
-    private static class TableCaptionRenderer implements Runnable {
-
-        final private DocxRendererContext myDocx;
-        final private TableCaption myNode;
-
-        public TableCaptionRenderer(DocxRendererContext docx, TableCaption node) {
-            myDocx = docx;
-            myNode = node;
-        }
-
-        @Override
-        public void run() {
-            myDocx.setBlockFormatProvider(new BlockFormatProviderBase<>(myDocx, myDocx.getDocxRendererOptions().TABLE_CAPTION));
-            myDocx.createP();
-            myDocx.renderChildren(myNode);
-        }
+    @Override
+    public RelationshipsPart getRelationshipsPart() {
+        return myContainerPart.relationships;
     }
 
-    private static class TableCellContentContainer implements ContentContainer {
+    @Override
+    public Part getContainerPart() {
+        return myContainerPart;
+    }
 
-        final private Tc myTc;
-        final private DocxRendererContext myDocx;
-        final private Part myContainerPart;
-        final private boolean[] myFirstP;
+    @Override
+    public Object getLastContentElement() {
+        List<Object> content = myTc.getContent();
+        return content != null && content.size() > 0 ? content.get(content.size() - 1) : null;
+    }
 
-        public TableCellContentContainer(Tc tc, DocxRendererContext docx, boolean[] firstP) {
-            myTc = tc;
-            myDocx = docx;
-            myFirstP = firstP;
-            myContainerPart = myDocx.getContainerPart();
-        }
+    @Override
+    public void addContentElement(Object element) {
+        myTc.getContent().add(element);
+        myFirstP[0] = false;
+    }
+}
 
-        @Override
-        public List<Object> getContent() {
-            return myTc.getContent();
-        }
+private static class TableCellParaContainer implements ParaContainer {
 
-        @Override
-        public RelationshipsPart getRelationshipsPart() {
-            return myContainerPart.relationships;
-        }
+    final private TableCell myNode;
+    final private Tc myTc;
+    final private DocxRendererContext myDocx;
+    final private boolean[] myFirstP;
 
-        @Override
-        public Part getContainerPart() {
-            return myContainerPart;
-        }
+    public TableCellParaContainer(TableCell node, Tc tc, DocxRendererContext docx, boolean[] firstP) {
+        myNode = node;
+        myTc = tc;
+        myDocx = docx;
+        myFirstP = firstP;
+    }
 
-        @Override
-        public Object getLastContentElement() {
-            List<Object> content = myTc.getContent();
-            return content != null && content.size() > 0 ? content.get(content.size() - 1) : null;
-        }
+    @Override
+    public void addP(P p) {
+        myFirstP[0] = false;
+        myTc.getContent().add(p);
+    }
 
-        @Override
-        public void addContentElement(Object element) {
-            myTc.getContent().add(element);
+    @Override
+    public P getLastP() {
+        List<Object> content = myTc.getContent();
+        if (myFirstP[0] && (content == null || content.size() == 0)) {
+            // Create object for p
+            P p = myDocx.createP();
+            PPr ppr = p.getPPr();
+
+            // Create object for jc
+            if (myNode.getAlignment() != null) {
+                JcEnumeration alignValue = getAlignValue(myNode.getAlignment());
+                Jc jc3 = myDocx.getFactory().createJc();
+                ppr.setJc(jc3);
+                jc3.setVal(alignValue);
+            }
+
             myFirstP[0] = false;
         }
+
+        if (content == null || content.size() == 0) {
+            return null;
+        }
+        Object o = content.get(content.size() - 1);
+        return o instanceof P ? (P) o : null;
     }
-
-    private static class TableCellParaContainer implements ParaContainer {
-
-        final private TableCell myNode;
-        final private Tc myTc;
-        final private DocxRendererContext myDocx;
-        final private boolean[] myFirstP;
-
-        public TableCellParaContainer(TableCell node, Tc tc, DocxRendererContext docx, boolean[] firstP) {
-            myNode = node;
-            myTc = tc;
-            myDocx = docx;
-            myFirstP = firstP;
-        }
-
-        @Override
-        public void addP(P p) {
-            myFirstP[0] = false;
-            myTc.getContent().add(p);
-        }
-
-        @Override
-        public P getLastP() {
-            List<Object> content = myTc.getContent();
-            if (myFirstP[0] && (content == null || content.size() == 0)) {
-                // Create object for p
-                P p = myDocx.createP();
-                PPr ppr = p.getPPr();
-
-                // Create object for jc
-                if (myNode.getAlignment() != null) {
-                    JcEnumeration alignValue = getAlignValue(myNode.getAlignment());
-                    Jc jc3 = myDocx.getFactory().createJc();
-                    ppr.setJc(jc3);
-                    jc3.setVal(alignValue);
-                }
-
-                myFirstP[0] = false;
-            }
-
-            if (content == null || content.size() == 0) {
-                return null;
-            }
-            Object o = content.get(content.size() - 1);
-            return o instanceof P ? (P) o : null;
-        }
-    }
+}
 }
