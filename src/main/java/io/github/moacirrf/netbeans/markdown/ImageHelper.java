@@ -114,8 +114,9 @@ public final class ImageHelper {
     }
 
     /**
-     * Download image from internet, if file exists with same name but with different hash
-     * a new file will be create with number concatenated ex.: 0_java.png.
+     * Download image from internet, if file exists with same name but with
+     * different hash a new file will be create with number concatenated ex.:
+     * 0_java.png.
      *
      * @param url
      * @return
@@ -137,7 +138,11 @@ public final class ImageHelper {
 
             byte[] bytes = http.send(request, ofByteArray())
                     .body();
-
+            
+            if (bytes == null || bytes.length < 1000) {
+                return TempDir.getCantLoadImage().toUri().toURL();
+            }
+            
             Path file = Path.of(TEMP_DIR.toString(), Path.of(url.getFile()).getFileName().toString());
             if (file != null) {
                 int contRepeatImage = 0;
@@ -154,7 +159,7 @@ public final class ImageHelper {
                 Thread.currentThread().interrupt();
             }
         }
-        getImageType(returnUrl);
+//        getImageType(returnUrl);
         return returnUrl;
     }
 
