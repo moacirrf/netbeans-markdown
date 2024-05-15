@@ -22,7 +22,6 @@ import javax.swing.JEditorPane;
 import javax.swing.text.ComponentView;
 import javax.swing.text.Element;
 
-
 public class ImageView extends ComponentView {
 
     private JEditorPane editorPane;
@@ -36,4 +35,9 @@ public class ImageView extends ComponentView {
     protected Component createComponent() {
         return new ImageLabel(getElement(), editorPane);
     }
+
+    @Override
+    public float getAlignment(int axis) {
+        return 1;
+    }   
 }
