@@ -85,7 +85,7 @@ public class CompletionQuery extends AsyncCompletionQuery {
     }
 
     private void addCode(int caretOffset) {
-        itens.add(newItem(6, "Code Block", "    fun code(){}", caretOffset, true));
+        itens.add(newItem(6, "Code Block", "        fun code(){}", caretOffset, true));
     }
 
     private void addLinks(int caretOffset) {
@@ -96,8 +96,8 @@ public class CompletionQuery extends AsyncCompletionQuery {
 
     private void addImages(int caretOffset) {
         itens.add(newItem(8, "Image 1",
-                "![Description Here](https://netbeans.apache.org/images/nblogo48x48.png)", caretOffset, false));
-        itens.add(newItem(8, "Image Resizable", "<img src=\"https://netbeans.apache.org/images/nblogo48x48.png\" width=\"60\" height=\"60\">", caretOffset, true));
+                "![Description Here](https://raw.githubusercontent.com/moacirrf/netbeans-markdown/main/images/nblogo48x48.png)", caretOffset, false));
+        itens.add(newItem(8, "Image Resizable", "<img src=\"https://raw.githubusercontent.com/moacirrf/netbeans-markdown/main/images/nblogo48x48.png\" width=\"60\" height=\"60\">", caretOffset, true));
     }
 
     private void addTables(int caretOffset) {
