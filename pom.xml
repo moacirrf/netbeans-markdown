@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.moacirrf</groupId>
     <artifactId>netbeans-markdown</artifactId>
-    <version>3.0</version>
+    <version>3.1</version>
     <packaging>nbm</packaging>
     <name>Netbeans Markdown</name>
     <url>https://github.com/moacirrf/netbeans-markdown</url>
@@ -22,7 +22,7 @@
         <connection>scm:git:https://github.com/moacirrf/netbeans-markdown</connection>
         <developerConnection>scm:git:https://github.com/moacirrf/netbeans-markdown</developerConnection>
         <url>https://github.com/moacirrf/netbeans-markdown/tree/${project.scm.tag}</url>
-        <tag>v3.0</tag>
+        <tag>v3.1</tag>
     </scm>
     
     <licenses>
@@ -102,12 +102,12 @@
                     <keystore>${basedir}/keystore.jks</keystore>
                     <keystorepassword>${keypass}</keystorepassword>
                     <keystorealias>netbeans-markdown-key</keystorealias>
-                    <moduleDependencies>       
+                    <moduleDependencies>
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-bootstrap</id>
                             <type>impl</type>
                         </dependency>
-                    </moduleDependencies>                            
+                    </moduleDependencies>
                 </configuration>
             </plugin>
             
@@ -361,6 +361,7 @@
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-bootstrap</artifactId>
             <version>RELEASE210</version>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
