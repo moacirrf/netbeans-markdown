@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.moacirrf</groupId>
     <artifactId>netbeans-markdown</artifactId>
-    <version>4.1</version>
+    <version>3.1</version>
     <packaging>nbm</packaging>
     <name>Netbeans Markdown</name>
     <url>https://github.com/moacirrf/netbeans-markdown</url>
@@ -22,7 +22,7 @@
         <connection>scm:git:https://github.com/moacirrf/netbeans-markdown</connection>
         <developerConnection>scm:git:https://github.com/moacirrf/netbeans-markdown</developerConnection>
         <url>https://github.com/moacirrf/netbeans-markdown/tree/${project.scm.tag}</url>
-        <tag>v4.1</tag>
+        <tag>v3.1</tag>
     </scm>
     
     <licenses>
