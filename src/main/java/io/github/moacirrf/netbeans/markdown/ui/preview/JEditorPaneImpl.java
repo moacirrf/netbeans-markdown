@@ -16,10 +16,12 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
+import io.github.moacirrf.netbeans.markdown.Context;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
@@ -36,6 +38,10 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import org.apache.commons.lang3.StringUtils;
 import org.openide.awt.HtmlBrowser;
+import org.openide.cookies.EditorCookie;
+import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
 
 /**
@@ -48,7 +54,11 @@ public class JEditorPaneImpl extends JEditorPane {
         this.addHyperlinkListener((HyperlinkEvent e) -> {
             if (e.getInputEvent() instanceof MouseEvent) {
                 if (ACTIVATED.equals(e.getEventType())) {
-                    HtmlBrowser.URLDisplayer.getDefault().showURL(e.getURL());
+                    if (e.getURL() != null) {
+                        HtmlBrowser.URLDisplayer.getDefault().showURL(e.getURL());
+                    } else {
+                        openFile(e.getDescription());
+                    }
                 } else if (ENTERED.equals(e.getEventType())) {
                     setToolTipText(getTitle(e.getSourceElement()));
                 } else if (EXITED.equals(e.getEventType())) {
@@ -56,6 +66,29 @@ public class JEditorPaneImpl extends JEditorPane {
                 }
             }
         });
+    }
+
+    private void openFile(String file) {
+        var arquivo = new File(file);
+        if (!arquivo.exists()) {
+            arquivo = new File(Context.OPENED_FILE.getParent().getPath(), file.replace("./", ""));
+        }
+
+        if (arquivo.exists()) {
+            try {
+                var dataObject = DataObject.find(FileUtil.toFileObject(arquivo));
+                if (dataObject != null) {
+                    var editorCookie = dataObject.getLookup().lookup(EditorCookie.class);
+                    if (editorCookie != null) {
+                        editorCookie.open();
+                    }
+                }
+            } catch (DataObjectNotFoundException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+
+        }
+
     }
 
     private String getTitle(Element e) {
@@ -68,7 +101,7 @@ public class JEditorPaneImpl extends JEditorPane {
                 }
             }
         }
- 
+
         return null;
     }
 
