@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.moacirrf</groupId>
     <artifactId>netbeans-markdown</artifactId>
-    <version>3.1</version>
+    <version>3.2</version>
     <packaging>nbm</packaging>
     <name>Netbeans Markdown</name>
     <url>https://github.com/moacirrf/netbeans-markdown</url>
@@ -367,6 +367,24 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-windows</artifactId>
+            <version>RELEASE210</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-text</artifactId>
+            <version>RELEASE210</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-projectapi</artifactId>
+            <version>RELEASE210</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-nodes</artifactId>
             <version>RELEASE210</version>
         </dependency>
                 
