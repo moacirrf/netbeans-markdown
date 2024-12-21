@@ -16,11 +16,19 @@
  */
 package io.github.moacirrf.netbeans.markdown.html;
 
-import static io.github.moacirrf.netbeans.markdown.TempDir.getTempDir;
+import io.github.moacirrf.netbeans.markdown.TempDir;
 import static java.io.File.separator;
+import java.io.IOException;
+import static java.lang.System.getProperty;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import static org.mockito.Mockito.mockStatic;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -28,45 +36,114 @@ import org.junit.Test;
  */
 public class ImageTest {
 
+    public static final String TEMP_DIR_PLUGIN = getProperty("java.io.tmpdir") + "/nb_markdown_teste";
+
     private HtmlBuilder htmlBuilder = HtmlBuilder.getInstance();
+
+    public static Path getTempDirTeste() {
+        Path path = Paths.get(TEMP_DIR_PLUGIN);
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectory(path);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return path;
+    }
 
     @Test
     public void testResizableImage() {
-        var srcExpected = "file:" + getTempDir() + separator + "tux.png";
-        var html = "<html>\n"
-                + " <body>\n"
-                + "  <img src=\"%s\" width=\"300\" height=\"300\" class=\"removeMarginPaddingTop\" />\n"
-                + " </body>\n"
-                + "</html>";
+        try (MockedStatic<TempDir> mockedStatic = mockStatic(TempDir.class)) {
+            mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(getTempDirTeste());
 
-        var expected = String.format(html, srcExpected);
+            var srcExpected = "file:" + TempDir.getTempDir() + separator + "tux.png";
+            var html = "<html>\n"
+                    + " <body>\n"
+                    + "  <img src=\"%s\" width=\"300\" height=\"300\" class=\"removeMarginPaddingTop\" />\n"
+                    + " </body>\n"
+                    + "</html>";
 
-        var given = "<img src=\"https://mdg.imgix.net/assets/images/tux.png\" width=\"300\" height=\"300\" />";
+            var expected = String.format(html, srcExpected);
 
-        var result = htmlBuilder.build(given);
+            var given = "<img src=\"https://mdg.imgix.net/assets/images/tux.png\" width=\"300\" height=\"300\" />";
 
-        assertNotNull(result);
-        assertEquals(expected, result);
+            var result = htmlBuilder.build(given);
+
+            assertNotNull(result);
+            assertEquals(expected, result);
+        }
     }
 
     @Test
     public void testImage() {
-        var srcExpected = "file:" + getTempDir() + separator + "tux.png";
+        try (MockedStatic<TempDir> mockedStatic = mockStatic(TempDir.class)) {
+            mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(getTempDirTeste());
 
-        String html = "<html>\n"
-                + " <body>\n"
-                + "  <p id=\"0-134\" class=\"removeMarginPaddingTop\"><span id=\"0-24\"><a href=\"https://mdg.imgix.net/assets/images/tux.png\" id=\"0-133\" class=\"removeColorLinkWithImage\"><img src=\"%s\" alt=\"Tux, the Linux mascot\" title=\"Title of image\" id=\"1-87\" /></a></span></p>\n"
-                + " </body>\n"
-                + "</html>";
+            var srcExpected = "file:" + TempDir.getTempDir() + separator + "tux.png";
 
-        var expected = String.format(html, srcExpected);
+            String html = "<html>\n"
+                    + " <body>\n"
+                    + "  <p id=\"0-134\" class=\"removeMarginPaddingTop\"><span id=\"0-24\"><a href=\"https://mdg.imgix.net/assets/images/tux.png\" id=\"0-133\" class=\"removeColorLinkWithImage\"><img src=\"%s\" alt=\"Tux, the Linux mascot\" title=\"Title of image\" id=\"1-87\" /></a></span></p>\n"
+                    + " </body>\n"
+                    + "</html>";
 
-        var given = "[![Tux, the Linux mascot](https://mdg.imgix.net/assets/images/tux.png \"Title of image\")](https://mdg.imgix.net/assets/images/tux.png)\n";
+            var expected = String.format(html, srcExpected);
 
-        var result = htmlBuilder.build(given);
+            var given = "[![Tux, the Linux mascot](https://mdg.imgix.net/assets/images/tux.png \"Title of image\")](https://mdg.imgix.net/assets/images/tux.png)\n";
 
-        assertNotNull(result);
-        assertEquals(expected, result);
+            var result = htmlBuilder.build(given);
+
+            assertNotNull(result);
+            assertEquals(expected, result);
+        }
+    }
+
+    @Test
+    public void testResizableImageWithParameters() {
+        try (MockedStatic<TempDir> mockedStatic = mockStatic(TempDir.class)) {
+            mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(getTempDirTeste());
+
+            var srcExpected = "file:" + TempDir.getTempDir() + separator + "tux.png";
+            var html = "<html>\n"
+                    + " <body>\n"
+                    + "  <img src=\"%s\" width=\"300\" height=\"300\" class=\"removeMarginPaddingTop\" />\n"
+                    + " </body>\n"
+                    + "</html>";
+
+            var expected = String.format(html, srcExpected);
+
+            var given = "<img src=\"https://mdg.imgix.net/assets/images/tux.png?raw=true&teste=23\" width=\"300\" height=\"300\" />";
+
+            var result = htmlBuilder.build(given);
+
+            assertNotNull(result);
+            assertEquals(expected, result);
+        }
+    }
+
+    @Test
+    public void testImageWithParameters() {
+        try (MockedStatic<TempDir> mockedStatic = mockStatic(TempDir.class)) {
+            mockedStatic.when(() ->  TempDir.getTempDir()).thenReturn(getTempDirTeste());
+
+            var srcExpected = "file:" + TempDir.getTempDir() + separator + "tux.png";
+
+            String html = "<html>\n"
+                    + " <body>\n"
+                    + "  <p id=\"0-143\" class=\"removeMarginPaddingTop\"><span id=\"0-24\"><a href=\"https://mdg.imgix.net/assets/images/tux.png\" id=\"0-142\" class=\"removeColorLinkWithImage\"><img src=\"%s\" alt=\"Tux, the Linux mascot\" title=\"Title of image\" id=\"1-96\" /></a></span></p>\n"
+                    + " </body>\n"
+                    + "</html>";
+
+            var expected = String.format(html, srcExpected);
+
+            var given = "[![Tux, the Linux mascot](https://mdg.imgix.net/assets/images/tux.png?raw=true \"Title of image\")](https://mdg.imgix.net/assets/images/tux.png)\n";
+
+            var result = htmlBuilder.build(given);
+
+            assertNotNull(result);
+            assertEquals(expected, result);
+        }
     }
 
 }

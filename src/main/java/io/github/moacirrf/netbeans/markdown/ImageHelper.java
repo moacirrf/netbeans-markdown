@@ -138,17 +138,19 @@ public final class ImageHelper {
 
             byte[] bytes = http.send(request, ofByteArray())
                     .body();
-            
+
             if (bytes == null || bytes.length < 1000) {
                 return TempDir.getCantLoadImage().toUri().toURL();
             }
-            
+
             Path file = Path.of(TEMP_DIR.toString(), Path.of(url.getFile()).getFileName().toString());
             if (file != null) {
                 int contRepeatImage = 0;
                 while (Files.exists(file) && !fileExistsByHash(file, bytes)) {
                     file = Path.of(TEMP_DIR.toString(), (contRepeatImage++) + "_" + Path.of(url.getFile()).getFileName().toString());
                 }
+                String fileSrc = removeParameters(file.toAbsolutePath().toFile().getAbsolutePath());
+                file = Path.of(fileSrc);
                 Files.write(file, bytes, CREATE, TRUNCATE_EXISTING);
                 returnUrl = file.toUri().toURL();
             }
@@ -252,5 +254,19 @@ public final class ImageHelper {
             Exceptions.printStackTrace(ex);
         }
         return false;
+    }
+
+    public static String removeParameters(String src) {
+        if (src == null || src.isBlank()) {
+            return src;
+        }
+        int index = src.indexOf("?");
+        if (index == -1) {
+            index = src.indexOf("%3F");
+        }
+        if (index != -1) {
+            return src.replace(src.substring(index, src.length()), "");
+        }
+        return src;
     }
 }

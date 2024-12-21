@@ -246,6 +246,20 @@
             <scope>test</scope>
         </dependency>
                 
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.14.2</version>
+            <scope>test</scope>
+        </dependency>               
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>               
+
         <!-- Netbeans modules -->
         <dependency>
             <groupId>org.netbeans.api</groupId>
