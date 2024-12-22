@@ -105,7 +105,7 @@ public class ImageNodeHelper {
                     resultUrl = ImageHelper.convertSVGToPNG(resultUrl);
                 }
             } else {
-                File localFile = ImageHelper.getLocalImage(url);
+                File localFile = ImageHelper.getLocalImage(ImageHelper.removeParameters(url));
                 if (localFile != null) {
                     resultUrl = Utilities.toURI(localFile).toURL();
                     if (ImageHelper.isSVG(resultUrl)) {
