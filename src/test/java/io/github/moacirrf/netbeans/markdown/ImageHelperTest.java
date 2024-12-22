@@ -26,10 +26,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.MockedStatic;
+import static org.mockito.Mockito.mockStatic;
 import org.openide.util.Exceptions;
 
 /**
@@ -43,6 +47,18 @@ public class ImageHelperTest {
 
     private static final String PNG_HTTP_URL
             = "https://raw.githubusercontent.com/moacirrf/netbeans-markdown/main/src/main/resources/io/github/moacirrf/netbeans/markdown/code_template.png";
+
+    private MockedStatic<TempDir> mockedStatic;
+
+    @Before
+    public void setup() {
+        mockedStatic = mockStatic(TempDir.class);
+    }
+
+    @After
+    public void tearDown() {
+        mockedStatic.close();
+    }
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -60,7 +76,9 @@ public class ImageHelperTest {
 
     @Test
     public void testDownloadImage() throws MalformedURLException, URISyntaxException {
-
+        mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(TempDirTest.getTempDir());
+        mockedStatic.when(() -> TempDir.getCantLoadImage()).thenReturn(TempDirTest.getCantLoadImage());
+        
         URL url = ImageHelper.downloadImage(new URL(SVG_HTTP_URL));
         var path = Path.of(url.toURI());
 
@@ -68,10 +86,14 @@ public class ImageHelperTest {
         assertTrue(Files.exists(path));
 
         path.toFile().delete();
+        TempDirTest.removeTempDir();
     }
 
     @Test
     public void testConvertSVGToPNG() throws MalformedURLException, URISyntaxException {
+        mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(TempDirTest.getTempDir());
+        mockedStatic.when(() -> TempDir.getCantLoadImage()).thenReturn(TempDirTest.getCantLoadImage());
+
         URL url = ImageHelper.downloadImage(new URL(SVG_HTTP_URL));
         URL urlPng = ImageHelper.convertSVGToPNG(url);
 
@@ -82,13 +104,14 @@ public class ImageHelperTest {
         assertTrue(file.exists());
 
         file.delete();
+        TempDirTest.removeTempDir();
     }
-    
+
     @Test
-    public void testGetImageType(){
+    public void testGetImageType() {
         try {
-            assertEquals(ImageHelper.getImageType(URI.create(SVG_HTTP_URL).toURL()), "svg"); ;
-            assertEquals(ImageHelper.getImageType(URI.create(PNG_HTTP_URL).toURL()), "png"); ;
+            assertEquals(ImageHelper.getImageType(URI.create(SVG_HTTP_URL).toURL()), "svg");;
+            assertEquals(ImageHelper.getImageType(URI.create(PNG_HTTP_URL).toURL()), "png");;
         } catch (MalformedURLException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -96,6 +119,8 @@ public class ImageHelperTest {
 
     @Test
     public void testFileExistsByHash() {
+        mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(TempDirTest.getTempDir());
+        mockedStatic.when(() -> TempDir.getCantLoadImage()).thenReturn(TempDirTest.getCantLoadImage());
         try {
             Path path = folder.newFile("teste.png").toPath();
             byte[] bytes = URI.create(PNG_HTTP_URL).toURL().openStream().readAllBytes();
@@ -105,6 +130,7 @@ public class ImageHelperTest {
             Files.delete(path);
 
             folder.delete();
+            TempDirTest.removeTempDir();
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

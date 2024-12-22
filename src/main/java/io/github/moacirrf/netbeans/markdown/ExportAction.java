@@ -43,10 +43,9 @@ import static org.openide.util.Utilities.actionsGlobalContext;
 @ActionRegistration(
         displayName = "#CTL_ExportAction"
 )
-// path = "Loaders/" + MarkdownDataObject.MIME_TYPE + "/Actions",
 @ActionReferences(value = {
-    @ActionReference(path = "Loaders/" + MarkdownDataObject.MIME_TYPE + "/Actions", name = "Markdown Exporters", position = 1425), //@ActionReference(path = "Editors/Popup/"+MarkdownDataObject.MIME_TYPE+"/Actions", position = 1425),
-// @ActionReference(path = "UI/ToolActions/"+MarkdownDataObject.MIME_TYPE+"/Actions", position = 2950)
+    @ActionReference(path = "Loaders/" + MarkdownDataObject.MIME_TYPE + "/Actions", name = "Markdown Exporters", position = 1425),
+    @ActionReference(path = "Editors/" + MarkdownDataObject.MIME_TYPE + "/Popup", position = 9999)
 })
 @Messages("CTL_ExportAction=Export to...")
 public final class ExportAction implements ActionListener {
@@ -68,8 +67,8 @@ public final class ExportAction implements ActionListener {
                     JOptionPane.showMessageDialog(null, MESSAGE_SUCCESS);
                 }
             });
- 
-           var dd = new DialogDescriptor(pane, TITLE_SELECT_DESTINY, true, null);
+
+            var dd = new DialogDescriptor(pane, TITLE_SELECT_DESTINY, true, null);
             dd.setClosingOptions(new String[0]);
             dd.setOptions(new String[0]);
 

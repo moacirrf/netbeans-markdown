@@ -16,15 +16,21 @@
  */
 package io.github.moacirrf.netbeans.markdown.export;
 
+import io.github.moacirrf.netbeans.markdown.TempDir;
+import io.github.moacirrf.netbeans.markdown.TempDirTest;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import static java.util.Arrays.asList;
 import java.util.List;
+import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.MockedStatic;
+import static org.mockito.Mockito.mockStatic;
 import org.openide.util.Exceptions;
 
 /**
@@ -36,8 +42,23 @@ public class PDFExporterTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    private MockedStatic<TempDir> mockedStatic;
+
+    @Before
+    public void setup() {
+        mockedStatic = mockStatic(TempDir.class);
+    }
+
+    @After
+    public void tearDown() {
+        mockedStatic.close();
+    }
+
     @Test
     public void testExportJoinMds() {
+        mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(TempDirTest.getTempDir());
+        mockedStatic.when(() -> TempDir.getCantLoadImage()).thenReturn(TempDirTest.getCantLoadImage());
+
         var mdFiles = asList(InputModel.from(getMdfile("test.md"), 1), InputModel.from(getMdfile("test_2.md"), 0));
 
         var exporterConfig = ExporterConfig.newUniqueFile(folder.getRoot(), mdFiles, "output");
@@ -45,10 +66,14 @@ public class PDFExporterTest {
         List<File> files = exporter.export(exporterConfig);
         assertFalse("No one pdf was generated", files.isEmpty());
         files.forEach(f -> assertTrue("File not found", f.exists()));
+        
+        TempDirTest.removeTempDir();
     }
 
     @Test
     public void testExportSepratedMds() {
+        mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(TempDirTest.getTempDir());
+        mockedStatic.when(() -> TempDir.getCantLoadImage()).thenReturn(TempDirTest.getCantLoadImage());
 
         var mdFiles = asList(InputModel.from(getMdfile("test.md"), 1), InputModel.from(getMdfile("test_2.md"), 0));
 
@@ -59,6 +84,8 @@ public class PDFExporterTest {
         assertFalse("No one pdf was generated", files.isEmpty());
         assertTrue("Must have two pdf", files.size() == 2);
         files.forEach(f -> assertTrue("File not found", f.exists()));
+        
+        TempDirTest.removeTempDir();
     }
 
     public File getMdfile(String name) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Moacir da Roza Flores <moacirrf@gmail.com>
+ * Copyright (C) 2024 Moacir da Roza Flores <moacirrf@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,13 @@ import org.openide.util.Exceptions;
  *
  * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
-public final class TempDir {
+public final class TempDirTest {
 
     private static final String NB_MARKDOWN_NOT_LOAD_IMAGE = "nb_markdown_not_load_image.png";
 
     private static Path NOT_LOADED_IMAGE;
 
-    private static final String TEMP_DIR_PLUGIN = getProperty("java.io.tmpdir") + "/nb_markdown";
+    public static final String TEMP_DIR_PLUGIN = getProperty("java.io.tmpdir") + "/nb_markdown_teste";
 
     public static Path getTempDir() {
         Path path = Paths.get(TEMP_DIR_PLUGIN);
@@ -62,7 +62,7 @@ public final class TempDir {
     private static void createCantLoadImage() {
         try (var inputStream = Icons.class.getResourceAsStream(NB_MARKDOWN_NOT_LOAD_IMAGE)) {
             byte[] bytes = inputStream.readAllBytes();
-            NOT_LOADED_IMAGE = Path.of(getTempDir().toAbsolutePath().toString(), NB_MARKDOWN_NOT_LOAD_IMAGE);
+            NOT_LOADED_IMAGE = Path.of(TEMP_DIR_PLUGIN, NB_MARKDOWN_NOT_LOAD_IMAGE);
             Files.write(NOT_LOADED_IMAGE, bytes, CREATE, TRUNCATE_EXISTING);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
@@ -85,6 +85,6 @@ public final class TempDir {
         }
     }
 
-    private TempDir() {
+    private TempDirTest() {
     }
 }
