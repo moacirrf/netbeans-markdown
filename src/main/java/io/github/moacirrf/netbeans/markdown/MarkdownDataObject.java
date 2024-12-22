@@ -65,7 +65,7 @@ import org.openide.windows.TopComponent;
             separatorAfter = 500
     ),
     @ActionReference(
-            path = "Loaders/text/x-markdown/Actions",
+            path = "Loaders/"+MarkdownDataObject.MIME_TYPE+"/Actions",
             id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
             position = 600
     ),
@@ -102,10 +102,11 @@ import org.openide.windows.TopComponent;
 public class MarkdownDataObject extends MultiDataObject {
 
     public static final String MIME_TYPE = "text/x-markdown-nb";
+    public static final String MIME_TYPE_OTHER = "text/x-markdown";
 
     public MarkdownDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-        registerEditor("text/x-markdown", true);
+        registerEditor(MIME_TYPE_OTHER, true);
     }
 
     @Override

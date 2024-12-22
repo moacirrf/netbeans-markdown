@@ -157,7 +157,7 @@ public final class ImageHelper {
 
         } catch (URISyntaxException | InterruptedException | IOException ex) {
             Exceptions.printStackTrace(ex);
-            if (ex instanceof InterruptedException) {
+            if (ex instanceof InterruptedException && Thread.currentThread() != null) {
                 Thread.currentThread().interrupt();
             }
         }
