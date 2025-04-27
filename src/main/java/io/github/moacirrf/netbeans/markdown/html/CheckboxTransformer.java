@@ -25,7 +25,7 @@ import org.jsoup.nodes.Element;
  *
  * @author moacirrf
  */
-public class CheckboxAdjuster implements HtmlAdjuster, Predicate<Element> {
+public class CheckboxTransformer implements HtmlTransformer, Predicate<Element> {
 
     private static final String STYLE = "list-style-type:none";
 

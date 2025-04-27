@@ -51,18 +51,18 @@ public final class HtmlBuilder {
         return new HtmlBuilder(null);
     }
 
-    private final List<HtmlAdjuster> htmlAdjusters = new ArrayList<>();
+    private final List<HtmlTransformer> htmlTransformers = new ArrayList<>();
 
     private final MutableDataSet localOptions;
 
     private HtmlBuilder(MutableDataSet options) {
         this.localOptions = options;
         this.includeFormTag = false;
-        htmlAdjusters.add(new TablesAdjuster());
-        htmlAdjusters.add(new LinksAdjuster());
-        htmlAdjusters.add(new FirstElementAdjuster());
-        htmlAdjusters.add(new ListAdjuster());
-        htmlAdjusters.add(new CheckboxAdjuster());
+        htmlTransformers.add(new TablesTransformer());
+        htmlTransformers.add(new LinksTransformer());
+        htmlTransformers.add(new FirstElementTransformer());
+        htmlTransformers.add(new ListTransformer());
+        htmlTransformers.add(new CheckboxTransformer());
     }
 
     public String build(String markdownText) {
@@ -88,9 +88,9 @@ public final class HtmlBuilder {
         if (doc == null) {
             return "";
         }
-        if (!htmlAdjusters.isEmpty()) {
-            for (var adjuster : htmlAdjusters) {
-                doc = adjuster.adjust(doc);
+        if (!htmlTransformers.isEmpty()) {
+            for (var transformer : htmlTransformers) {
+                doc = transformer.adjust(doc);
             }
         }
         doc.outputSettings().syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml);

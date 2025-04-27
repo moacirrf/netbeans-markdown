@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 moacirrf
+ * Copyright (C) 2022 Moacir da Roza Flores <moacirrf@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +19,18 @@ package io.github.moacirrf.netbeans.markdown.html;
 import org.jsoup.nodes.Document;
 
 /**
- *
- * @author moacirrf
+ * Clear top padding of the first element, include a custom css
  */
-public class ListAdjuster implements HtmlAdjuster {
+public class FirstElementTransformer implements HtmlTransformer {
 
     @Override
     public Document adjust(Document inputDocument) {
-        var elements = inputDocument.getElementsByTag("ul");
-        if (elements != null) {
-            elements.forEach(e -> {
-                var next = e.nextElementSibling();
-                if (next != null && "p".equals(next.tagName().toLowerCase())) {
-                    e.addClass("margin-bottom");
-                }
-            });
+        if (inputDocument != null) {
+            var body = inputDocument.getElementsByTag("body");
+            if (body != null && body.first() != null && body.first().firstElementChild() != null) {
+                body.first().firstElementChild()
+                        .addClass("removeMarginPaddingTop");
+            }
         }
         return inputDocument;
     }

@@ -19,20 +19,12 @@ package io.github.moacirrf.netbeans.markdown.html;
 import org.jsoup.nodes.Document;
 
 /**
- * Clear top padding of the first element, include a custom css
+ * A generic interface to make adjust on html documents, you must return 
+ * the same document that you receive.
+ * 
+ * @author Moacir da Roza Flores <moacirrf@gmail.com>
  */
-public class FirstElementAdjuster implements HtmlAdjuster {
+public interface HtmlTransformer {
 
-    @Override
-    public Document adjust(Document inputDocument) {
-        if (inputDocument != null) {
-            var body = inputDocument.getElementsByTag("body");
-            if (body != null && body.first() != null && body.first().firstElementChild() != null) {
-                body.first().firstElementChild()
-                        .addClass("removeMarginPaddingTop");
-            }
-        }
-        return inputDocument;
-    }
-
+    public Document adjust(Document inputDocument);
 }
