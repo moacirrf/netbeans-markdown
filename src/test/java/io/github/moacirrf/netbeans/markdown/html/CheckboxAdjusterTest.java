@@ -43,7 +43,7 @@ public class CheckboxAdjusterTest {
 
     @Test
     public void testAdjust() {
-        var adjuster = new CheckboxAdjuster();
+        var adjuster = new CheckboxTransformer();
 
         Document given = Jsoup.parse(HTML_GIVEN);
 

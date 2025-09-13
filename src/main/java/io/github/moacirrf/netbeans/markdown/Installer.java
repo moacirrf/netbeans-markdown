@@ -48,4 +48,9 @@ public class Installer extends ModuleInstall {
         TempDir.removeTempDir();
         return super.closing();
     }
+
+    @Override
+    public void uninstalled() {
+        MyConfigurations.clear();
+    }
 }

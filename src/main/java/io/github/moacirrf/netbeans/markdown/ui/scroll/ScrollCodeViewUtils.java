@@ -17,6 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.ui.scroll;
 
 import io.github.moacirrf.netbeans.markdown.Context;
+import io.github.moacirrf.netbeans.markdown.MyConfigurations;
 import io.github.moacirrf.netbeans.markdown.ui.preview.JEditorPaneImpl;
 import java.awt.Rectangle;
 import javax.swing.JEditorPane;
@@ -35,7 +36,7 @@ import org.openide.util.Exceptions;
 public final class ScrollCodeViewUtils {
 
     public static void syncronizeScrolls(JEditorPane leftEditor, JEditorPane rightEditor) {
-        if (Context.SCROLL_SYNC) {
+        if (MyConfigurations.isScrollSync()) {
             JScrollPane scrollPane = ScrollUtils.getScrollPaneOf(rightEditor);
             var text = JEditorPaneImpl.getVisibleText(rightEditor, scrollPane);
             Document document = Jsoup.parse(text);
