@@ -17,14 +17,32 @@
 package io.github.moacirrf.netbeans.markdown.html;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 /**
- * A generic interface to make adjust on html documents, you must return 
- * the same document that you receive.
- * 
- * @author Moacir da Roza Flores <moacirrf@gmail.com>
+ * This was necessary because we need remove color of link when it have an image
+ * inside.
+ * <a href="..."><img> </a>
+ *
  */
-public interface HtmlAdjuster {
+public class LinksTransformer implements HtmlTransformer {
 
-    public Document adjust(Document inputDocument);
+    @Override
+    public Document adjust(Document inputDocument) {
+        if (inputDocument != null) {
+            fixLinksWithImage(inputDocument.getElementsByTag("a"));
+        }
+        return inputDocument;
+    }
+
+    private void fixLinksWithImage(Elements elements) {
+        if (elements != null) {
+            elements.forEach(link -> {
+                if (!link.getElementsByTag("img").isEmpty()) {
+                    link.addClass("removeColorLinkWithImage");
+                }
+            });
+        }
+    }
+
 }

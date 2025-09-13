@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Moacir da Roza Flores <moacirrf@gmail.com>
+ * Copyright (C) 2023 moacirrf
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,32 +17,25 @@
 package io.github.moacirrf.netbeans.markdown.html;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 /**
- * This was necessary because we need remove color of link when it have an image
- * inside.
- * <a href="..."><img> </a>
  *
+ * @author moacirrf
  */
-public class LinksAdjuster implements HtmlAdjuster {
+public class ListTransformer implements HtmlTransformer {
 
     @Override
     public Document adjust(Document inputDocument) {
-        if (inputDocument != null) {
-            fixLinksWithImage(inputDocument.getElementsByTag("a"));
-        }
-        return inputDocument;
-    }
-
-    private void fixLinksWithImage(Elements elements) {
+        var elements = inputDocument.getElementsByTag("ul");
         if (elements != null) {
-            elements.forEach(link -> {
-                if (!link.getElementsByTag("img").isEmpty()) {
-                    link.addClass("removeColorLinkWithImage");
+            elements.forEach(e -> {
+                var next = e.nextElementSibling();
+                if (next != null && "p".equals(next.tagName().toLowerCase())) {
+                    e.addClass("margin-bottom");
                 }
             });
         }
+        return inputDocument;
     }
 
 }

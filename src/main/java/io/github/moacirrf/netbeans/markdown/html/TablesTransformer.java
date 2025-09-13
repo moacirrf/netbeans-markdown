@@ -25,7 +25,7 @@ import org.jsoup.select.Elements;
  * tables So the trick is create some css classes to remove borders.
  *
  */
-public class TablesAdjuster implements HtmlAdjuster {
+public class TablesTransformer implements HtmlTransformer {
 
     @Override
     public Document adjust(Document document) {
