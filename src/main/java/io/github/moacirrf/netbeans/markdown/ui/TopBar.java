@@ -16,12 +16,14 @@
  */
 package io.github.moacirrf.netbeans.markdown.ui;
 
-import io.github.moacirrf.netbeans.markdown.Context;
 import io.github.moacirrf.netbeans.markdown.Icons;
+import io.github.moacirrf.netbeans.markdown.MyConfigurations;
+import static io.github.moacirrf.netbeans.markdown.MyConfigurations.ViewMode.SPLIT_VERTICAL;
 import java.awt.Graphics;
 import static javax.swing.JSplitPane.HORIZONTAL_SPLIT;
 import static javax.swing.JSplitPane.VERTICAL_SPLIT;
 import javax.swing.SwingUtilities;
+import org.apache.batik.util.Platform;
 
 public class TopBar extends javax.swing.JPanel {
 
@@ -29,20 +31,42 @@ public class TopBar extends javax.swing.JPanel {
 
     private boolean splitModeOn;
 
+    private MyConfigurations.ViewMode viewMode;
+
     /**
      * Creates new form TopBar
      */
     public TopBar(SplitPanel splitPanel) {
+        this.viewMode = MyConfigurations.getViewMode();
         this.splitPanel = splitPanel;
         initComponents();
-        buttonGroup1.add(showSourceBtn);
-        buttonGroup1.add(splitModeBtn);
-        buttonGroup1.add(showPreviewBtn);
+        buttonGroupViewBtn.add(showSourceBtn);
+        buttonGroupViewBtn.add(splitModeBtn);
+        buttonGroupViewBtn.add(showPreviewBtn);
         showSourceBtn.setIcon(Icons.getICON_SOURCE());
         showPreviewBtn.setIcon(Icons.getICON_PREVIEW());
-        split();
-        splitPanel.getSplitPanel().setOrientation(HORIZONTAL_SPLIT);
-        this.scrollSync.setSelected(Context.SCROLL_SYNC);
+
+        switch (viewMode) {
+            case SPLIT_HORIZONTAL:
+                splitPanel.getSplitPanel().setOrientation(HORIZONTAL_SPLIT);
+                split();
+                break;
+
+            case SPLIT_VERTICAL:
+                splitPanel.getSplitPanel().setOrientation(VERTICAL_SPLIT);
+                split();
+                break;
+
+            case EDITOR:
+                onlySource();
+                break;
+
+            case PREVIEW:
+                onlyPreview();
+                break;
+        }
+        this.configCheckBoxViewMode();
+        this.scrollSync.setSelected(MyConfigurations.isScrollSync());
     }
 
     /**
@@ -54,14 +78,12 @@ public class TopBar extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        buttonGroupViewBtn = new javax.swing.ButtonGroup();
         showSourceBtn = new javax.swing.JToggleButton();
         splitModeBtn = new javax.swing.JToggleButton();
         showPreviewBtn = new javax.swing.JToggleButton();
         scrollSync = new javax.swing.JCheckBox();
-
-        org.openide.awt.Mnemonics.setLocalizedText(jToggleButton1, org.openide.util.NbBundle.getMessage(TopBar.class, "TopBar.jToggleButton1.text")); // NOI18N
+        viewModeDefault = new javax.swing.JCheckBox();
 
         showSourceBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/io/github/moacirrf/netbeans/markdown/icon_source.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(showSourceBtn, org.openide.util.NbBundle.getMessage(TopBar.class, "TopBar.showSourceBtn.text")); // NOI18N
@@ -100,6 +122,13 @@ public class TopBar extends javax.swing.JPanel {
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(viewModeDefault, org.openide.util.NbBundle.getMessage(TopBar.class, "TopBar.viewModeDefault.text")); // NOI18N
+        viewModeDefault.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setAsDefaultView(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -113,6 +142,8 @@ public class TopBar extends javax.swing.JPanel {
                 .addComponent(showPreviewBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollSync)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(viewModeDefault)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -120,36 +151,70 @@ public class TopBar extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollSync)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(scrollSync)
+                        .addComponent(viewModeDefault))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(showSourceBtn)
                         .addComponent(splitModeBtn)
-                        .addComponent(showPreviewBtn)))
+                        .addComponent(showPreviewBtn, javax.swing.GroupLayout.Alignment.TRAILING)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void showSourceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showSourceBtnActionPerformed
         this.onlySource();
+        this.viewMode = MyConfigurations.ViewMode.EDITOR;
+        this.configCheckBoxViewMode();
     }//GEN-LAST:event_showSourceBtnActionPerformed
 
     private void splitModeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_splitModeBtnActionPerformed
         this.split();
+        SwingUtilities.invokeLater(() -> {
+            switch (splitPanel.getSplitPanel().getOrientation()) {
+                case VERTICAL_SPLIT:
+                    this.viewMode = MyConfigurations.ViewMode.SPLIT_VERTICAL;
+                    break;
+                default:
+                    this.viewMode = MyConfigurations.ViewMode.SPLIT_HORIZONTAL;
+            }
+            this.configCheckBoxViewMode();
+        });
     }//GEN-LAST:event_splitModeBtnActionPerformed
 
     private void showPreviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPreviewBtnActionPerformed
         this.onlyPreview();
+        this.viewMode = MyConfigurations.ViewMode.PREVIEW;
+        this.configCheckBoxViewMode();
     }//GEN-LAST:event_showPreviewBtnActionPerformed
 
     private void scrollSyncActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrollSyncActionPerformed
-        Context.SCROLL_SYNC = scrollSync.isSelected();
+        MyConfigurations.setScrollSync(scrollSync.isSelected());
     }//GEN-LAST:event_scrollSyncActionPerformed
+
+    private void setAsDefaultView(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setAsDefaultView
+
+        if (this.viewModeDefault.isSelected()) {
+            MyConfigurations.setDefaultViewMode(viewMode);
+            this.configCheckBoxViewMode();
+        }
+
+    }//GEN-LAST:event_setAsDefaultView
 
     private void onlySource() {
         SwingUtilities.invokeLater(() -> {
             splitPanel.getSplitPanel().getLeftComponent().setVisible(true);
             splitPanel.getSplitPanel().getRightComponent().setVisible(false);
             splitModeOn = false;
+            this.showSourceBtn.setSelected(true);
+            this.scrollSync.setEnabled(splitModeOn);
+        });
+    }
+
+    private void configCheckBoxViewMode() {
+        SwingUtilities.invokeLater(() -> {
+            this.viewModeDefault.setSelected(MyConfigurations.getViewMode() == this.viewMode);
+            this.viewModeDefault.setEnabled(!this.viewModeDefault.isSelected());
         });
     }
 
@@ -171,6 +236,7 @@ public class TopBar extends javax.swing.JPanel {
             }
             splitModeOn = true;
             splitPanel.getSplitPanel().setDividerLocation(0.5);
+            this.scrollSync.setEnabled(splitModeOn);
         });
     }
 
@@ -179,23 +245,24 @@ public class TopBar extends javax.swing.JPanel {
             splitPanel.getSplitPanel().getLeftComponent().setVisible(false);
             splitPanel.getSplitPanel().getRightComponent().setVisible(true);
             splitModeOn = false;
+            this.showPreviewBtn.setSelected(true);
+            this.scrollSync.setEnabled(splitModeOn);
         });
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        this.scrollSync.setSelected(Context.SCROLL_SYNC);
+        this.scrollSync.setSelected(MyConfigurations.isScrollSync());
         super.paintComponent(g);
     }
-    
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.ButtonGroup buttonGroupViewBtn;
     private javax.swing.JCheckBox scrollSync;
     private javax.swing.JToggleButton showPreviewBtn;
     private javax.swing.JToggleButton showSourceBtn;
     private javax.swing.JToggleButton splitModeBtn;
+    private javax.swing.JCheckBox viewModeDefault;
     // End of variables declaration//GEN-END:variables
+
 }

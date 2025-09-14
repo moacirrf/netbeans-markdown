@@ -17,6 +17,7 @@
 package io.github.moacirrf.netbeans.markdown.ui.scroll;
 
 import io.github.moacirrf.netbeans.markdown.Context;
+import io.github.moacirrf.netbeans.markdown.MyConfigurations;
 import io.github.moacirrf.netbeans.markdown.ui.preview.JEditorPaneImpl;
 import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.getScrollPaneOf;
 import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.isScrolledToMaximum;
@@ -36,7 +37,7 @@ import org.openide.util.Exceptions;
 public final class ScrollPreviewUtils {
 
     public static void syncronizeScrolls(JEditorPane leftEditorPane, JEditorPane rightEditor) {
-        if (Context.SCROLL_SYNC) {
+        if (MyConfigurations.isScrollSync()) {
             JScrollPane leftJScrollPane = getScrollPaneOf(leftEditorPane);
             JScrollPane rightJScrollPane = getScrollPaneOf(rightEditor);
             if (leftJScrollPane != null) {
@@ -59,7 +60,7 @@ public final class ScrollPreviewUtils {
     }
 
     private static void scrollByTextContent(String completeText, String visibleText, JEditorPaneImpl rightEdit) throws BadLocationException {
-        if (Context.SCROLL_SYNC) {
+        if (MyConfigurations.isScrollSync()) {
             var list = ScrollableModel.from(Jsoup.parse(rightEdit.getText()), completeText);
             Collections.sort(list);
             visibleText = visibleText.trim();

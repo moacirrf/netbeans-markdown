@@ -28,6 +28,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import static java.net.http.HttpResponse.BodyHandlers.ofByteArray;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -154,7 +155,8 @@ public final class ImageHelper {
                 Files.write(file, bytes, CREATE, TRUNCATE_EXISTING);
                 returnUrl = file.toUri().toURL();
             }
-
+        } catch (NoSuchFileException ex) {
+            Exceptions.printStackTrace(ex);
         } catch (URISyntaxException | InterruptedException | IOException ex) {
             Exceptions.printStackTrace(ex);
             if (ex instanceof InterruptedException && Thread.currentThread() != null) {
