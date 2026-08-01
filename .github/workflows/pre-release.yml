@@ -10,6 +10,8 @@ jobs:
   pre-release:
     name: "Pre Release"
     runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -18,13 +20,14 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - run: mvn -Dkeypass=${{secrets.KEYPASS}} verify
-      - uses: marvinpinto/action-automatic-releases@v1.2.1
+      - uses: softprops/action-gh-release@v2
         with:
-          repo_token: "${{ secrets.NETBEANS_ACTION_TOKEN }}"
-          automatic_release_tag: "latest"
+          tag_name: "latest"
           prerelease: true
-          title: "Development Build"
+          name: "Development Build"
           files: |
             target/*.jar
             target/*.nbm
             target/*.asc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
