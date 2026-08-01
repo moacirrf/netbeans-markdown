@@ -32,14 +32,20 @@ import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 public class MultiViewSplitEditorElement extends MultiViewEditorElement {
 
     private static final int SCROLL_DELAY = 100;
+
+    private static final int PREVIEW_UPDATE_DELAY = 300;
 
     private enum SCROLL_STATE {
         CODE,
@@ -53,6 +59,10 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
     private JEditorPane leftEditorPane;
 
     private Timer timer;
+
+    private Timer previewTimer;
+
+    private transient DocumentListener documentListener;
 
     public MultiViewSplitEditorElement(Lookup lookup) {
         super(lookup);
@@ -103,6 +113,48 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
                     currentScroll = SCROLL_STATE.PREVIEW;
                 }
             }));
+
+            initDocumentListener();
+        }
+    }
+
+    private void initDocumentListener() {
+        if (documentListener == null) {
+            documentListener = new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    schedulePreviewUpdate();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    schedulePreviewUpdate();
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    schedulePreviewUpdate();
+                }
+            };
+            getEditorPane().getDocument().addDocumentListener(documentListener);
+        }
+    }
+
+    private void schedulePreviewUpdate() {
+        if (previewTimer == null) {
+            previewTimer = new Timer(PREVIEW_UPDATE_DELAY, e -> updatePreview());
+            previewTimer.setRepeats(false);
+            previewTimer.setCoalesce(false);
+        }
+        previewTimer.restart();
+    }
+
+    private void updatePreview() {
+        var document = getEditorPane().getDocument();
+        try {
+            previewPane.fillEditorPane(document.getText(0, document.getLength()), false);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
         }
     }
 

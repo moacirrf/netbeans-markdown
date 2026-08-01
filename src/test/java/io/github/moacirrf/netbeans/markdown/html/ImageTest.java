@@ -16,6 +16,7 @@
  */
 package io.github.moacirrf.netbeans.markdown.html;
 
+import io.github.moacirrf.netbeans.markdown.ImageHelper;
 import io.github.moacirrf.netbeans.markdown.TempDir;
 import io.github.moacirrf.netbeans.markdown.TempDirTest;
 import static java.io.File.separator;
@@ -43,6 +44,7 @@ public class ImageTest {
     @Before
     public void setup() {
         mockedStatic = mockStatic(TempDir.class);
+        ImageHelper.clearCache();
     }
 
     @After
@@ -55,7 +57,7 @@ public class ImageTest {
         mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(TempDirTest.getTempDir());
         mockedStatic.when(() -> TempDir.getCantLoadImage()).thenReturn(TempDirTest.getCantLoadImage());
 
-        var srcExpected = "file:" + TempDir.getTempDir() + separator + "tux.png";
+		var srcExpected = "file:" + TempDir.getTempDir() + separator + "badge.svg.png";
         var html = "<html>\n"
                 + " <body>\n"
                 + "  <img src=\"%s\" width=\"300\" height=\"300\" class=\"removeMarginPaddingTop\" />\n"
@@ -64,7 +66,7 @@ public class ImageTest {
 
         var expected = String.format(html, srcExpected);
 
-        var given = "<img src=\"https://mdg.imgix.net/assets/images/tux.png\" width=\"300\" height=\"300\" />";
+		var given = "<img src=\"https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg\" width=\"300\" height=\"300\" />";
 
         var result = htmlBuilder.build(given);
 
@@ -80,17 +82,15 @@ public class ImageTest {
         mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(TempDirTest.getTempDir());
         mockedStatic.when(() -> TempDir.getCantLoadImage()).thenReturn(TempDirTest.getCantLoadImage());
 
-        var srcExpected = "file:" + TempDir.getTempDir() + separator + "tux.png";
+		var srcExpected = "file:" + TempDir.getTempDir() + separator + "badge.svg.png";
 
         String html = "<html>\n"
                 + " <body>\n"
-                + "  <p id=\"0-134\" class=\"removeMarginPaddingTop\"><span id=\"0-24\"><a href=\"https://mdg.imgix.net/assets/images/tux.png\" id=\"0-133\" class=\"removeColorLinkWithImage\"><img src=\"%s\" alt=\"Tux, the Linux mascot\" title=\"Title of image\" id=\"1-87\" /></a></span></p>\n"
-                + " </body>\n"
-                + "</html>";
+				+ "  <p id=\"0-230\" class=\"removeMarginPaddingTop\"><span id=\"0-24\"><a href=\"https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg\" id=\"0-229\" class=\"removeColorLinkWithImage\"><img src=\"%s\" alt=\"Tux, the Linux mascot\" title=\"Title of image\" id=\"1-135\" /></a></span></p>\n" + " </body>\n" + "</html>";
 
         var expected = String.format(html, srcExpected);
 
-        var given = "[![Tux, the Linux mascot](https://mdg.imgix.net/assets/images/tux.png \"Title of image\")](https://mdg.imgix.net/assets/images/tux.png)\n";
+		var given = "[![Tux, the Linux mascot](https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg \"Title of image\")](https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg)\n";
 
         var result = htmlBuilder.build(given);
 
@@ -106,7 +106,7 @@ public class ImageTest {
         mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(TempDirTest.getTempDir(), TempDirTest.getTempDir());
         mockedStatic.when(() -> TempDir.getCantLoadImage()).thenReturn(TempDirTest.getCantLoadImage());
 
-        var srcExpected = "file:" + TempDir.getTempDir() + separator + "tux.png";
+		var srcExpected = "file:" + TempDir.getTempDir() + separator + "badge.svg.png";
         var html = "<html>\n"
                 + " <body>\n"
                 + "  <img src=\"%s\" width=\"300\" height=\"300\" class=\"removeMarginPaddingTop\" />\n"
@@ -115,7 +115,7 @@ public class ImageTest {
 
         var expected = String.format(html, srcExpected);
 
-        var given = "<img src=\"https://mdg.imgix.net/assets/images/tux.png?raw=true&teste=23\" width=\"300\" height=\"300\" />";
+		var given = "<img src=\"https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg?raw=true&teste=23\" width=\"300\" height=\"300\" />";
 
         var result = htmlBuilder.build(given);
 
@@ -131,17 +131,15 @@ public class ImageTest {
         mockedStatic.when(() -> TempDir.getTempDir()).thenReturn(TempDirTest.getTempDir(), TempDirTest.getTempDir());
         mockedStatic.when(() -> TempDir.getCantLoadImage()).thenReturn(TempDirTest.getCantLoadImage());
 
-        var srcExpected = "file:" + TempDir.getTempDir() + separator + "tux.png";
+		var srcExpected = "file:" + TempDir.getTempDir() + separator + "badge.svg.png";
 
         String html = "<html>\n"
                 + " <body>\n"
-                + "  <p id=\"0-143\" class=\"removeMarginPaddingTop\"><span id=\"0-24\"><a href=\"https://mdg.imgix.net/assets/images/tux.png\" id=\"0-142\" class=\"removeColorLinkWithImage\"><img src=\"%s\" alt=\"Tux, the Linux mascot\" title=\"Title of image\" id=\"1-96\" /></a></span></p>\n"
-                + " </body>\n"
-                + "</html>";
+				+ "  <p id=\"0-230\" class=\"removeMarginPaddingTop\"><span id=\"0-24\"><a href=\"https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg\" id=\"0-229\" class=\"removeColorLinkWithImage\"><img src=\"%s\" alt=\"Tux, the Linux mascot\" title=\"Title of image\" id=\"1-135\" /></a></span></p>\n" + " </body>\n" + "</html>";
 
         var expected = String.format(html, srcExpected);
 
-        var given = "[![Tux, the Linux mascot](https://mdg.imgix.net/assets/images/tux.png?raw=true \"Title of image\")](https://mdg.imgix.net/assets/images/tux.png)\n";
+		var given = "[![Tux, the Linux mascot](https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg \"Title of image\")](https://github.com/moacirrf/netbeans-markdown/actions/workflows/maven-publish.yml/badge.svg)\n";
 
         var result = htmlBuilder.build(given);
 

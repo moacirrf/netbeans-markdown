@@ -27,8 +27,6 @@ import org.junit.Test;
  */
 public class CheckboxAdjusterTest {
 
-    private HtmlBuilder htmlBuilder = HtmlBuilder.getInstance();
-
     public static final String HTML_GIVEN = "<html>\n"
             + " <body>\n"
             + "  <form class=\"removeMarginPaddingTop\">\n"
@@ -42,8 +40,8 @@ public class CheckboxAdjusterTest {
 
 
     @Test
-    public void testAdjust() {
-        var adjuster = new CheckboxTransformer();
+	public void testAdjust() {
+		var adjuster = new CheckboxTransformer();
 
         Document given = Jsoup.parse(HTML_GIVEN);
 
