@@ -17,8 +17,10 @@
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
 import io.github.moacirrf.netbeans.markdown.html.HtmlBuilder;
+import io.github.moacirrf.netbeans.markdown.ui.preview.image.ImageLabel;
 import java.awt.CardLayout;
-import java.awt.event.MouseEvent;
+import java.awt.Point;
+import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JEditorPane;
@@ -32,6 +34,7 @@ import javax.swing.event.HyperlinkEvent;
 import static javax.swing.event.HyperlinkEvent.EventType.ACTIVATED;
 import org.openide.awt.HtmlBrowser;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
 
 public class MarkdownPreviewPane extends JPanel {
 
@@ -42,6 +45,10 @@ public class MarkdownPreviewPane extends JPanel {
     private JPanel progressPanel;
 
     private transient FileObject fileObject;
+
+    private volatile int currentVersion;
+
+    private String lastRenderedHtml;
 
     public MarkdownPreviewPane() {
         this.initComponents();
@@ -108,10 +115,19 @@ public class MarkdownPreviewPane extends JPanel {
     }
 
     public void fillEditorPane(boolean showProgressBar) {
+        fillEditorPane(null, showProgressBar);
+    }
+
+    public void fillEditorPane(String markdownText, boolean showProgressBar) {
         SwingUtilities.invokeLater(() -> {
             scrollPane.setVisible(!showProgressBar);
             progressPanel.setVisible(showProgressBar);
-            new FillEditorPaneWorker().execute();
+            ScrollState scrollState = null;
+            if (!showProgressBar) {
+                var viewport = scrollPane.getViewport();
+                scrollState = new ScrollState(viewport.getViewPosition(), viewport.getViewSize().height, viewport.getExtentSize().height);
+            }
+            new FillEditorPaneWorker(markdownText, ++currentVersion, scrollState).execute();
         });
 
     }
@@ -126,20 +142,79 @@ public class MarkdownPreviewPane extends JPanel {
 
     private final class FillEditorPaneWorker extends SwingWorker<Object, Object> {
 
+        private final String markdownText;
+
+        private final int version;
+
+        private final ScrollState scrollState;
+
+        private FillEditorPaneWorker(String markdownText, int version, ScrollState scrollState) {
+            this.markdownText = markdownText;
+            this.version = version;
+            this.scrollState = scrollState;
+        }
+
         @Override
         protected Object doInBackground() throws Exception {
-
+            var source = markdownText;
+            if (source == null) {
+                source = fileObject.asText();
+            }
             var html = HtmlBuilder.getInstance()
-                    .build(fileObject.asText());
-            editorPane.setText(html);
-
+                    .build(source);
+            ImageLabel.preloadImages(html);
             return html;
         }
 
         @Override
         protected void done() {
+            if (version != currentVersion) {
+                return;
+            }
+            try {
+                var html = (String) get();
+                if (html.equals(lastRenderedHtml)) {
+                    return;
+                }
+                lastRenderedHtml = html;
+                editorPane.setText(html);
+                if (scrollState != null) {
+                    restoreScrollPosition(scrollState);
+                }
+            } catch (InterruptedException | ExecutionException ex) {
+                Exceptions.printStackTrace(ex);
+            }
             scrollPane.setVisible(true);
             progressPanel.setVisible(false);
+        }
+    }
+
+    /**
+     * Restores the scroll after the re-render layout settles, preserving the
+     * relative position so the preview does not jump when the content height
+     * changes (e.g. when images appear or text grows).
+     */
+    private void restoreScrollPosition(ScrollState scrollState) {
+        var viewport = scrollPane.getViewport();
+        SwingUtilities.invokeLater(() -> {
+            Point target = scrollState.resolve(viewport.getViewSize().height, viewport.getExtentSize().height);
+            viewport.setViewPosition(target);
+        });
+    }
+
+    private static final class ScrollState {
+
+        private final float ratio;
+
+        ScrollState(Point position, int viewHeight, int extentHeight) {
+            int range = viewHeight - extentHeight;
+            this.ratio = range > 0 ? (float) position.y / range : 0f;
+        }
+
+        Point resolve(int viewHeight, int extentHeight) {
+            int range = viewHeight - extentHeight;
+            int targetY = range > 0 ? Math.round(ratio * range) : 0;
+            return new Point(0, targetY);
         }
     }
 }
