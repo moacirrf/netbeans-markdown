@@ -62,7 +62,12 @@ public final class ImageHelper {
 
     private static final Map<String, URL> CACHE_CONVERTED_IMAGES = new HashMap<>();
 
+    private static final Map<String, URL> CACHE_DOWNLOADED_IMAGES = new java.util.concurrent.ConcurrentHashMap<>();
+
     public static boolean isSVG(URL url) {
+        if (url == null) {
+            return false;
+        }
         String fileName = url.getFile().toLowerCase();
         return getImageType(url).contains("svg") || fileName.endsWith("svg");
     }
@@ -127,7 +132,13 @@ public final class ImageHelper {
         if (!isHttpUrl(url.toString())) {
             throw new InvalidParameterException("Url must be http");
         }
+        String cacheKey = url.toString();
+        URL cached = CACHE_DOWNLOADED_IMAGES.get(cacheKey);
+        if (cached != null && isCachedFileExisting(cached)) {
+            return cached;
+        }
         URL returnUrl = null;
+        boolean downloaded = false;
         try {
             HttpRequest request = HttpRequest.newBuilder(url.toURI())
                     .GET()
@@ -154,6 +165,7 @@ public final class ImageHelper {
                 file = Path.of(fileSrc);
                 Files.write(file, bytes, CREATE, TRUNCATE_EXISTING);
                 returnUrl = file.toUri().toURL();
+                downloaded = true;
             }
         } catch (NoSuchFileException ex) {
             Exceptions.printStackTrace(ex);
@@ -163,7 +175,17 @@ public final class ImageHelper {
                 Thread.currentThread().interrupt();
             }
         }
+        if (downloaded) {
+            CACHE_DOWNLOADED_IMAGES.put(cacheKey, returnUrl);
+        }
 //        getImageType(returnUrl);
+        if (returnUrl == null) {
+            try {
+                return TempDir.getCantLoadImage().toUri().toURL();
+            } catch (MalformedURLException ex) {
+                return null;
+            }
+        }
         return returnUrl;
     }
 
@@ -245,6 +267,20 @@ public final class ImageHelper {
      * @param bytes Byte arrays to compare to path
      * @return true if file exists(is the same), false if not
      */
+    public static void clearCache() {
+        CACHE_DOWNLOADED_IMAGES.clear();
+        CACHE_CONVERTED_IMAGES.clear();
+    }
+
+    private static boolean isCachedFileExisting(URL url) {
+        try {
+            return "file".equals(url.getProtocol()) && Files.exists(Path.of(url.toURI()));
+        } catch (URISyntaxException ex) {
+            Exceptions.printStackTrace(ex);
+            return false;
+        }
+    }
+
     public static boolean fileExistsByHash(Path path, byte[] bytes) {
         try {
             if (Files.exists(path)) {
