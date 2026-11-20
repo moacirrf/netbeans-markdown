@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.moacirrf</groupId>
     <artifactId>netbeans-markdown</artifactId>
-    <version>5.1</version>
+    <version>6.0</version>
     <packaging>nbm</packaging>
     <name>Netbeans Markdown</name>
     <url>https://github.com/moacirrf/netbeans-markdown</url>
     <description>Markdown Preview for Apache Netbeans.</description>
-    
+
     <developers>
         <developer>
             <id>moacirrf</id>
@@ -17,14 +17,14 @@
             <url>https://github.com/moacirrf</url>
         </developer>
     </developers>
-    
+
     <scm>
         <connection>scm:git:https://github.com/moacirrf/netbeans-markdown</connection>
         <developerConnection>scm:git:https://github.com/moacirrf/netbeans-markdown</developerConnection>
         <url>https://github.com/moacirrf/netbeans-markdown/tree/${project.scm.tag}</url>
-        <tag>v5.1</tag>
+        <tag>v6.0</tag>
     </scm>
-    
+
     <licenses>
         <license>
             <name>GNU GENERAL PUBLIC LICENSE 3.0</name>
@@ -32,23 +32,7 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    
-    <distributionManagement>
-        <site>
-            <id>github</id>
-            <name>Maven Site Distribution</name>
-            <url>scm:git:https://github.com/moacirrf/netbeans-markdown.git</url>
-        </site>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-    
+
     <profiles>
         <profile>
             <id>maven-publish</id>
@@ -72,21 +56,20 @@
             </build>
         </profile>
     </profiles>
-    
+
     <build>
         <plugins>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.6.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
@@ -110,7 +93,7 @@
                     </moduleDependencies>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -120,7 +103,7 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -131,13 +114,13 @@
                     </archive>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -184,7 +167,7 @@
             <artifactId>flexmark-util</artifactId>
             <version>0.64.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-docx-converter</artifactId>
@@ -196,28 +179,28 @@
             <artifactId>flexmark-pdf-converter</artifactId>
             <version>0.64.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-profile-pegdown</artifactId>
             <version>0.64.0</version>
             <type>jar</type>
         </dependency>
-        
+
         <!-- jsoup -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.17.2</version>
         </dependency>
-        
+
         <!--  Apache Batik Transcoder-->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>
             <version>1.17</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-codec</artifactId>
@@ -237,7 +220,7 @@
             <artifactId>asm</artifactId>
             <version>9.7</version>
         </dependency>
-                       
+
         <!-- Junit -->
         <dependency>
             <groupId>junit</groupId>
@@ -245,20 +228,20 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-                
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>5.14.2</version>
             <scope>test</scope>
-        </dependency>               
+        </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <version>5.2.0</version>
             <scope>test</scope>
-        </dependency>               
+        </dependency>
 
         <!-- Netbeans modules -->
         <dependency>
@@ -266,21 +249,21 @@
             <artifactId>org-netbeans-api-annotations-common</artifactId>
             <version>RELEASE210</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-modules</artifactId>
             <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-core-multiview</artifactId>
             <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-textmate-lexer</artifactId>
@@ -329,20 +312,20 @@
             <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-editor-completion</artifactId>
             <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
-            
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-editor-mimelookup</artifactId>
             <version>RELEASE210</version>
             <type>jar</type>
-        </dependency>    
+        </dependency>
 
         <dependency>
             <groupId>org.netbeans.api</groupId>
@@ -357,51 +340,51 @@
             <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-filesystems-nb</artifactId>
             <version>RELEASE210</version>
             <type>jar</type>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE210</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-bootstrap</artifactId>
             <version>RELEASE210</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-windows</artifactId>
             <version>RELEASE210</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-text</artifactId>
             <version>RELEASE210</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-projectapi</artifactId>
             <version>RELEASE210</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-nodes</artifactId>
             <version>RELEASE210</version>
         </dependency>
-                
+
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
