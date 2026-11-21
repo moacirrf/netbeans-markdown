@@ -17,19 +17,31 @@
 package io.github.moacirrf.netbeans.markdown.ui.preview;
 
 import io.github.moacirrf.netbeans.markdown.Context;
+import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
+import javax.swing.AbstractAction;
 import javax.swing.JEditorPane;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.HyperlinkEvent;
 import static javax.swing.event.HyperlinkEvent.EventType.ACTIVATED;
 import static javax.swing.event.HyperlinkEvent.EventType.ENTERED;
 import static javax.swing.event.HyperlinkEvent.EventType.EXITED;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
@@ -50,7 +62,22 @@ import org.openide.util.Exceptions;
  */
 public class JEditorPaneImpl extends JEditorPane {
 
+    private final transient CodeBlockCopyController codeBlockCopyController;
+    private final transient Consumer<String> clipboardWriter;
+    private JPopupMenu contextMenu;
+    private JMenuItem copyMenuItem;
+    private JMenuItem copyLinkMenuItem;
+    private JMenuItem selectAllMenuItem;
+    private String pendingLinkUrl;
+
     public JEditorPaneImpl() {
+        this(JEditorPaneImpl::copyToSystemClipboard);
+    }
+
+    JEditorPaneImpl(Consumer<String> clipboardWriter) {
+        this.clipboardWriter = clipboardWriter;
+        this.codeBlockCopyController = new CodeBlockCopyController(this);
+        initCopyAndContextMenu();
         this.addHyperlinkListener((HyperlinkEvent e) -> {
             if (e.getInputEvent() instanceof MouseEvent) {
                 if (ACTIVATED.equals(e.getEventType())) {
@@ -66,6 +93,181 @@ public class JEditorPaneImpl extends JEditorPane {
                 }
             }
         });
+    }
+
+    private void initCopyAndContextMenu() {
+        int menuMask = getMenuShortcutMask();
+        KeyStroke copyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, menuMask);
+        KeyStroke selectAllStroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask);
+
+        getActionMap().put(DefaultEditorKit.copyAction, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                copy();
+            }
+        });
+        getActionMap().put(DefaultEditorKit.selectAllAction, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectAll();
+            }
+        });
+
+        var inputMap = getInputMap(WHEN_FOCUSED);
+        inputMap.put(copyStroke, DefaultEditorKit.copyAction);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, InputEvent.CTRL_DOWN_MASK), DefaultEditorKit.copyAction);
+        inputMap.put(selectAllStroke, DefaultEditorKit.selectAllAction);
+
+        copyMenuItem = new JMenuItem(new AbstractAction("Copy") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                copy();
+            }
+        });
+        copyMenuItem.setAccelerator(copyStroke);
+
+        copyLinkMenuItem = new JMenuItem(new AbstractAction("Copy Link") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (pendingLinkUrl != null && !pendingLinkUrl.isEmpty()) {
+                    clipboardWriter.accept(pendingLinkUrl);
+                }
+            }
+        });
+        copyLinkMenuItem.setVisible(false);
+
+        selectAllMenuItem = new JMenuItem(new AbstractAction("Select All") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectAll();
+            }
+        });
+        selectAllMenuItem.setAccelerator(selectAllStroke);
+
+        contextMenu = new JPopupMenu();
+        contextMenu.add(copyMenuItem);
+        contextMenu.add(copyLinkMenuItem);
+        contextMenu.add(selectAllMenuItem);
+    }
+
+    @Override
+    public void copy() {
+        String text = getCleanSelectedText();
+        if (text != null && !text.isEmpty()) {
+            clipboardWriter.accept(text);
+        }
+    }
+
+    String getCleanSelectedText() {
+        String selected = getSelectedText();
+        if (selected == null || selected.isEmpty()) {
+            return selected;
+        }
+        // Swing HTMLEditorKit includes a synthetic leading newline from <head> when selecting from offset 0.
+        if (getSelectionStart() == 0 && selected.startsWith("\n")) {
+            return selected.substring(1);
+        }
+        return selected;
+    }
+
+    boolean hasSelectedText() {
+        return getSelectionEnd() > getSelectionStart();
+    }
+
+    JPopupMenu getContextMenu() {
+        return getContextMenu(null);
+    }
+
+    JPopupMenu getContextMenu(Point point) {
+        updateContextMenuState(point);
+        return contextMenu;
+    }
+
+    private void updateContextMenuState(Point point) {
+        if (copyMenuItem != null) {
+            copyMenuItem.setEnabled(hasSelectedText());
+        }
+        pendingLinkUrl = (point != null) ? findLinkAt(point) : null;
+        if (copyLinkMenuItem != null) {
+            copyLinkMenuItem.setVisible(pendingLinkUrl != null && !pendingLinkUrl.isEmpty());
+        }
+        if (selectAllMenuItem != null && getDocument() != null) {
+            selectAllMenuItem.setEnabled(getDocument().getLength() > 0);
+        }
+    }
+
+    String findLinkAt(Point point) {
+        if (point == null || !(getDocument() instanceof HTMLDocument)) {
+            return null;
+        }
+        HTMLDocument doc = (HTMLDocument) getDocument();
+        javax.swing.text.Position.Bias[] biasRet = new javax.swing.text.Position.Bias[1];
+        int pos = getUI().viewToModel2D(this, point, biasRet);
+        if (pos < 0) {
+            return null;
+        }
+        try {
+            var charRect = modelToView2D(pos);
+            if (charRect != null && (point.y < charRect.getMinY() || point.y > charRect.getMaxY()
+                    || point.x > charRect.getMaxX() + 6)) {
+                return null;
+            }
+        } catch (BadLocationException ex) {
+            return null;
+        }
+        if (biasRet[0] == javax.swing.text.Position.Bias.Backward && pos > 0) {
+            pos--;
+        }
+        Element elem = doc.getCharacterElement(pos);
+        if (elem == null || elem.getAttributes() == null) {
+            return null;
+        }
+        Object linkAttrs = elem.getAttributes().getAttribute(HTML.Tag.A);
+        if (linkAttrs instanceof javax.swing.text.AttributeSet) {
+            Object href = ((javax.swing.text.AttributeSet) linkAttrs).getAttribute(HTML.Attribute.HREF);
+            if (href != null && StringUtils.isNotBlank(href.toString())) {
+                return href.toString();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected void processMouseEvent(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            requestFocusInWindow();
+            updateContextMenuState(e.getPoint());
+            if (contextMenu != null) {
+                contextMenu.show(this, e.getX(), e.getY());
+            }
+            e.consume();
+            return;
+        }
+        if (codeBlockCopyController != null && codeBlockCopyController.handleMouseEvent(e)) {
+            return;
+        }
+        super.processMouseEvent(e);
+    }
+
+    @Override
+    protected void processMouseMotionEvent(MouseEvent e) {
+        super.processMouseMotionEvent(e);
+        if (codeBlockCopyController != null) {
+            codeBlockCopyController.handleMouseMotionEvent(e);
+        }
+    }
+
+    private static int getMenuShortcutMask() {
+        try {
+            return Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+        } catch (HeadlessException ex) {
+            return InputEvent.CTRL_DOWN_MASK;
+        }
+    }
+
+    private static void copyToSystemClipboard(String text) {
+        Toolkit.getDefaultToolkit().getSystemClipboard()
+                .setContents(new StringSelection(text), null);
     }
 
     private void openFile(String file) {
@@ -162,6 +364,7 @@ public class JEditorPaneImpl extends JEditorPane {
                 Exceptions.printStackTrace(ex1);
             }
         }
-    }
+	}
+
 
 }

@@ -26,6 +26,9 @@ import static io.github.moacirrf.netbeans.markdown.ui.scroll.ScrollUtils.getScro
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
@@ -35,6 +38,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
@@ -115,7 +119,59 @@ public class MultiViewSplitEditorElement extends MultiViewEditorElement {
             }));
 
             initDocumentListener();
+            initPreviewCopyActions();
         }
+    }
+
+    private void initPreviewCopyActions() {
+        registerFocusAwareActions(splitPanel.getActionMap());
+        if (getComponent() != null) {
+            registerFocusAwareActions(getComponent().getActionMap());
+        }
+    }
+
+    private void registerFocusAwareActions(ActionMap actionMap) {
+        if (actionMap == null) {
+            return;
+        }
+        wrapAction(actionMap, DefaultEditorKit.copyAction, true);
+        wrapAction(actionMap, DefaultEditorKit.selectAllAction, false);
+    }
+
+    private void wrapAction(ActionMap actionMap, String actionKey, boolean isCopy) {
+        Action original = actionMap.get(actionKey);
+        Action editorFallback = (leftEditorPane != null) ? leftEditorPane.getActionMap().get(actionKey) : null;
+        actionMap.put(actionKey, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JEditorPane previewEditor = previewPane.getEditorPane();
+                if (previewEditor != null && previewEditor.isFocusOwner()) {
+                    if (isCopy) {
+                        previewEditor.copy();
+                    } else {
+                        previewEditor.selectAll();
+                    }
+                    return;
+                }
+                Action target = (original != null && original != this) ? original : editorFallback;
+                if (target != null) {
+                    target.actionPerformed(e);
+                }
+            }
+
+            @Override
+            public boolean isEnabled() {
+                JEditorPane previewEditor = previewPane.getEditorPane();
+                if (previewEditor != null && previewEditor.isFocusOwner()) {
+                    if (isCopy) {
+                        return previewEditor.getSelectionEnd() > previewEditor.getSelectionStart();
+                    }
+                    return previewEditor.getDocument() != null && previewEditor.getDocument().getLength() > 0;
+                }
+                Action target = (original != null && original != this) ? original : editorFallback;
+                return target != null && target.isEnabled();
+            }
+        });
     }
 
     private void initDocumentListener() {

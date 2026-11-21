@@ -16,17 +16,21 @@
  */
 package io.github.moacirrf.netbeans.markdown;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import static java.io.File.separator;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import static java.net.http.HttpResponse.BodyHandlers.ofByteArray;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -56,9 +60,12 @@ import org.openide.util.Exceptions;
  */
 public final class ImageHelper {
 
-    private static final List<String> EXTENSION_IMAGES = asList("jpg", "png", "jpeg", "webp", "gif", "svg");
+    private static final List<String> EXTENSION_IMAGES = asList("jpg", "png", "jpeg", "webp", "gif", "svg", "bmp", "ico");
 
-    private static final Path TEMP_DIR = TempDir.getTempDir();
+    /**
+     * Number of bytes read to discover the image type.
+     */
+    private static final int HEADER_SIZE = 4096;
 
     private static final Map<String, URL> CACHE_CONVERTED_IMAGES = new HashMap<>();
 
@@ -79,40 +86,181 @@ public final class ImageHelper {
                     return true;
                 }
             }
-            String type = getImageType(URI.create(url).toURL());
+            URL target = isHttpUrl(url)
+                    ? URI.create(url).toURL()
+                    : getLocalImage(removeParameters(url)).toURI().toURL();
+            String type = getImageType(target);
             for (String ext : EXTENSION_IMAGES) {
                 if (type.toLowerCase().contains(ext)) {
                     return true;
                 }
             }
-        } catch (MalformedURLException ex) {
+        } catch (MalformedURLException | IllegalArgumentException ex) {
             Exceptions.printStackTrace(ex);
         }
         return false;
     }
 
+    /**
+     * Discover the image type reading the first bytes of the url content.
+     *
+     * @param url Url of image
+     * @return The format name in lower case (ex.: png, jpeg, gif, webp, svg) or
+     * empty string if not discovered.
+     */
     public static String getImageType(URL url) {
-        try {
-            ImageInputStream iis = ImageIO.createImageInputStream(url.openStream());
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-            if (readers != null) {
-                while (readers.hasNext()) {
-                    ImageReader reader = readers.next();
-                    return reader.getFormatName().toLowerCase();
-                }
-
+        if (url == null) {
+            return "";
+        }
+        try (InputStream in = url.openStream()) {
+            byte[] head = in.readNBytes(HEADER_SIZE);
+            String ext = detectExtension(head);
+            if (!ext.isEmpty()) {
+                return "jpg".equals(ext) ? "jpeg" : ext;
             }
-            String header = new String(url.openStream().readAllBytes()).substring(0, 5);
-            iis.close();
-            if (header.toLowerCase().contains("svg")) {
-                return "svg";
-            }
-
+            return getImageTypeByImageIO(head);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
         return "";
+    }
 
+    private static String getImageTypeByImageIO(byte[] bytes) {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(bytes))) {
+            if (iis != null) {
+                Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+                if (readers != null && readers.hasNext()) {
+                    return readers.next().getFormatName().toLowerCase();
+                }
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return "";
+    }
+
+    /**
+     * Detect the image extension based on magic bytes (file signature).
+     *
+     * @param bytes The image content (or at least the first bytes of it)
+     * @return png, jpg, gif, webp, bmp, ico, svg or empty string when the
+     * format is unknown.
+     */
+    public static String detectExtension(byte[] bytes) {
+        if (bytes == null || bytes.length < 2) {
+            return "";
+        }
+        if (startsWith(bytes, 0x89, 'P', 'N', 'G')) {
+            return "png";
+        }
+        if (startsWith(bytes, 0xFF, 0xD8, 0xFF)) {
+            return "jpg";
+        }
+        if (startsWith(bytes, 'G', 'I', 'F', '8')) {
+            return "gif";
+        }
+        if (bytes.length >= 12 && startsWith(bytes, 'R', 'I', 'F', 'F')
+                && bytes[8] == 'W' && bytes[9] == 'E' && bytes[10] == 'B' && bytes[11] == 'P') {
+            return "webp";
+        }
+        if (startsWith(bytes, 0x00, 0x00, 0x01, 0x00)) {
+            return "ico";
+        }
+        if (startsWith(bytes, 'B', 'M')) {
+            return "bmp";
+        }
+        String head = new String(bytes, 0, Math.min(bytes.length, HEADER_SIZE), StandardCharsets.ISO_8859_1)
+                .toLowerCase();
+        if (head.contains("<svg")) {
+            return "svg";
+        }
+        return "";
+    }
+
+    private static boolean startsWith(byte[] bytes, int... signature) {
+        if (bytes.length < signature.length) {
+            return false;
+        }
+        for (int i = 0; i < signature.length; i++) {
+            if ((bytes[i] & 0xFF) != signature[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Convert a http Content-Type to a image extension.
+     *
+     * @param contentType Ex.: image/png, image/svg+xml; charset=utf-8
+     * @return The extension or empty string if unknown.
+     */
+    public static String extensionFromContentType(String contentType) {
+        if (contentType == null || contentType.isBlank()) {
+            return "";
+        }
+        String type = contentType.split(";")[0].trim().toLowerCase();
+        switch (type) {
+            case "image/png":
+                return "png";
+            case "image/jpeg":
+            case "image/jpg":
+            case "image/pjpeg":
+                return "jpg";
+            case "image/gif":
+                return "gif";
+            case "image/webp":
+                return "webp";
+            case "image/svg+xml":
+                return "svg";
+            case "image/bmp":
+            case "image/x-ms-bmp":
+                return "bmp";
+            case "image/x-icon":
+            case "image/vnd.microsoft.icon":
+                return "ico";
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * Test if the file name ends with a known image extension.
+     *
+     * @param fileName The file name
+     * @return true if has a known image extension
+     */
+    public static boolean hasImageExtension(String fileName) {
+        if (fileName == null) {
+            return false;
+        }
+        int index = fileName.lastIndexOf('.');
+        if (index < 0 || index == fileName.length() - 1) {
+            return false;
+        }
+        return EXTENSION_IMAGES.contains(fileName.substring(index + 1).toLowerCase());
+    }
+
+    /**
+     * If the file name has no known image extension, discover the image type
+     * and concatenate the extension. Ex.: badge -> badge.svg, image.php ->
+     * image.php.png. When the type cannot be discovered the name is returned
+     * unchanged.
+     *
+     * @param fileName The file name
+     * @param bytes Image content, used to detect the type by magic bytes
+     * @param contentType Optional http Content-Type, used as fallback
+     * @return The file name with extension
+     */
+    public static String ensureExtension(String fileName, byte[] bytes, String contentType) {
+        if (fileName == null || hasImageExtension(fileName)) {
+            return fileName;
+        }
+        String ext = detectExtension(bytes);
+        if (ext.isEmpty()) {
+            ext = extensionFromContentType(contentType);
+        }
+        return ext.isEmpty() ? fileName : fileName + "." + ext;
     }
 
     public static boolean isHttpUrl(String url) {
@@ -148,25 +296,25 @@ public final class ImageHelper {
                     .followRedirects(HttpClient.Redirect.ALWAYS)
                     .build();
 
-            byte[] bytes = http.send(request, ofByteArray())
-                    .body();
+            HttpResponse<byte[]> response = http.send(request, ofByteArray());
+            byte[] bytes = response.body();
 
             if (bytes == null || bytes.length < 1000) {
                 return TempDir.getCantLoadImage().toUri().toURL();
             }
 
-            Path file = Path.of(TEMP_DIR.toString(), Path.of(url.getFile()).getFileName().toString());
-            if (file != null) {
-                int contRepeatImage = 0;
-                while (Files.exists(file) && !fileExistsByHash(file, bytes)) {
-                    file = Path.of(TEMP_DIR.toString(), (contRepeatImage++) + "_" + Path.of(url.getFile()).getFileName().toString());
-                }
-                String fileSrc = removeParameters(file.toAbsolutePath().toFile().getAbsolutePath());
-                file = Path.of(fileSrc);
-                Files.write(file, bytes, CREATE, TRUNCATE_EXISTING);
-                returnUrl = file.toUri().toURL();
-                downloaded = true;
+            String contentType = response.headers().firstValue("Content-Type").orElse(null);
+            String fileName = buildFileName(url, bytes, contentType);
+            Path tempDir = TempDir.getTempDir();
+
+            Path file = Path.of(tempDir.toString(), fileName);
+            int contRepeatImage = 0;
+            while (Files.exists(file) && !fileExistsByHash(file, bytes)) {
+                file = Path.of(tempDir.toString(), (contRepeatImage++) + "_" + fileName);
             }
+            Files.write(file, bytes, CREATE, TRUNCATE_EXISTING);
+            returnUrl = file.toUri().toURL();
+            downloaded = true;
         } catch (NoSuchFileException ex) {
             Exceptions.printStackTrace(ex);
         } catch (URISyntaxException | InterruptedException | IOException ex) {
@@ -190,6 +338,27 @@ public final class ImageHelper {
     }
 
     /**
+     * Build a valid local file name to a downloaded image: takes the last
+     * segment of url path, removes parameters, replaces invalid chars and
+     * ensures a image extension.
+     *
+     * @param url Original url
+     * @param bytes Downloaded content
+     * @param contentType Http Content-Type, can be null
+     * @return File name with extension (when discoverable)
+     */
+    static String buildFileName(URL url, byte[] bytes, String contentType) {
+        String path = url.getPath() == null ? "" : url.getPath();
+        String name = path.substring(path.lastIndexOf('/') + 1);
+        name = removeParameters(name);
+        name = name == null ? "" : name.replaceAll("[\\\\/:*?\"<>|]", "_").trim();
+        if (name.isEmpty() || ".".equals(name) || "..".equals(name)) {
+            name = "image_" + DigestUtils.md5Hex(bytes).substring(0, 12);
+        }
+        return ensureExtension(name, bytes, contentType);
+    }
+
+    /**
      * Convert SVG to png
      *
      * @param url
@@ -203,7 +372,7 @@ public final class ImageHelper {
             try {
                 String fileName = new File(url.getFile()).getName().toLowerCase();
 
-                Path imageTemp = Paths.get(TEMP_DIR.toString(), fileName + ".png");
+                Path imageTemp = Paths.get(TempDir.getTempDir().toString(), fileName + ".png");
                 imageTemp.toFile().setWritable(true);
 
                 var t = new PNGTranscoder();

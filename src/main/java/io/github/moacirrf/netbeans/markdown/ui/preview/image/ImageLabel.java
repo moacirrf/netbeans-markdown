@@ -202,6 +202,7 @@ public class ImageLabel extends JLabel {
         setPreferredSize(size);
         setMinimumSize(size);
         setMaximumSize(size);
+        revalidate();
     }
 
     private static Dimension getStableSize(String imageKey, int targetWidth) {

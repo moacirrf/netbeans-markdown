@@ -41,6 +41,10 @@ public class LocalViewFactory extends HTMLEditorKit.HTMLFactory {
             return new CheckboxView(elem);
         }
 
+        if (isElementOfTag(elem, HTML.Tag.PRE)) {
+            return new CodeBlockView(elem);
+        }
+
         return super.create(elem);
     }
 }

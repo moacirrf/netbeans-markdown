@@ -61,7 +61,7 @@ public final class HtmlBuilder {
         htmlTransformers.add(new TablesTransformer());
         htmlTransformers.add(new LinksTransformer());
         htmlTransformers.add(new FirstElementTransformer());
-        htmlTransformers.add(new ListTransformer());
+        htmlTransformers.add(new HrTransformer());
         htmlTransformers.add(new CheckboxTransformer());
     }
 
