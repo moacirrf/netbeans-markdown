@@ -11,7 +11,7 @@ This plugin adds some additional features to Apache Netbeans Markdown Editor.
 
 ## Requirements
  - Apache Netbeans 14-20(until version 2.0) 
- - Apache Netbeans 21+(version 3.0) 
+ - Apache Netbeans 31+(version 5.0) 
  - JDK 11+
 
 ## Licenses
@@ -22,7 +22,6 @@ This plugin adds some additional features to Apache Netbeans Markdown Editor.
  - Apache Batik - Apache License, Version 2.0
  - Jsoup - The MIT License
  - Apache Commons Text - Apache License, Version 2.0
- 
 
 ## Screenshots
-<img src="https://github.com/moacirrf/netbeans-markdown/assets/950706/9c0508ba-1556-4ca2-9edc-6dadb7e06fa3" width="1700"  />
+<img src="https://github.com/user-attachments/assets/fb3c088b-4458-4699-8bd4-8a4595dabab9" width="1700"  />
