@@ -93,13 +93,26 @@ public final class ThemeResolver {
 
         var att = fontColorSettings.getFontColors(FontColorNames.DEFAULT_COLORING);
 
+        Object fontSizeObj = att.getAttribute(StyleConstants.FontSize);
+        int baseFontSize = (fontSizeObj instanceof Number) ? ((Number) fontSizeObj).intValue() : 13;
+
         maps.put("fontFamily", att.getAttribute(StyleConstants.FontFamily));
-        maps.put("fontSize", att.getAttribute(StyleConstants.FontSize));
+        maps.put("fontSize", baseFontSize);
+        putHeadingFontSizes(maps, baseFontSize);
 
         Color fontColor = (Color) att.getAttribute(StyleConstants.Foreground);
         Color bgColor = (Color) att.getAttribute(StyleConstants.Background);
         maps.put("body.color", toRGB(fontColor));
         maps.put("body.bgColor", toRGB(bgColor));
+    }
+
+    static void putHeadingFontSizes(Map<String, Object> maps, int baseFontSize) {
+        maps.put("h1.fontSize", Math.round(baseFontSize * 2.0f));
+        maps.put("h2.fontSize", Math.round(baseFontSize * 1.5f));
+        maps.put("h3.fontSize", Math.round(baseFontSize * 1.25f));
+        maps.put("h4.fontSize", Math.round(baseFontSize * 1.1f));
+        maps.put("h5.fontSize", baseFontSize);
+        maps.put("h6.fontSize", Math.round(baseFontSize * 0.9f));
     }
 
     private String toRGB(Color color) {

@@ -16,6 +16,7 @@
  */
 package io.github.moacirrf.netbeans.markdown.export;
 
+import io.github.moacirrf.netbeans.markdown.ImageHelper;
 import io.github.moacirrf.netbeans.markdown.html.HtmlBuilder;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -148,10 +149,14 @@ public class HtmlExporter implements Exporter {
                     Path originalImage = null;
                     originalImage = Path.of(URI.create(element.attr("src")));
                     if (Files.exists(originalImage)) {
-                        Path image = Path.of(images.toString(), originalImage.getFileName().toString());
+                        String targetName = originalImage.getFileName().toString();
+                        if (!ImageHelper.hasImageExtension(targetName)) {
+                            targetName = ImageHelper.ensureExtension(targetName, Files.readAllBytes(originalImage), null);
+                        }
+                        Path image = Path.of(images.toString(), targetName);
                         int contRepeatedImage = 0;
                         while (Files.exists(image)) {
-                            image = Path.of(images.toString(), (contRepeatedImage++) + "_" + originalImage.getFileName().toString());
+                            image = Path.of(images.toString(), (contRepeatedImage++) + "_" + targetName);
                         }
                         Files.copy(originalImage, image);
                         element.attr("src", IMAGES_FOLDER_NAME + "/" + image.getFileName().toString());

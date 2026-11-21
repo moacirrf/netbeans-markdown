@@ -76,7 +76,7 @@ import org.openide.windows.TopComponent;
             separatorAfter = 800
     ),
     @ActionReference(
-            path = "Loaders/" + MarkdownDataObject.MIME_TYPE + "/ctions",
+            path = "Loaders/" + MarkdownDataObject.MIME_TYPE + "/Actions",
             id = @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
             position = 900,
             separatorAfter = 1000
